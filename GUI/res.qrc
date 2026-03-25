@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/hals_128.png</file>
+    </qresource>
+</RCC>

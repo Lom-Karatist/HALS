@@ -6,10 +6,7 @@
 #include <QMutex>
 #include <QObject>
 #include <QRunnable>
-#include <memory>
 
-#include "Types.h"
-//
 #include "Commands/ParameterCommand.h"
 #include "Commands/SetBinningHorizontalCommand.h"
 #include "Commands/SetBinningHorizontalModeCommand.h"
@@ -23,6 +20,7 @@
 #include "Commands/SetOffsetYCommand.h"
 #include "Commands/SetPixelFormatCommand.h"
 #include "Commands/SetWidthCommand.h"
+#include "Types.h"
 
 /**
  * @brief Класс для управления камерой Basler в отдельном потоке.
