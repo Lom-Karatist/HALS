@@ -6,6 +6,7 @@ CONFIG += c++11
 RC_FILE = recource.rc
 
 include(Basler/Basler.pri)
+include(GPS/solutions/gps_device/gps_device.pri)
 
 SOURCES += \
     main.cpp \

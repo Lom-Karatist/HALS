@@ -2,6 +2,7 @@
 #define HALSWINDOW_H
 
 #include <QMainWindow>
+#include "gps_device.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class HalsWindow; }
@@ -17,5 +18,6 @@ public:
 
 private:
     Ui::HalsWindow *ui;
+    GPSDevice device;
 };
 #endif // HALSWINDOW_H
