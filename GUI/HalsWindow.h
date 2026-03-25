@@ -18,6 +18,5 @@ public:
 
 private:
     Ui::HalsWindow *ui;
-    GPSDevice device;
 };
 #endif // HALSWINDOW_H
