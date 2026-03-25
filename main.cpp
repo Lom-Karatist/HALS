@@ -1,4 +1,4 @@
-#include "HalsWindow.h"
+#include "GUI/HalsWindow.h"
 
 #include <QApplication>
 
