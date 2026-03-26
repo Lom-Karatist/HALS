@@ -42,6 +42,8 @@ void HalsWindow::setupGui() {
     for (QPushButton* btn : buttons) {
         btn->style()->polish(btn);
     }
+
+    addStatusIndicators();
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -181,6 +183,49 @@ void HalsWindow::applyStyleSheet() {
         }
     )";
     qApp->setStyleSheet(styleSheet);
+}
+
+void HalsWindow::addStatusIndicators() {
+    auto* usbIndicator = new StatusIndicator;
+    usbIndicator->setIcon(QPixmap(":/Icons/flash-drive_active.png"));
+    usbIndicator->setLabelText("Флеш-накопитель");
+    usbIndicator->setValueText("Подключен");
+    usbIndicator->setState(StatusIndicator::State::Active);  // будет зелёным
+
+    auto* hsIndicator = new StatusIndicator;
+    hsIndicator->setIcon(QPixmap(":/Icons/hs.png"));
+    hsIndicator->setLabelText("Гиперспектрометр");
+    hsIndicator->setValueText("Активен");
+    hsIndicator->setState(StatusIndicator::State::Active);
+
+    auto* ocIndicator = new StatusIndicator;
+    ocIndicator->setIcon(QPixmap(":/Icons/camera.png"));
+    ocIndicator->setLabelText("Обзорная камера");
+    ocIndicator->setValueText("Активна");
+    ocIndicator->setState(StatusIndicator::State::Active);
+
+    auto* sunIndicator = new StatusIndicator;
+    sunIndicator->setIcon(QPixmap(":/Icons/sun.png"));
+    sunIndicator->setLabelText("Сенсор освещенности");
+    sunIndicator->setValueText("Нет соединения");
+    sunIndicator->setState(StatusIndicator::State::Inactive);  // красный
+
+    auto* missionIndicator = new StatusIndicator;
+    missionIndicator->setIcon(QPixmap(":/Icons/checklist.png"));
+    missionIndicator->setLabelText("Полётное задание");
+    missionIndicator->setValueText("Загружено");
+    missionIndicator->setState(StatusIndicator::State::Active);
+
+    // Добавляем в горизонтальный лейаут centerWidget
+    QHBoxLayout* centerLayout =
+        qobject_cast<QHBoxLayout*>(ui->centerWidget->layout());
+    if (centerLayout) {
+        centerLayout->addWidget(usbIndicator);
+        centerLayout->addWidget(sunIndicator);
+        centerLayout->addWidget(hsIndicator);
+        centerLayout->addWidget(ocIndicator);
+        centerLayout->addWidget(missionIndicator);
+    }
 }
 
 void HalsWindow::on_pushButtonSettings_clicked() {}

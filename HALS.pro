@@ -9,15 +9,18 @@ include(Basler/Basler.pri)
 include(GPS/solutions/gps_device/gps_device.pri)
 
 SOURCES += \
+    GUI/StatusIndicator.cpp \
     main.cpp \
     GUI/HalsWindow.cpp
 
 HEADERS += \
     GUI/HalsWindow.h \
+    GUI/StatusIndicator.h \
     version.h
 
 FORMS += \
-    GUI/HalsWindow.ui
+    GUI/HalsWindow.ui \
+    GUI/StatusIndicator.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

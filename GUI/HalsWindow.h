@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "StatusIndicator.h"
 #include "gps_device.h"
 
 QT_BEGIN_NAMESPACE
@@ -30,6 +31,8 @@ private slots:
 private:
     void setupGui();
     void applyStyleSheet();
+
+    void addStatusIndicators();
 
     Ui::HalsWindow *ui;
 };

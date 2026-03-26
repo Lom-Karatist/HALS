@@ -9,5 +9,8 @@
         <file>Icons/save.png</file>
         <file>Icons/setting.png</file>
         <file>Icons/stop-button.png</file>
+        <file>Icons/flash-drive_active.png</file>
+        <file>Icons/flash-drive_inactive.png</file>
+        <file>Icons/flash-drive_unknown.png</file>
     </qresource>
 </RCC>
