@@ -1,5 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>Icons/hals_128.png</file>
+        <file>Icons/satellite.png</file>
+        <file>Icons/power.png</file>
+        <file>Icons/power_pressed.png</file>
+        <file>Icons/hals_image.png</file>
+        <file>Icons/play.png</file>
+        <file>Icons/save.png</file>
+        <file>Icons/setting.png</file>
+        <file>Icons/stop-button.png</file>
     </qresource>
 </RCC>

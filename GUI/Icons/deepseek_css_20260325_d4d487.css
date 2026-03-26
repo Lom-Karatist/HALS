@@ -1,0 +1,137 @@
+/* Общий стиль окна */
+QMainWindow, QWidget {
+    background-color: #1a1a1a;    /* zinc-900 */
+    color: #ffffff;               /* text-white */
+    font-family: "Arial", "Helvetica", sans-serif;
+    font-size: 12pt;
+}
+
+/* Верхняя панель */
+QWidget#statusBarWidget {
+    background-color: #0f0f0f;    /* zinc-950 */
+    border-bottom: 2px solid #eab308; /* amber-500 */
+    height: 48px;
+}
+QWidget#statusBarWidget QLabel {
+    color: #ffffff;
+    font-weight: bold;
+}
+QWidget#statusBarWidget QLabel#satelliteIcon {
+    color: #eab308; /* amber-400 */
+}
+
+/* Блок логотипа */
+QWidget#logoBarWidget {
+    border-bottom: 2px solid #3f3f46; /* zinc-700 */
+    height: 80px;
+}
+QLabel#logo {
+    background-color: #eab308; /* amber-500 */
+    border-radius: 6px;
+    min-width: 48px;
+    min-height: 48px;
+    qproperty-alignment: AlignCenter;
+}
+QLabel#logoText {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #ffffff;
+}
+QLabel#logoSub {
+    font-size: 10pt;
+    color: #71717a; /* zinc-400 */
+    text-transform: uppercase;
+}
+
+/* Кнопка питания */
+QPushButton#powerButton {
+    background-color: #dc2626; /* red-600 */
+    border: none;
+    border-radius: 32px;
+    min-width: 56px;
+    min-height: 56px;
+    max-width: 56px;
+    max-height: 56px;
+}
+QPushButton#powerButton:pressed {
+    background-color: #b91c1c; /* red-700 */
+}
+
+/* Контейнеры для индикаторов (QFrame) */
+QFrame.statusIndicator {
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 8px;
+}
+QFrame.statusIndicator[active="true"] {
+    border-color: #10b981; /* emerald-500 */
+    background-color: rgba(16,185,129,0.1); /* emerald-950/40 */
+}
+QFrame.statusIndicator[active="false"] {
+    border-color: #ef4444; /* red-500 */
+    background-color: rgba(239,68,68,0.1); /* red-950/40 */
+}
+QLabel.statusIcon {
+    min-width: 32px;
+    min-height: 32px;
+}
+QLabel.statusIcon[active="true"] {
+    color: #34d399; /* emerald-400 */
+}
+QLabel.statusIcon[active="false"] {
+    color: #f87171; /* red-400 */
+}
+QLabel.statusLabel {
+    font-size: 11pt;
+    color: #d4d4d8; /* zinc-300 */
+}
+QLabel.statusValue {
+    font-size: 10pt;
+    margin-top: 4px;
+}
+QLabel.statusValue[active="true"] {
+    color: #34d399; /* emerald-400 */
+}
+QLabel.statusValue[active="false"] {
+    color: #f87171; /* red-400 */
+}
+
+/* Нижняя панель */
+QWidget#bottomBarWidget {
+    background-color: #0f0f0f; /* zinc-950 */
+    border-top: 2px solid #3f3f46; /* zinc-700 */
+    height: 80px;
+}
+
+/* Кнопки нижней панели */
+QPushButton {
+    border: 2px solid #3f3f46; /* zinc-600 */
+    border-radius: 12px;
+    background-color: #27272a; /* zinc-800 */
+    padding: 8px;
+    font-size: 14pt;
+    font-weight: 500;
+    color: #ffffff;
+}
+QPushButton:hover {
+    background-color: #3f3f46; /* zinc-700 */
+}
+QPushButton:pressed {
+    background-color: #52525b; /* zinc-600 */
+}
+
+/* Специальные цвета для отдельных кнопок */
+QPushButton#saveButton {
+    background-color: #2563eb; /* blue-600 */
+    border-color: #3b82f6; /* blue-500? */
+}
+QPushButton#saveButton:pressed {
+    background-color: #1d4ed8; /* blue-700 */
+}
+QPushButton#startButton {
+    background-color: #d97706; /* amber-600 */
+    border-color: #eab308; /* amber-500 */
+}
+QPushButton#startButton:pressed {
+    background-color: #b45309; /* amber-700 */
+}

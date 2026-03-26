@@ -21,6 +21,12 @@ public:
 private slots:
     void on_pushButtonQuit_clicked();
 
+    void on_pushButtonSettings_clicked();
+
+    void on_pushButtonSaveParameters_clicked();
+
+    void on_pushButtonStartStop_clicked();
+
 private:
     void setupGui();
     void applyStyleSheet();

@@ -2,10 +2,11 @@
 
 #include <QMessageBox>
 #include <QPixmap>
+#include <QStyle>
 
 #include "ui_HalsWindow.h"
 
-HalsWindow::HalsWindow(QWidget *parent)
+HalsWindow::HalsWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::HalsWindow) {
     ui->setupUi(this);
     setupGui();
@@ -24,61 +25,111 @@ void HalsWindow::on_pushButtonQuit_clicked() {
 
 void HalsWindow::setupGui() {
     setWindowFlags(Qt::FramelessWindowHint);
-    ui->labelLogo->setPixmap(QPixmap(":/Icons/hals_128.png"));
+    ui->labelLogo->setPixmap(QPixmap(":/Icons/hals_image.png"));
+    ui->labelGps->setPixmap(QPixmap(":/Icons/satellite.png"));
     applyStyleSheet();
+
+    ui->pushButtonSaveParameters->setIcon(QIcon(":/Icons/save.png"));
+    ui->pushButtonSaveParameters->setIconSize(QSize(24, 24));
+
+    ui->pushButtonSettings->setIcon(QIcon(":/Icons/setting.png"));
+    ui->pushButtonSettings->setIconSize(QSize(24, 24));
+
+    ui->pushButtonStartStop->setIcon(QIcon(":/Icons/play.png"));
+    ui->pushButtonStartStop->setIconSize(QSize(24, 24));
+
+    QList<QPushButton*> buttons = findChildren<QPushButton*>();
+    for (QPushButton* btn : buttons) {
+        btn->style()->polish(btn);
+    }
 }
 
 void HalsWindow::applyStyleSheet() {
     QString styleSheet = R"(
         /* Основное окно и виджеты */
         QMainWindow, QWidget {
-            background-color: #FFF2CC;   /* светло-жёлтый фон */
-            color: #1E1E1E;              /* почти чёрный текст */
-            font-family: "Arial", "Helvetica", sans-serif;
-            font-size: 12pt;
+            background-color: #1a1a1a;   /* zinc-900 */
+            color: #ffffff;
+            font-size: 14pt;
+            font-family: "Geologica Thin", "Arial", "Helvetica", sans-serif;
         }
         QLabel {
-            color: #1E1E1E;
+            color: #ffffff;
         }
         QGroupBox {
             border: 1px solid #CCAA66;
             border-radius: 5px;
             margin-top: 0.5em;
-            font-size: 14pt;
+            font-size: 15pt;
             font-weight: bold;
-            color: #1E1E1E;
+            color: #ffffff;
         }
         QGroupBox::title {
             subcontrol-origin: margin;
             left: 10px;
             padding: 0 3px 0 3px;
-            background-color: #FFF2CC;
+            background-color: #1a1a1a;
         }
+
+        /* ---- Базовый стиль для всех кнопок ---- */
         QPushButton {
-            background-color: #FFDD88;
-            border: 1px solid #CCAA66;
-            border-radius: 4px;
+            background-color: #27272a;   /* zinc-800 */
+            border: 2px solid #3f3f46;   /* zinc-600 */
+            border-radius: 12px;
             padding: 8px;
-            font-size: 14pt;
-            font-weight: bold;
+            font-size: 12pt;
+            font-weight: 500;
             min-height: 48px;
-            color: #1E1E1E;
+            color: #ffffff;
+            spacing: 8px;
         }
         QPushButton:hover {
-            background-color: #FFCC66;
+            background-color: #3f3f46;
         }
         QPushButton:pressed {
-            background-color: #EEBB55;
+            background-color: #52525b;
         }
-        /* Специальный стиль для кнопки выхода (красный для привлечения внимания) */
+
+        /* ---- Специальные кнопки ---- */
+        QPushButton#pushButtonSaveParameters {
+            background-color: #2563eb;   /* blue-600 */
+            border-color: #3b82f6;
+            padding: 8px;
+            font-size: 12pt;
+        }
+        QPushButton#pushButtonSaveParameters:pressed {
+            background-color: #1d4ed8;
+        }
+        QPushButton#pushButtonStartStop {
+            background-color: #d97706;   /* amber-600 */
+            border-color: #eab308;
+            font-size: 12pt;
+        }
+        QPushButton#pushButtonStartStop:pressed {
+            background-color: #b45309;
+        }
+        /* Состояние "активно" (checked) – красный фон */
+        QPushButton#pushButtonStartStop:checked {
+            background-color: #E7000B;   /* ярко-красный */
+            border-color: #C30009;
+        }
+        QPushButton#pushButtonStartStop:checked:pressed {
+            background-color: #C30009;   /* тёмно-красный при нажатии */
+        }
+
+        /* Кнопка выхода (иконка) – прозрачная */
         QPushButton#pushButtonQuit {
-            background-color: #FF8888;
-            border-color: #AA6666;
-            color: #1E1E1E;
+            background-color: transparent;
+            border: none;
+            background-image: url(:/Icons/power.png);
+            background-repeat: no-repeat;
+            background-position: center;
         }
-        QPushButton#pushButtonQuit:hover {
-            background-color: #FFAAAA;
+        QPushButton#pushButtonQuit:hover,
+        QPushButton#pushButtonQuit:pressed {
+            background-color: transparent; /* убираем эффект наведения */
         }
+
         /* Поля ввода */
         QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {
             background-color: #FFFFFF;
@@ -91,31 +142,57 @@ void HalsWindow::applyStyleSheet() {
             border-color: #AA8844;
         }
         QStatusBar {
-            background-color: #FFF2CC;
-            color: #1E1E1E;
+            background-color: #1a1a1a;
+            color: #ffffff;
         }
 
-        /* Стилизация диалогового окна QMessageBox и его кнопок */
+        /* ---- Верхняя панель (статус) ---- */
+        QWidget#upperStatusWidget {
+            background-color: rgba(128, 128, 128, 64);
+            border-bottom: 2px solid #fe9a00;
+            height: 48px;
+        }
+        QWidget#upperStatusWidget QLabel {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            font-weight: bold;
+            font-size: 13pt;
+            color: #ffffff;
+        }
+
+        /* ---- Диалоговые окна (сохраняем жёлтые кнопки) ---- */
         QMessageBox {
-            background-color: #FFF2CC;
-            font-size: 12pt;
+            background-color: #1a1a1a;
+            font-size: 13pt;
         }
         QMessageBox QPushButton {
+            font-size: 14pt;
+            font-weight: bold;
             min-width: 120px;
             min-height: 48px;
-            font-size: 14pt;
             padding: 8px 12px;
-            background-color: #FFDD88;
-            border: 1px solid #CCAA66;
-            border-radius: 4px;
-            color: #1E1E1E;
         }
-        QMessageBox QPushButton:hover {
-            background-color: #FFCC66;
-        }
-        QMessageBox QPushButton:pressed {
-            background-color: #EEBB55;
+
+        /* ---- Центральный виджет (разделители) ---- */
+        QWidget#centerWidget {
+            border-top: 2px solid #3f3f46;
+            border-bottom: 2px solid #3f3f46;
         }
     )";
     qApp->setStyleSheet(styleSheet);
+}
+
+void HalsWindow::on_pushButtonSettings_clicked() {}
+
+void HalsWindow::on_pushButtonSaveParameters_clicked() {}
+
+void HalsWindow::on_pushButtonStartStop_clicked() {
+    if (ui->pushButtonStartStop->isChecked()) {
+        ui->pushButtonStartStop->setText("  Остановить");
+        ui->pushButtonStartStop->setIcon(QIcon(":/Icons/stop-button.png"));
+    } else {
+        ui->pushButtonStartStop->setText("  Начать эксперимент");
+        ui->pushButtonStartStop->setIcon(QIcon(":/Icons/play.png"));
+    }
 }
