@@ -29,9 +29,9 @@ bool HalsWindow::eventFilter(QObject* watched, QEvent* event) {
             qreal endX = touchEvent->points().first().position().x();
             if (endX - m_touchStartPos > 100) {  // сдвиг вправо более 100 px
                 if (ui->stackedWidget->currentWidget() == ui->settingsPage) {
-                    ui->stackedWidget->setCurrentWidget(ui->mainPage);
+                    makePageSwitch(ui->settingsPage, ui->mainPage);
                 } else if (ui->stackedWidget->currentWidget() == ui->mainPage) {
-                    ui->stackedWidget->setCurrentWidget(ui->settingsPage);
+                    makePageSwitch(ui->mainPage, ui->settingsPage);
                 }
                 return true;
             }
@@ -55,8 +55,8 @@ void HalsWindow::setupGui() {
     ui->labelGps->setPixmap(QPixmap(":/Icons/satellite.png"));
     applyStyleSheet();
 
-    ui->pushButtonSaveParameters->setIcon(QIcon(":/Icons/save.png"));
-    ui->pushButtonSaveParameters->setIconSize(QSize(24, 24));
+    ui->pushButtonUpdateConfiguration->setIcon(QIcon(":/Icons/refresh.png"));
+    ui->pushButtonUpdateConfiguration->setIconSize(QSize(24, 24));
 
     ui->pushButtonSettings->setIcon(QIcon(":/Icons/setting.png"));
     ui->pushButtonSettings->setIconSize(QSize(24, 24));
@@ -72,9 +72,10 @@ void HalsWindow::setupGui() {
     addStatusIndicators();
 
     ui->stackedWidget->installEventFilter(this);
-    connect(ui->pushButtonSettings, &QPushButton::clicked, this, [this]() {
-        ui->stackedWidget->setCurrentWidget(ui->settingsPage);
-    });
+    connect(ui->pushButtonSettings, &QPushButton::clicked, this,
+            [this]() { makePageSwitch(ui->mainPage, ui->settingsPage); });
+    connect(ui->pushButtonToMainPage, &QPushButton::clicked, this,
+            [this]() { makePageSwitch(ui->settingsPage, ui->mainPage); });
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -124,13 +125,13 @@ void HalsWindow::applyStyleSheet() {
         }
 
         /* ---- Специальные кнопки ---- */
-        QPushButton#pushButtonSaveParameters {
+        QPushButton#pushButtonUpdateConfiguration {
             background-color: #2563eb;   /* blue-600 */
             border-color: #3b82f6;
             padding: 8px;
             font-size: 12pt;
         }
-        QPushButton#pushButtonSaveParameters:pressed {
+        QPushButton#pushButtonUpdateConfiguration:pressed {
             background-color: #1d4ed8;
         }
         QPushButton#pushButtonStartStop {
@@ -238,6 +239,11 @@ void HalsWindow::addStatusIndicators() {
     //    ocIndicator->setValueText("Активна");
     sunIndicator->setValueText("Не активен");
     missionIndicator->setValueText("Загружено");
+}
+
+void HalsWindow::makePageSwitch(QWidget* fromPage, QWidget* toPage) {
+    if (!fromPage || !toPage) return;
+    ui->stackedWidget->setCurrentWidget(toPage);
 }
 
 void HalsWindow::on_pushButtonSettings_clicked() {}

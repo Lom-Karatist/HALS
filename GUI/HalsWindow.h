@@ -34,6 +34,9 @@ private:
     void applyStyleSheet();
 
     void addStatusIndicators();
+    void makePageSwitch(QWidget *fromPage, QWidget *toPage);
+
+    QParallelAnimationGroup *m_switchAnimation;
 
     Ui::HalsWindow *ui;
     qreal m_touchStartPos;

@@ -401,7 +401,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButtonSaveParameters">
+            <widget class="QPushButton" name="pushButtonUpdateConfiguration">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -409,7 +409,7 @@
               </size>
              </property>
              <property name="text">
-              <string>  Сохранить параметры</string>
+              <string>  Обновить состояние</string>
              </property>
             </widget>
            </item>
@@ -434,7 +434,21 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="settingsPage"/>
+      <widget class="QWidget" name="settingsPage">
+       <widget class="QPushButton" name="pushButtonToMainPage">
+        <property name="geometry">
+         <rect>
+          <x>610</x>
+          <y>330</y>
+          <width>80</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>back to main</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>

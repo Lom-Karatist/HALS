@@ -24,5 +24,6 @@
         <file>Icons/sun_active.png</file>
         <file>Icons/sun_inactive.png</file>
         <file>Icons/sun_unknown.png</file>
+        <file>Icons/refresh.png</file>
     </qresource>
 </RCC>
