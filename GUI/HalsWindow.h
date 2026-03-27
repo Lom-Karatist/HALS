@@ -18,6 +18,7 @@ class HalsWindow : public QMainWindow {
 public:
     HalsWindow(QWidget *parent = nullptr);
     ~HalsWindow();
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
     void on_pushButtonQuit_clicked();
@@ -35,5 +36,6 @@ private:
     void addStatusIndicators();
 
     Ui::HalsWindow *ui;
+    qreal m_touchStartPos;
 };
 #endif  // HALSWINDOW_H

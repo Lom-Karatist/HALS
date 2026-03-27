@@ -3,16 +3,42 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QStyle>
+#include <QTouchEvent>
 
 #include "ui_HalsWindow.h"
 
 HalsWindow::HalsWindow(QWidget* parent)
-    : QMainWindow(parent), ui(new Ui::HalsWindow) {
+    : QMainWindow(parent), ui(new Ui::HalsWindow), m_touchStartPos(0) {
     ui->setupUi(this);
     setupGui();
 }
 
 HalsWindow::~HalsWindow() { delete ui; }
+
+bool HalsWindow::eventFilter(QObject* watched, QEvent* event) {
+    if (watched == ui->stackedWidget && event->type() == QEvent::TouchBegin) {
+        QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
+        if (touchEvent->points().size() == 1) {
+            m_touchStartPos = touchEvent->points().first().position().x();
+            return true;
+        }
+    } else if (watched == ui->stackedWidget &&
+               event->type() == QEvent::TouchEnd) {
+        QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
+        if (touchEvent->points().size() == 1) {
+            qreal endX = touchEvent->points().first().position().x();
+            if (endX - m_touchStartPos > 100) {  // сдвиг вправо более 100 px
+                if (ui->stackedWidget->currentWidget() == ui->settingsPage) {
+                    ui->stackedWidget->setCurrentWidget(ui->mainPage);
+                } else if (ui->stackedWidget->currentWidget() == ui->mainPage) {
+                    ui->stackedWidget->setCurrentWidget(ui->settingsPage);
+                }
+                return true;
+            }
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
 
 void HalsWindow::on_pushButtonQuit_clicked() {
     QMessageBox::StandardButton reply = QMessageBox::question(
@@ -44,6 +70,11 @@ void HalsWindow::setupGui() {
     }
 
     addStatusIndicators();
+
+    ui->stackedWidget->installEventFilter(this);
+    connect(ui->pushButtonSettings, &QPushButton::clicked, this, [this]() {
+        ui->stackedWidget->setCurrentWidget(ui->settingsPage);
+    });
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -205,7 +236,7 @@ void HalsWindow::addStatusIndicators() {
     usbIndicator->setValueText("Подключен");
     hsIndicator->setValueText("Активен");
     //    ocIndicator->setValueText("Активна");
-    sunIndicator->setValueText("Нет соединения");
+    sunIndicator->setValueText("Не активен");
     missionIndicator->setValueText("Загружено");
 }
 
