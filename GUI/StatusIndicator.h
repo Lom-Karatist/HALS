@@ -21,7 +21,8 @@ public:
     explicit StatusIndicator(QWidget *parent = nullptr);
     ~StatusIndicator();
 
-    void setIcon(const QPixmap &icon);
+    void setIconBaseName(const QString &text);
+    void setIcon(QString nameAppendix);
     void setLabelText(const QString &text);
     void setValueText(const QString &text);
 
@@ -34,6 +35,7 @@ private:
 
     Ui::StatusIndicator *ui;
     State m_state;
+    QString m_iconBaseName;
 };
 
 #endif  // STATUSINDICATOR_H

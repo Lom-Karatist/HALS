@@ -132,22 +132,6 @@ void HalsWindow::applyStyleSheet() {
             background-color: transparent; /* убираем эффект наведения */
         }
 
-        /* Поля ввода */
-        QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {
-            background-color: #FFFFFF;
-            border: 1px solid #CCAA66;
-            border-radius: 3px;
-            padding: 4px;
-            color: #1E1E1E;
-        }
-        QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
-            border-color: #AA8844;
-        }
-        QStatusBar {
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
-
         /* ---- Верхняя панель (статус) ---- */
         QWidget#upperStatusWidget {
             background-color: rgba(128, 128, 128, 64);
@@ -163,7 +147,15 @@ void HalsWindow::applyStyleSheet() {
             color: #ffffff;
         }
 
-        /* ---- Диалоговые окна (сохраняем жёлтые кнопки) ---- */
+        /* ---- Верхний и нижний виджеты ---- */
+        QWidget#upperWidget {
+            border-bottom: 2px solid #3f3f46;
+        }
+        QWidget#downWidget {
+            border-top: 2px solid #3f3f46;
+        }
+
+
         QMessageBox {
             background-color: #1a1a1a;
             font-size: 13pt;
@@ -175,57 +167,49 @@ void HalsWindow::applyStyleSheet() {
             min-height: 48px;
             padding: 8px 12px;
         }
-
-        /* ---- Центральный виджет (разделители) ---- */
-        QWidget#centerWidget {
-            border-top: 2px solid #3f3f46;
-            border-bottom: 2px solid #3f3f46;
-        }
     )";
     qApp->setStyleSheet(styleSheet);
 }
 
 void HalsWindow::addStatusIndicators() {
     auto* usbIndicator = new StatusIndicator;
-    usbIndicator->setIcon(QPixmap(":/Icons/flash-drive_active.png"));
+    usbIndicator->setIconBaseName(":/Icons/flash-drive");
     usbIndicator->setLabelText("Флеш-накопитель");
     usbIndicator->setValueText("Подключен");
-    usbIndicator->setState(StatusIndicator::State::Active);  // будет зелёным
 
     auto* hsIndicator = new StatusIndicator;
-    hsIndicator->setIcon(QPixmap(":/Icons/hs.png"));
-    hsIndicator->setLabelText("Гиперспектрометр");
+    hsIndicator->setIconBaseName(":/Icons/focus");
+    hsIndicator->setLabelText("Сенсор ГС");
     hsIndicator->setValueText("Активен");
-    hsIndicator->setState(StatusIndicator::State::Active);
 
     auto* ocIndicator = new StatusIndicator;
-    ocIndicator->setIcon(QPixmap(":/Icons/camera.png"));
+    ocIndicator->setIconBaseName(":/Icons/camera");
     ocIndicator->setLabelText("Обзорная камера");
     ocIndicator->setValueText("Активна");
-    ocIndicator->setState(StatusIndicator::State::Active);
 
     auto* sunIndicator = new StatusIndicator;
-    sunIndicator->setIcon(QPixmap(":/Icons/sun.png"));
+    sunIndicator->setIconBaseName(":/Icons/sun");
     sunIndicator->setLabelText("Сенсор освещенности");
     sunIndicator->setValueText("Нет соединения");
-    sunIndicator->setState(StatusIndicator::State::Inactive);  // красный
 
     auto* missionIndicator = new StatusIndicator;
-    missionIndicator->setIcon(QPixmap(":/Icons/checklist.png"));
+    missionIndicator->setIconBaseName(":/Icons/checklist");
     missionIndicator->setLabelText("Полётное задание");
     missionIndicator->setValueText("Загружено");
-    missionIndicator->setState(StatusIndicator::State::Active);
 
     // Добавляем в горизонтальный лейаут centerWidget
-    QHBoxLayout* centerLayout =
-        qobject_cast<QHBoxLayout*>(ui->centerWidget->layout());
-    if (centerLayout) {
-        centerLayout->addWidget(usbIndicator);
-        centerLayout->addWidget(sunIndicator);
-        centerLayout->addWidget(hsIndicator);
-        centerLayout->addWidget(ocIndicator);
-        centerLayout->addWidget(missionIndicator);
-    }
+
+    ui->centerHLayout->addWidget(usbIndicator);
+    ui->centerHLayout->addWidget(sunIndicator);
+    ui->centerHLayout->addWidget(hsIndicator);
+    ui->centerHLayout->addWidget(ocIndicator);
+    ui->centerHLayout->addWidget(missionIndicator);
+
+    usbIndicator->setState(StatusIndicator::State::Active);
+    hsIndicator->setState(StatusIndicator::State::Active);
+    ocIndicator->setState(StatusIndicator::State::Active);
+    sunIndicator->setState(StatusIndicator::State::Inactive);
+    missionIndicator->setState(StatusIndicator::State::Active);
 }
 
 void HalsWindow::on_pushButtonSettings_clicked() {}

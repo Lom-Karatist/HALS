@@ -12,5 +12,17 @@
         <file>Icons/flash-drive_active.png</file>
         <file>Icons/flash-drive_inactive.png</file>
         <file>Icons/flash-drive_unknown.png</file>
+        <file>Icons/camera_active.png</file>
+        <file>Icons/camera_inactive.png</file>
+        <file>Icons/camera_unknown.png</file>
+        <file>Icons/checklist_active.png</file>
+        <file>Icons/checklist_inactive.png</file>
+        <file>Icons/checklist_unknown.png</file>
+        <file>Icons/focus_active.png</file>
+        <file>Icons/focus_inactive.png</file>
+        <file>Icons/focus_unknown.png</file>
+        <file>Icons/sun_active.png</file>
+        <file>Icons/sun_inactive.png</file>
+        <file>Icons/sun_unknown.png</file>
     </qresource>
 </RCC>

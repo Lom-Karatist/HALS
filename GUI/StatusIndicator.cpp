@@ -7,14 +7,19 @@
 StatusIndicator::StatusIndicator(QWidget *parent)
     : QWidget(parent), ui(new Ui::StatusIndicator), m_state(State::Unknown) {
     ui->setupUi(this);
-    updateStyle();
+    //    updateStyle();
 }
 
 StatusIndicator::~StatusIndicator() { delete ui; }
 
-void StatusIndicator::setIcon(const QPixmap &icon) {
+void StatusIndicator::setIconBaseName(const QString &text) {
+    m_iconBaseName = text;
+}
+
+void StatusIndicator::setIcon(QString nameAppendix) {
     ui->labelImage->setPixmap(
-        icon.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        QPixmap(m_iconBaseName + nameAppendix + ".png")
+            .scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void StatusIndicator::setLabelText(const QString &text) {
@@ -32,39 +37,38 @@ void StatusIndicator::setState(State state) {
 }
 
 void StatusIndicator::updateStyle() {
-    QString borderColor, bgColor, stateColor;
+    QString bgColor, stateColor, iconNameAppendix;
 
     switch (m_state) {
         case State::Active:
-            borderColor = "#00d492";  // зелёный
-            bgColor = "rgba(16,185,129,0.1)";
+            bgColor = "rgba(16,185,129,64)";
             stateColor = "#00d492";
+            iconNameAppendix = "_active";
             break;
         case State::Inactive:
-            borderColor = "#ff6467";  // красный
-            bgColor = "rgba(239,68,68,0.1)";
+            bgColor = "rgba(239,68,68,64)";
             stateColor = "#ff6467";
+            iconNameAppendix = "_inactive";
             break;
         case State::Unknown:
         default:
-            borderColor = "#9ca3af";  // серый
-            bgColor = "rgba(156,163,175,0.1)";
+            bgColor = "rgba(156,163,175,64)";
             stateColor = "#d4d4d8";
+            iconNameAppendix = "_unknown";
             break;
     }
 
-    setStyleSheet(QString("StatusIndicator {"
-                          "   border: 2px solid %1;"
-                          "   background-color: %2;"
-                          "   border-radius: 8px;"
-                          "}"
-                          // labelName всегда белый
-                          "StatusIndicator #labelName {"
-                          "   color: #ffffff;"
-                          "}"
-                          // labelState меняет цвет
-                          "StatusIndicator #labelState {"
-                          "   color: %3;"
-                          "}")
-                      .arg(borderColor, bgColor, stateColor));
+    setIcon(iconNameAppendix);
+    this->setStyleSheet(QString(R"(QWidget#StatusIndicator {
+                                border: 2px solid %2;
+                                background-color: %1;
+                                border-radius: 8px;
+                            }
+                            QWidget #StatusIndicator #labelName{
+                                color : #ffffff;
+                            }
+                            QWidget #StatusIndicator #labelState {
+                                color: % 2;
+                            })")
+                            .arg(bgColor, stateColor));
 }
