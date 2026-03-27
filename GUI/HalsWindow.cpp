@@ -172,30 +172,21 @@ void HalsWindow::applyStyleSheet() {
 }
 
 void HalsWindow::addStatusIndicators() {
-    auto* usbIndicator = new StatusIndicator;
-    usbIndicator->setIconBaseName(":/Icons/flash-drive");
+    auto* usbIndicator = new StatusIndicator(this, ":/Icons/flash-drive");
     usbIndicator->setLabelText("Флеш-накопитель");
-    usbIndicator->setValueText("Подключен");
 
-    auto* hsIndicator = new StatusIndicator;
-    hsIndicator->setIconBaseName(":/Icons/focus");
+    auto* hsIndicator = new StatusIndicator(this, ":/Icons/focus");
     hsIndicator->setLabelText("Сенсор ГС");
-    hsIndicator->setValueText("Активен");
 
-    auto* ocIndicator = new StatusIndicator;
-    ocIndicator->setIconBaseName(":/Icons/camera");
+    auto* ocIndicator = new StatusIndicator(this, ":/Icons/camera");
     ocIndicator->setLabelText("Обзорная камера");
-    ocIndicator->setValueText("Активна");
 
-    auto* sunIndicator = new StatusIndicator;
+    auto* sunIndicator = new StatusIndicator(this, ":/Icons/sun");
     sunIndicator->setIconBaseName(":/Icons/sun");
     sunIndicator->setLabelText("Сенсор освещенности");
-    sunIndicator->setValueText("Нет соединения");
 
-    auto* missionIndicator = new StatusIndicator;
-    missionIndicator->setIconBaseName(":/Icons/checklist");
+    auto* missionIndicator = new StatusIndicator(this, ":/Icons/checklist");
     missionIndicator->setLabelText("Полётное задание");
-    missionIndicator->setValueText("Загружено");
 
     // Добавляем в горизонтальный лейаут centerWidget
 
@@ -207,9 +198,15 @@ void HalsWindow::addStatusIndicators() {
 
     usbIndicator->setState(StatusIndicator::State::Active);
     hsIndicator->setState(StatusIndicator::State::Active);
-    ocIndicator->setState(StatusIndicator::State::Active);
+    //    ocIndicator->setState(StatusIndicator::State::Active);
     sunIndicator->setState(StatusIndicator::State::Inactive);
     missionIndicator->setState(StatusIndicator::State::Active);
+
+    usbIndicator->setValueText("Подключен");
+    hsIndicator->setValueText("Активен");
+    //    ocIndicator->setValueText("Активна");
+    sunIndicator->setValueText("Нет соединения");
+    missionIndicator->setValueText("Загружено");
 }
 
 void HalsWindow::on_pushButtonSettings_clicked() {}

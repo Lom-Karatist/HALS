@@ -18,7 +18,7 @@ public:
     };
     Q_ENUM(State)
 
-    explicit StatusIndicator(QWidget *parent = nullptr);
+    explicit StatusIndicator(QWidget *parent = nullptr, QString baseName = "");
     ~StatusIndicator();
 
     void setIconBaseName(const QString &text);
