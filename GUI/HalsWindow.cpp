@@ -68,6 +68,11 @@ void HalsWindow::setupGui() {
     ui->pushButtonStartStop->setIcon(QIcon(":/Icons/play.png"));
     ui->pushButtonStartStop->setIconSize(QSize(24, 24));
 
+    ui->pushButtonToMainPage->setIcon(QIcon(":/Icons/home.png"));
+    ui->pushButtonToMainPage->setIconSize(QSize(24, 24));
+    ui->pushButtonToMainPage_2->setIcon(QIcon(":/Icons/home.png"));
+    ui->pushButtonToMainPage_2->setIconSize(QSize(24, 24));
+
     QList<QPushButton*> buttons = findChildren<QPushButton*>();
     for (QPushButton* btn : buttons) {
         btn->style()->polish(btn);
@@ -80,6 +85,8 @@ void HalsWindow::setupGui() {
             [this]() { makePageSwitch(ui->mainPage, ui->settingsPage); });
     connect(ui->pushButtonToMainPage, &QPushButton::clicked, this,
             [this]() { makePageSwitch(ui->settingsPage, ui->mainPage); });
+    connect(ui->pushButtonToMainPage_2, &QPushButton::clicked, this,
+            [this]() { makePageSwitch(ui->cameraPage, ui->mainPage); });
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -215,6 +222,8 @@ void HalsWindow::addStatusIndicators() {
     m_hsIndicator->setLabelText("Сенсор ГС");
 
     m_ocIndicator = new StatusIndicator(this, ":/Icons/camera");
+    connect(m_ocIndicator, &StatusIndicator::clicked, this,
+            [this]() { makePageSwitch(ui->mainPage, ui->cameraPage); });
     m_ocIndicator->setLabelText("Обзорная камера");
 
     m_sunIndicator = new StatusIndicator(this, ":/Icons/sun");
@@ -222,8 +231,6 @@ void HalsWindow::addStatusIndicators() {
 
     m_missionIndicator = new StatusIndicator(this, ":/Icons/checklist");
     m_missionIndicator->setLabelText("Полётное задание");
-
-    // Добавляем в горизонтальный лейаут centerWidget
 
     ui->centerHLayout->addWidget(m_usbIndicator);
     ui->centerHLayout->addWidget(m_sunIndicator);
@@ -246,8 +253,6 @@ void HalsWindow::makePageSwitch(QWidget* fromPage, QWidget* toPage) {
     if (!fromPage || !toPage) return;
     ui->stackedWidget->setCurrentWidget(toPage);
 }
-
-void HalsWindow::on_pushButtonSettings_clicked() {}
 
 void HalsWindow::on_pushButtonUpdateConfiguration_clicked() {
     m_facade->refreshUsbState();

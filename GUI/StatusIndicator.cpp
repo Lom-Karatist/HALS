@@ -40,6 +40,11 @@ void StatusIndicator::setState(State state) {
     updateStyle();
 }
 
+void StatusIndicator::mousePressEvent(QMouseEvent *event) {
+    emit clicked();
+    QWidget::mousePressEvent(event);
+}
+
 void StatusIndicator::updateStyle() {
     QString bgColor, stateColor, iconNameAppendix;
 

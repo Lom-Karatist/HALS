@@ -30,6 +30,12 @@ public:
     void setState(State state);
     bool isActive() const { return m_state == State::Active; }
 
+signals:
+    void clicked();
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
 private:
     void updateStyle();
 
