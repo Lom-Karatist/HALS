@@ -10,12 +10,14 @@ include(GPS/solutions/gps_device/gps_device.pri)
 
 SOURCES += \
     Components/HalsFacade.cpp \
+    Components/Logger.cpp \
     GUI/StatusIndicator.cpp \
     main.cpp \
     GUI/HalsWindow.cpp
 
 HEADERS += \
     Components/HalsFacade.h \
+    Components/Logger.h \
     GUI/HalsWindow.h \
     GUI/StatusIndicator.h \
     version.h

@@ -8,13 +8,29 @@ HalsFacade::HalsFacade(QObject *parent) : QObject(parent) {
 }
 
 HalsFacade::~HalsFacade() {
+    m_loggerThread->quit();
+    m_loggerThread->wait();
     if (m_gpsDevice) m_gpsDevice->stop();
     stopCapture();
 }
 
 void HalsFacade::initialize() {
+    startLogger();
     startCameras();
     startGps();
+}
+
+void HalsFacade::startLogger() {
+    m_loggerThread = new QThread(this);
+    m_logger = std::make_unique<Logger>();
+    m_logger->moveToThread(m_loggerThread);
+
+    connect(m_loggerThread, &QThread::finished, m_logger.get(),
+            &QObject::deleteLater);
+    connect(this, &HalsFacade::logMessage, m_logger.get(), &Logger::log,
+            Qt::QueuedConnection);
+    m_loggerThread->start();
+    logMessage(Logger::Info, "HALS facade started");
 }
 
 bool HalsFacade::startCameras() {
@@ -24,9 +40,12 @@ bool HalsFacade::startCameras() {
                 &HalsFacade::overviewImageReady);
         connect(m_cameraManager.get(), &CameraManager::errorOccurred, this,
                 &HalsFacade::cameraError, Qt::QueuedConnection);
+        logMessage(Logger::Info, "Hyperspectrometer sensors was initted");
         return true;
-    } else
+    } else {
+        logMessage(Logger::Critical, "Hyperspectrometer sensors init error");
         return false;
+    }
 }
 
 bool HalsFacade::startGps() {
@@ -35,9 +54,12 @@ bool HalsFacade::startGps() {
         connect(m_gpsDevice.get(), &GPSDevice::gpsDataUpdated, this,
                 &HalsFacade::onGpsDataUpdated, Qt::QueuedConnection);
         m_gpsDevice->start();
+        logMessage(Logger::Info, "GPS initted");
         return true;
-    } else
+    } else {
+        logMessage(Logger::Critical, "GPS init error");
         return false;
+    }
 }
 
 void HalsFacade::startCapture() {
@@ -60,11 +82,6 @@ void HalsFacade::stopCapture() {
 
 void HalsFacade::setSaveFormat(int format) {
     // saving format is need to be set in camera manager
-}
-
-bool HalsFacade::isFlashMounted() const {
-    // Можно проверить наличие монтирования USB, но пока true
-    return true;
 }
 
 bool HalsFacade::isHSCameraReady() const {
