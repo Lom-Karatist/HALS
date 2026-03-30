@@ -31,6 +31,10 @@ private slots:
 
     void setSatellitesCount(const int &satellitesCount);
 
+    void updateCpuTemperature(QString temperature);
+
+    void updateTime();
+
 private:
     void initObjects();
     void setupGui();
@@ -43,5 +47,6 @@ private:
     qreal m_touchStartPos;
 
     HalsFacade *m_facade;
+    QTimer *m_updatingTimer;
 };
 #endif  // HALSWINDOW_H

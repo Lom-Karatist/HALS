@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "CameraManager.h"
+#include "CpuTemperatureController.h"
 #include "Logger.h"
 #include "gps_device.h"
 
@@ -35,6 +36,7 @@ signals:
     void overviewImageReady(const QImage &image);
     void cameraError(const QString &error);
     void gpsSatellitesCountUpdated(const int &count);
+    void cpuTemperatureUpdated(QString temperature);
     void logMessage(Logger::LogLevel level, const QString &message);
 
 private slots:
@@ -43,6 +45,7 @@ private slots:
 private:
     void initialize();
     void startLogger();
+    void startTempController();
     bool startCameras();
     bool startGps();
 
@@ -53,6 +56,9 @@ private:
 
     std::unique_ptr<Logger> m_logger;
     QThread *m_loggerThread;
+
+    std::unique_ptr<CpuTemperatureController> m_tempController;
+    QThread *m_tempControllerThread;
 };
 
 #endif  // HALSFACADE_H

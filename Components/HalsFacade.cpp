@@ -8,14 +8,30 @@ HalsFacade::HalsFacade(QObject *parent) : QObject(parent) {
 }
 
 HalsFacade::~HalsFacade() {
+    qDebug() << "----------------ending facade";
+
     m_loggerThread->quit();
     m_loggerThread->wait();
+
+    qDebug() << "----------------logger finish";
+
+    m_tempControllerThread->quit();
+    m_tempControllerThread->wait();
+
+    qDebug() << "----------------CPU TC finish";
+
     if (m_gpsDevice) m_gpsDevice->stop();
+
+    qDebug() << "----------------GPS finish";
+
     stopCapture();
+
+    qDebug() << "----------------Basler finish";
 }
 
 void HalsFacade::initialize() {
     startLogger();
+    startTempController();
     startCameras();
     startGps();
 }
@@ -31,6 +47,16 @@ void HalsFacade::startLogger() {
             Qt::QueuedConnection);
     m_loggerThread->start();
     logMessage(Logger::Info, "HALS facade started");
+}
+
+void HalsFacade::startTempController() {
+    m_tempControllerThread = new QThread(this);
+    m_tempController = std::make_unique<CpuTemperatureController>();
+    m_tempController->moveToThread(m_tempControllerThread);
+    connect(m_tempController.get(),
+            &CpuTemperatureController::cpuTemperatureUpdated, this,
+            &HalsFacade::cpuTemperatureUpdated);
+    m_tempControllerThread->start();
 }
 
 bool HalsFacade::startCameras() {

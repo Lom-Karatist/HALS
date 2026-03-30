@@ -8,7 +8,12 @@ RC_FILE = recource.rc
 include(Basler/Basler.pri)
 include(GPS/solutions/gps_device/gps_device.pri)
 
+win32 {
+    LIBS += -lwbemuuid
+}
+
 SOURCES += \
+    Components/CpuTemperatureController.cpp \
     Components/HalsFacade.cpp \
     Components/Logger.cpp \
     GUI/StatusIndicator.cpp \
@@ -16,6 +21,7 @@ SOURCES += \
     GUI/HalsWindow.cpp
 
 HEADERS += \
+    Components/CpuTemperatureController.h \
     Components/HalsFacade.h \
     Components/Logger.h \
     GUI/HalsWindow.h \

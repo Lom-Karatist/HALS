@@ -268,8 +268,24 @@ void HalsWindow::setSatellitesCount(const int& satellitesCount) {
     ui->labelGpsValue->setText(QString::number(satellitesCount));
 }
 
+void HalsWindow::updateCpuTemperature(QString temperature) {
+    qDebug() << "checking temperature..." << temperature;
+    ui->labelTemperatureValue->setText(temperature);
+}
+
+void HalsWindow::updateTime() {
+    QDateTime dt = QDateTime::currentDateTimeUtc().addSecs(3 * 3600);
+    ui->labelTimeValue->setText(dt.toString("HH:mm:ss"));
+}
+
 void HalsWindow::initObjects() {
     m_facade = new HalsFacade();
     connect(m_facade, &HalsFacade::gpsSatellitesCountUpdated, this,
             &HalsWindow::setSatellitesCount);
+    connect(m_facade, &HalsFacade::cpuTemperatureUpdated, this,
+            &HalsWindow::updateCpuTemperature);
+
+    m_updatingTimer = new QTimer(this);
+    connect(m_updatingTimer, &QTimer::timeout, this, &HalsWindow::updateTime);
+    m_updatingTimer->start(1000);
 }
