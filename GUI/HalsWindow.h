@@ -33,6 +33,10 @@ private slots:
 
     void updateCpuTemperature(QString temperature);
 
+    void updateUsbState(bool mounted, qint64 availableBytes, qint64 totalBytes);
+
+    QString formatBytes(qint64 bytes);
+
     void updateTime();
 
 private:
@@ -48,5 +52,11 @@ private:
 
     HalsFacade *m_facade;
     QTimer *m_updatingTimer;
+
+    StatusIndicator *m_usbIndicator;
+    StatusIndicator *m_hsIndicator;
+    StatusIndicator *m_ocIndicator;
+    StatusIndicator *m_sunIndicator;
+    StatusIndicator *m_missionIndicator;
 };
 #endif  // HALSWINDOW_H

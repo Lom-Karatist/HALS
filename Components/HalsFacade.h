@@ -7,6 +7,7 @@
 #include "CameraManager.h"
 #include "CpuTemperatureController.h"
 #include "Logger.h"
+#include "UsbChecker.h"
 #include "gps_device.h"
 
 class HalsFacade : public QObject {
@@ -16,7 +17,8 @@ public:
     explicit HalsFacade(QObject *parent = nullptr);
     ~HalsFacade();
 
-    // Инициализация системы
+    void initialize();
+    void refreshUsbState();
 
     // Управление захватом
     void startCapture();
@@ -38,14 +40,16 @@ signals:
     void gpsSatellitesCountUpdated(const int &count);
     void cpuTemperatureUpdated(QString temperature);
     void logMessage(Logger::LogLevel level, const QString &message);
+    void usbStatusChanged(bool mounted, qint64 availableBytes,
+                          qint64 totalBytes);
 
 private slots:
     void onGpsDataUpdated(const GpsData &gpsData);
 
 private:
-    void initialize();
     void startLogger();
     void startTempController();
+    void startUsbChecker();
     bool startCameras();
     bool startGps();
 
@@ -59,6 +63,8 @@ private:
 
     std::unique_ptr<CpuTemperatureController> m_tempController;
     QThread *m_tempControllerThread;
+
+    std::unique_ptr<UsbChecker> m_usbChecker;
 };
 
 #endif  // HALSFACADE_H

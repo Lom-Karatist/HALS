@@ -10,8 +10,8 @@
 HalsWindow::HalsWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::HalsWindow), m_touchStartPos(0) {
     ui->setupUi(this);
-    initObjects();
     setupGui();
+    initObjects();
 }
 
 HalsWindow::~HalsWindow() {
@@ -208,41 +208,38 @@ void HalsWindow::applyStyleSheet() {
 }
 
 void HalsWindow::addStatusIndicators() {
-    auto* usbIndicator = new StatusIndicator(this, ":/Icons/flash-drive");
-    usbIndicator->setLabelText("Флеш-накопитель");
+    m_usbIndicator = new StatusIndicator(this, ":/Icons/flash-drive");
+    m_usbIndicator->setLabelText("Флеш-накопитель");
 
-    auto* hsIndicator = new StatusIndicator(this, ":/Icons/focus");
-    hsIndicator->setLabelText("Сенсор ГС");
+    m_hsIndicator = new StatusIndicator(this, ":/Icons/focus");
+    m_hsIndicator->setLabelText("Сенсор ГС");
 
-    auto* ocIndicator = new StatusIndicator(this, ":/Icons/camera");
-    ocIndicator->setLabelText("Обзорная камера");
+    m_ocIndicator = new StatusIndicator(this, ":/Icons/camera");
+    m_ocIndicator->setLabelText("Обзорная камера");
 
-    auto* sunIndicator = new StatusIndicator(this, ":/Icons/sun");
-    sunIndicator->setIconBaseName(":/Icons/sun");
-    sunIndicator->setLabelText("Сенсор освещенности");
+    m_sunIndicator = new StatusIndicator(this, ":/Icons/sun");
+    m_sunIndicator->setLabelText("Сенсор освещенности");
 
-    auto* missionIndicator = new StatusIndicator(this, ":/Icons/checklist");
-    missionIndicator->setLabelText("Полётное задание");
+    m_missionIndicator = new StatusIndicator(this, ":/Icons/checklist");
+    m_missionIndicator->setLabelText("Полётное задание");
 
     // Добавляем в горизонтальный лейаут centerWidget
 
-    ui->centerHLayout->addWidget(usbIndicator);
-    ui->centerHLayout->addWidget(sunIndicator);
-    ui->centerHLayout->addWidget(hsIndicator);
-    ui->centerHLayout->addWidget(ocIndicator);
-    ui->centerHLayout->addWidget(missionIndicator);
+    ui->centerHLayout->addWidget(m_usbIndicator);
+    ui->centerHLayout->addWidget(m_sunIndicator);
+    ui->centerHLayout->addWidget(m_hsIndicator);
+    ui->centerHLayout->addWidget(m_ocIndicator);
+    ui->centerHLayout->addWidget(m_missionIndicator);
 
-    usbIndicator->setState(StatusIndicator::State::Active);
-    hsIndicator->setState(StatusIndicator::State::Active);
+    //    hsIndicator->setState(StatusIndicator::State::Active);
     //    ocIndicator->setState(StatusIndicator::State::Active);
-    sunIndicator->setState(StatusIndicator::State::Inactive);
-    missionIndicator->setState(StatusIndicator::State::Active);
+    //    sunIndicator->setState(StatusIndicator::State::Inactive);
+    //    missionIndicator->setState(StatusIndicator::State::Active);
 
-    usbIndicator->setValueText("Подключен");
-    hsIndicator->setValueText("Активен");
+    //    hsIndicator->setValueText("Активен");
     //    ocIndicator->setValueText("Активна");
-    sunIndicator->setValueText("Не активен");
-    missionIndicator->setValueText("Загружено");
+    //    sunIndicator->setValueText("Не активен");
+    //    missionIndicator->setValueText("Загружено");
 }
 
 void HalsWindow::makePageSwitch(QWidget* fromPage, QWidget* toPage) {
@@ -252,7 +249,9 @@ void HalsWindow::makePageSwitch(QWidget* fromPage, QWidget* toPage) {
 
 void HalsWindow::on_pushButtonSettings_clicked() {}
 
-void HalsWindow::on_pushButtonUpdateConfiguration_clicked() {}
+void HalsWindow::on_pushButtonUpdateConfiguration_clicked() {
+    m_facade->refreshUsbState();
+}
 
 void HalsWindow::on_pushButtonStartStop_clicked() {
     if (ui->pushButtonStartStop->isChecked()) {
@@ -273,6 +272,23 @@ void HalsWindow::updateCpuTemperature(QString temperature) {
     ui->labelTemperatureValue->setText(temperature);
 }
 
+void HalsWindow::updateUsbState(bool mounted, qint64 availableBytes,
+                                qint64 totalBytes) {
+    if (mounted) {
+        m_usbIndicator->setState(StatusIndicator::State::Active);
+        m_usbIndicator->setValueText("Доступно:\n" +
+                                     formatBytes(availableBytes) + "/" +
+                                     formatBytes(totalBytes) + " GB");
+    } else {
+        m_usbIndicator->setState(StatusIndicator::State::Inactive);
+        m_usbIndicator->setValueText("Не подключен");
+    }
+}
+
+QString HalsWindow::formatBytes(qint64 bytes) {
+    return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 1);
+}
+
 void HalsWindow::updateTime() {
     QDateTime dt = QDateTime::currentDateTimeUtc().addSecs(3 * 3600);
     ui->labelTimeValue->setText(dt.toString("HH:mm:ss"));
@@ -284,6 +300,9 @@ void HalsWindow::initObjects() {
             &HalsWindow::setSatellitesCount);
     connect(m_facade, &HalsFacade::cpuTemperatureUpdated, this,
             &HalsWindow::updateCpuTemperature);
+    connect(m_facade, &HalsFacade::usbStatusChanged, this,
+            &HalsWindow::updateUsbState);
+    m_facade->initialize();
 
     m_updatingTimer = new QTimer(this);
     connect(m_updatingTimer, &QTimer::timeout, this, &HalsWindow::updateTime);

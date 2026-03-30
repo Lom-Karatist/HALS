@@ -16,6 +16,7 @@ SOURCES += \
     Components/CpuTemperatureController.cpp \
     Components/HalsFacade.cpp \
     Components/Logger.cpp \
+    Components/UsbChecker.cpp \
     GUI/StatusIndicator.cpp \
     main.cpp \
     GUI/HalsWindow.cpp
@@ -24,6 +25,7 @@ HEADERS += \
     Components/CpuTemperatureController.h \
     Components/HalsFacade.h \
     Components/Logger.h \
+    Components/UsbChecker.h \
     GUI/HalsWindow.h \
     GUI/StatusIndicator.h \
     version.h

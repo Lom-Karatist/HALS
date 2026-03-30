@@ -3,7 +3,6 @@
 #include <QDir>
 
 HalsFacade::HalsFacade(QObject *parent) : QObject(parent) {
-    initialize();
     m_satellitesCount = -1;
 }
 
@@ -32,8 +31,13 @@ HalsFacade::~HalsFacade() {
 void HalsFacade::initialize() {
     startLogger();
     startTempController();
+    startUsbChecker();
     startCameras();
     startGps();
+}
+
+void HalsFacade::refreshUsbState() {
+    if (m_usbChecker) m_usbChecker->check();
 }
 
 void HalsFacade::startLogger() {
@@ -57,6 +61,13 @@ void HalsFacade::startTempController() {
             &CpuTemperatureController::cpuTemperatureUpdated, this,
             &HalsFacade::cpuTemperatureUpdated);
     m_tempControllerThread->start();
+}
+
+void HalsFacade::startUsbChecker() {
+    m_usbChecker = std::make_unique<UsbChecker>(this);
+    connect(m_usbChecker.get(), &UsbChecker::usbStatusChanged, this,
+            &HalsFacade::usbStatusChanged);
+    m_usbChecker->check();
 }
 
 bool HalsFacade::startCameras() {
