@@ -285,7 +285,6 @@ void HalsWindow::setSatellitesCount(const int& satellitesCount) {
 }
 
 void HalsWindow::updateCpuTemperature(QString temperature) {
-    qDebug() << "checking temperature..." << temperature;
     ui->labelTemperatureValue->setText(temperature);
 }
 
