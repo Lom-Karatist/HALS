@@ -37,6 +37,8 @@ private slots:
 
     void updateTime();
 
+    void on_pushButtonMakeSnapshot_clicked();
+
 private:
     void initObjects();
     void setupGui();

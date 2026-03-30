@@ -73,6 +73,9 @@ void HalsWindow::setupGui() {
     ui->pushButtonToMainPage_2->setIcon(QIcon(":/Icons/home.png"));
     ui->pushButtonToMainPage_2->setIconSize(QSize(24, 24));
 
+    ui->pushButtonMakeSnapshot->setIcon(QIcon(":/Icons/save.png"));
+    ui->pushButtonMakeSnapshot->setIconSize(QSize(24, 24));
+
     QList<QPushButton*> buttons = findChildren<QPushButton*>();
     for (QPushButton* btn : buttons) {
         btn->style()->polish(btn);
@@ -160,6 +163,15 @@ void HalsWindow::applyStyleSheet() {
         }
         QPushButton#pushButtonStartStop:checked:pressed {
             background-color: #C30009;   /* тёмно-красный при нажатии */
+        }
+
+        QPushButton#pushButtonMakeSnapshot {
+            background-color: #d97706;   /* amber-600 */
+            border-color: #eab308;
+            font-size: 12pt;
+        }
+        QPushButton#pushButtonMakeSnapshot:pressed {
+            background-color: #b45309;
         }
 
         /* Кнопка выхода (иконка) – прозрачная */
@@ -313,3 +325,5 @@ void HalsWindow::initObjects() {
     connect(m_updatingTimer, &QTimer::timeout, this, &HalsWindow::updateTime);
     m_updatingTimer->start(1000);
 }
+
+void HalsWindow::on_pushButtonMakeSnapshot_clicked() {}
