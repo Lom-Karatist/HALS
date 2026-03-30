@@ -10,10 +10,14 @@
 HalsWindow::HalsWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::HalsWindow), m_touchStartPos(0) {
     ui->setupUi(this);
+    initObjects();
     setupGui();
 }
 
-HalsWindow::~HalsWindow() { delete ui; }
+HalsWindow::~HalsWindow() {
+    delete m_facade;
+    delete ui;
+}
 
 bool HalsWindow::eventFilter(QObject* watched, QEvent* event) {
     if (watched == ui->stackedWidget && event->type() == QEvent::TouchBegin) {
@@ -248,7 +252,7 @@ void HalsWindow::makePageSwitch(QWidget* fromPage, QWidget* toPage) {
 
 void HalsWindow::on_pushButtonSettings_clicked() {}
 
-void HalsWindow::on_pushButtonSaveParameters_clicked() {}
+void HalsWindow::on_pushButtonUpdateConfiguration_clicked() {}
 
 void HalsWindow::on_pushButtonStartStop_clicked() {
     if (ui->pushButtonStartStop->isChecked()) {
@@ -258,4 +262,14 @@ void HalsWindow::on_pushButtonStartStop_clicked() {
         ui->pushButtonStartStop->setText("  Начать эксперимент");
         ui->pushButtonStartStop->setIcon(QIcon(":/Icons/play.png"));
     }
+}
+
+void HalsWindow::setSatellitesCount(const int& satellitesCount) {
+    ui->labelGpsValue->setText(QString::number(satellitesCount));
+}
+
+void HalsWindow::initObjects() {
+    m_facade = new HalsFacade();
+    connect(m_facade, &HalsFacade::gpsSatellitesCountUpdated, this,
+            &HalsWindow::setSatellitesCount);
 }

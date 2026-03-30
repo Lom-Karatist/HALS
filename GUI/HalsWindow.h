@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 
+#include "Components/HalsFacade.h"
 #include "StatusIndicator.h"
-#include "gps_device.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,20 +25,23 @@ private slots:
 
     void on_pushButtonSettings_clicked();
 
-    void on_pushButtonSaveParameters_clicked();
+    void on_pushButtonUpdateConfiguration_clicked();
 
     void on_pushButtonStartStop_clicked();
 
+    void setSatellitesCount(const int &satellitesCount);
+
 private:
+    void initObjects();
     void setupGui();
     void applyStyleSheet();
 
     void addStatusIndicators();
     void makePageSwitch(QWidget *fromPage, QWidget *toPage);
 
-    QParallelAnimationGroup *m_switchAnimation;
-
     Ui::HalsWindow *ui;
     qreal m_touchStartPos;
+
+    HalsFacade *m_facade;
 };
 #endif  // HALSWINDOW_H

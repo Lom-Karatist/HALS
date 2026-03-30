@@ -9,11 +9,13 @@ include(Basler/Basler.pri)
 include(GPS/solutions/gps_device/gps_device.pri)
 
 SOURCES += \
+    Components/HalsFacade.cpp \
     GUI/StatusIndicator.cpp \
     main.cpp \
     GUI/HalsWindow.cpp
 
 HEADERS += \
+    Components/HalsFacade.h \
     GUI/HalsWindow.h \
     GUI/StatusIndicator.h \
     version.h
