@@ -6,6 +6,7 @@
 
 #include "CameraManager.h"
 #include "CpuTemperatureController.h"
+#include "FlightTaskModule.h"
 #include "Logger.h"
 #include "UsbChecker.h"
 #include "gps_device.h"
@@ -25,22 +26,22 @@ public:
     void setSaveFormat(int format);  // 0 - BMP, 1 - Binary
 
     // Статусные индикаторы (для GUI)
-    bool isHSCameraReady() const;
-    bool isOCCameraReady() const;
     bool isLightSensorReady() const;  // заглушка
     bool isMissionLoaded() const;     // заглушка
 
 signals:
     void masterConnectionStatusChanged(bool connectionStatus);
     void slaveConnectionStatusChanged(bool connectionStatus);
-    void overviewImageReady(const QImage &image);
-    void hsImageReady(const QImage &image);
+    void overviewImageReady(const QImage &image, int maxBrightness);
+    void hsImageReady(const QImage &image, int maxBrightness);
     void cameraError(const QString &error);
     void gpsSatellitesCountUpdated(const int &count);
     void cpuTemperatureUpdated(QString temperature);
     void logMessage(Logger::LogLevel level, const QString &message);
     void usbStatusChanged(bool mounted, qint64 availableBytes,
                           qint64 totalBytes);
+    void ocCharsWereUpdated(double fovMeters, double gsd);
+    void hsCharsWereUpdated(double fovMeters, double gsd);
 
 private slots:
     void onGpsDataUpdated(const GpsData &gpsData);
@@ -53,6 +54,7 @@ private:
     void startUsbChecker();
     bool initCameras();
     bool startGps();
+    void initFlightTaskModule();
 
     std::unique_ptr<CameraManager> m_cameraManager;
 
@@ -66,6 +68,8 @@ private:
     QThread *m_tempControllerThread;
 
     std::unique_ptr<UsbChecker> m_usbChecker;
+
+    std::unique_ptr<FlightTaskModule> m_flightTaskModule;
 };
 
 #endif  // HALSFACADE_H

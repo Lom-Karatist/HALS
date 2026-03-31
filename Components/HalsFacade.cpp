@@ -33,6 +33,7 @@ void HalsFacade::initialize() {
     startTempController();
     startUsbChecker();
     initCameras();
+    initFlightTaskModule();
     startGps();
 }
 
@@ -105,6 +106,17 @@ bool HalsFacade::startGps() {
     }
 }
 
+void HalsFacade::initFlightTaskModule() {
+    m_flightTaskModule = std::make_unique<FlightTaskModule>(
+        this, m_cameraManager->ocParams().width,
+        m_cameraManager->hsParams().height);
+    connect(m_flightTaskModule.get(), &FlightTaskModule::ocCharsWereUpdated,
+            this, &HalsFacade::ocCharsWereUpdated, Qt::QueuedConnection);
+    connect(m_flightTaskModule.get(), &FlightTaskModule::hsCharsWereUpdated,
+            this, &HalsFacade::hsCharsWereUpdated, Qt::QueuedConnection);
+    m_flightTaskModule->setAltitude(2);
+}
+
 void HalsFacade::stopBaslerCameras() {
     if (m_cameraManager) {
         m_cameraManager->stop();
@@ -119,14 +131,6 @@ void HalsFacade::setVideoStreamEnabled(bool enabled) {
 
 void HalsFacade::setSaveFormat(int format) {
     // saving format is need to be set in camera manager
-}
-
-bool HalsFacade::isHSCameraReady() const {
-    return m_cameraManager && m_cameraManager->isReady();
-}
-
-bool HalsFacade::isOCCameraReady() const {
-    return m_cameraManager && m_cameraManager->isReady();
 }
 
 bool HalsFacade::isLightSensorReady() const {
@@ -149,6 +153,8 @@ void HalsFacade::onGpsDataUpdated(const GpsData &gpsData) {
 void HalsFacade::startBaslerCameras() {
     connect(m_cameraManager.get(), &CameraManager::slaveImageReady, this,
             &HalsFacade::overviewImageReady);
+    connect(m_cameraManager.get(), &CameraManager::masterImageReady, this,
+            &HalsFacade::hsImageReady);
     connect(m_cameraManager.get(), &CameraManager::masterRawData, this,
             &HalsFacade::updateHsData);
     m_cameraManager->start();

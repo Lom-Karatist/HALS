@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,9 +14,11 @@ win32 {
 
 SOURCES += \
     Components/CpuTemperatureController.cpp \
+    Components/FlightTaskModule.cpp \
     Components/HalsFacade.cpp \
     Components/Logger.cpp \
     Components/UsbChecker.cpp \
+    GUI/OverlayLabel.cpp \
     GUI/SensorCharacteristicsForm.cpp \
     GUI/StatusIndicator.cpp \
     main.cpp \
@@ -24,10 +26,12 @@ SOURCES += \
 
 HEADERS += \
     Components/CpuTemperatureController.h \
+    Components/FlightTaskModule.h \
     Components/HalsFacade.h \
     Components/Logger.h \
     Components/UsbChecker.h \
     GUI/HalsWindow.h \
+    GUI/OverlayLabel.h \
     GUI/SensorCharacteristicsForm.h \
     GUI/StatusIndicator.h \
     version.h

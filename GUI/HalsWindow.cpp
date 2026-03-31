@@ -90,6 +90,10 @@ void HalsWindow::setupGui() {
             [this]() { makePageSwitch(ui->settingsPage, ui->mainPage); });
     connect(ui->pushButtonToMainPage_2, &QPushButton::clicked, this,
             [this]() { makePageSwitch(ui->cameraPage, ui->mainPage); });
+
+    m_hsFovRect = QRect(960, 10, 12, 1180);  // примерные координаты
+    if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
+        overlay->setOverlayRect(m_hsFovRect);
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -331,14 +335,45 @@ void HalsWindow::updateOcState(bool connectionStatus) {
     }
 }
 
-void HalsWindow::updateOcImageLabel(QImage imageToShow) {
+void HalsWindow::updateOcImageLabel(QImage imageToShow, int maxBrightness) {
     QPixmap pix = QPixmap::fromImage(imageToShow);
     ui->labelCameraImage->setPixmap(pix.scaled(ui->labelCameraImage->size(),
                                                Qt::KeepAspectRatio,
                                                Qt::SmoothTransformation));
+
+    if (!m_hsFovRect.isNull()) {
+        double scaleX =
+            (double)ui->labelCameraImage->width() / imageToShow.width();
+        double scaleY =
+            (double)ui->labelCameraImage->height() / imageToShow.height();
+        QRect scaledRect(m_hsFovRect.x() * scaleX, m_hsFovRect.y() * scaleY,
+                         m_hsFovRect.width() * scaleX,
+                         m_hsFovRect.height() * scaleY);
+        if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
+            overlay->setOverlayRect(scaledRect);
+    }
+
+    ui->widgetOcChars->setMaxBrightness(maxBrightness);
 }
 
-void HalsWindow::updateHsImageLabel(QImage imageToShow) {}
+void HalsWindow::updateHsImageLabel(QImage imageToShow, int maxBrightness) {
+    QPixmap pix = QPixmap::fromImage(imageToShow);
+    ui->labelSpectra->setPixmap(pix.scaled(ui->labelSpectra->size(),
+                                           Qt::IgnoreAspectRatio,
+                                           Qt::SmoothTransformation));
+
+    ui->widgetHsChars->setMaxBrightness(maxBrightness);
+}
+
+void HalsWindow::updateOcChars(double fovMeters, double gsd) {
+    ui->widgetOcChars->setFov(fovMeters);
+    ui->widgetOcChars->setGsd(gsd);
+}
+
+void HalsWindow::updateHsChars(double fovMeters, double gsd) {
+    ui->widgetHsChars->setFov(fovMeters);
+    ui->widgetHsChars->setGsd(gsd);
+}
 
 QString HalsWindow::formatBytes(qint64 bytes) {
     return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 1);
@@ -365,6 +400,10 @@ void HalsWindow::initObjects() {
             &HalsWindow::updateOcImageLabel);
     connect(m_facade, &HalsFacade::hsImageReady, this,
             &HalsWindow::updateHsImageLabel);
+    connect(m_facade, &HalsFacade::ocCharsWereUpdated, this,
+            &HalsWindow::updateOcChars);
+    connect(m_facade, &HalsFacade::hsCharsWereUpdated, this,
+            &HalsWindow::updateHsChars);
     m_facade->setVideoStreamEnabled(false);
     m_facade->initialize();
 
@@ -374,3 +413,9 @@ void HalsWindow::initObjects() {
 }
 
 void HalsWindow::on_pushButtonMakeSnapshot_clicked() {}
+
+void HalsWindow::setSpectrometerFovRect(const QRect& rect) {
+    m_hsFovRect = rect;
+    if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
+        overlay->setOverlayRect(rect);
+}

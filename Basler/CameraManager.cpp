@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QDir>
 
+#include "ImageFormatConverter.h"
+
 CameraManager::CameraManager(QObject *parent, bool isMasterSlaveNeeded)
     : QObject(parent),
       m_master(nullptr),
@@ -149,13 +151,19 @@ void CameraManager::onSlaveError(const QString &err) {
 
 void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
                                     int pixelFormat) {
-    //    qDebug() << "master raw";
-    if (m_isImageNeeded) {
-        QImage img = SavingModule::convertToQImage(data, w, h, pixelFormat);
-        if (!img.isNull()) {
-            emit masterImageReady(img);
-        }
+    if (m_isImageNeeded.load()) {
+        QByteArray dataCopy = data;  // копия для передачи в другой поток
+        QtConcurrent::run([this, dataCopy, w, h, pixelFormat]() {
+            QImage img = ImageFormatConverter::convertToHeatmapImage(
+                dataCopy, w, h, pixelFormat, 5);
+
+            if (!img.isNull() && m_isImageNeeded.load()) {
+                int maxBright = findMaxBrightness(dataCopy, w, h, pixelFormat);
+                emit masterImageReady(img, maxBright);
+            }
+        });
     }
+
     emit masterRawData(data, w, h, pixelFormat);
 
     if (m_savingModule.isNeedToSave() && m_isNeedToSaveHS) {
@@ -166,10 +174,12 @@ void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
 
 void CameraManager::onSlaveRawData(const QByteArray &data, int w, int h,
                                    int pixelFormat) {
-    if (m_isImageNeeded) {
-        QImage img = SavingModule::convertToQImage(data, w, h, pixelFormat);
+    if (m_isImageNeeded.load()) {
+        QImage img =
+            ImageFormatConverter::convertToQImage(data, w, h, pixelFormat);
         if (!img.isNull()) {
-            emit slaveImageReady(img);
+            int maxBrightness = findMaxBrightness(data, w, h, pixelFormat);
+            emit slaveImageReady(img, maxBrightness);
         }
     }
 
@@ -459,6 +469,51 @@ void CameraManager::submitCommands(
         m_master->submitCommands(std::move(commands));
     else
         m_slave->submitCommands(std::move(commands));
+}
+
+int CameraManager::findMaxBrightness(const QByteArray &data, int w, int h,
+                                     int pixelFormat) {
+    quint16 maxVal = 0;
+    switch (pixelFormat) {
+        case PixelType_Mono8: {
+            const quint8 *ptr =
+                reinterpret_cast<const quint8 *>(data.constData());
+            for (int i = 0; i < data.size(); ++i) {
+                if (ptr[i] > maxVal) maxVal = ptr[i];
+            }
+        } break;
+        case PixelType_Mono12: {
+            const quint16 *ptr =
+                reinterpret_cast<const quint16 *>(data.constData());
+            int numPixels = data.size() / sizeof(quint16);
+            for (int i = 0; i < numPixels; ++i) {
+                quint16 val = ptr[i] & 0x0FFF;
+                if (val > maxVal) maxVal = val;
+            }
+        } break;
+        case PixelType_Mono12p: {
+            const uchar *ptr =
+                reinterpret_cast<const uchar *>(data.constData());
+            int numPixels = w * h;
+            for (int i = 0; i < numPixels; ++i) {
+                int byteOffset = (i * 12) / 8;
+                int bitOffset = (i * 12) % 8;
+                quint16 val;
+                if (bitOffset == 0) {
+                    val =
+                        (ptr[byteOffset] | (ptr[byteOffset + 1] << 8)) & 0x0FFF;
+                } else {
+                    val = ((ptr[byteOffset] >> bitOffset) |
+                           (ptr[byteOffset + 1] << (8 - bitOffset))) &
+                          0x0FFF;
+                }
+                if (val > maxVal) maxVal = val;
+            }
+        } break;
+        default:
+            break;
+    }
+    return maxVal;
 }
 
 void CameraManager::setIsImageNeeded(bool newIsImageNeeded) {

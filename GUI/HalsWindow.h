@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "Components/HalsFacade.h"
+#include "OverlayLabel.h"
 #include "StatusIndicator.h"
 
 QT_BEGIN_NAMESPACE
@@ -36,14 +37,19 @@ private slots:
     void updateHsState(bool connectionStatus);
     void updateOcState(bool connectionStatus);
 
-    void updateOcImageLabel(QImage imageToShow);
-    void updateHsImageLabel(QImage imageToShow);
+    void updateOcImageLabel(QImage imageToShow, int maxBrightness);
+    void updateHsImageLabel(QImage imageToShow, int maxBrightness);
+
+    void updateOcChars(double fovMeters, double gsd);
+    void updateHsChars(double fovMeters, double gsd);
 
     QString formatBytes(qint64 bytes);
 
     void updateTime();
 
     void on_pushButtonMakeSnapshot_clicked();
+
+    void setSpectrometerFovRect(const QRect &rect);
 
 private:
     void initObjects();
@@ -64,5 +70,7 @@ private:
     StatusIndicator *m_ocIndicator;
     StatusIndicator *m_sunIndicator;
     StatusIndicator *m_missionIndicator;
+
+    QRect m_hsFovRect;
 };
 #endif  // HALSWINDOW_H

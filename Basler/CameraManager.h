@@ -5,11 +5,12 @@
 #include <QMutex>
 #include <QObject>
 #include <QThreadPool>
+#include <QtConcurrent/QtConcurrent>
+#include <atomic>
 
 #include "BaslerApi.h"
 #include "BaslerSettings.h"
 #include "SavingModule.h"
-
 /**
  * @brief Класс-менеджер, координирующий работу двух камер (мастер и слейв).
  *
@@ -133,13 +134,13 @@ signals:
      * @brief Сигнал с изображением гиперспектрометра.
      * @param image QImage для отображения.
      */
-    void masterImageReady(const QImage &image);
+    void masterImageReady(const QImage &image, int maxBrightness);
 
     /**
      * @brief Сигнал с изображением обзорной камеры.
      * @param image QImage для отображения.
      */
-    void slaveImageReady(const QImage &image);
+    void slaveImageReady(const QImage &image, int maxBrightness);
 
     /**
      * @brief Сигнал с сырыми данными гиперспектрометра.
@@ -342,6 +343,22 @@ private:
     void submitCommands(
         bool isMaster, std::vector<std::unique_ptr<ParameterCommand>> commands);
 
+    /**
+     * @brief Вычисляет максимальное значение яркости в кадре.
+     * Анализирует сырые данные изображения и возвращает наибольшее значение
+     * пикселя с учётом формата.
+     *
+     * @param data Байтовый массив с данными кадра.
+     * @param w Ширина изображения в пикселях.
+     * @param h Высота изображения в пикселях.
+     * @param pixelFormat Формат пикселя (из Pylon: Mono8, Mono12, Mono12p).
+     * @return Максимальное значение яркости:
+     *         - Для Mono8: 0–255.
+     *         - Для Mono12: 0–4095.
+     */
+    int findMaxBrightness(const QByteArray &data, int w, int h,
+                          int pixelFormat);
+
     // --- Объекты управления камерами ---
     BaslerApi *m_master;  //!< Управление мастер-камерой (гиперспектрометр).
     BaslerApi *m_slave;  //!< Управление слейв-камерой (обзорная камера).
@@ -358,7 +375,9 @@ private:
     bool m_masterReady;  //!< Флаг готовности мастер-камеры (ГС)
     bool m_ready;    //!< Флаг готовности обеих камер.
     QMutex m_mutex;  //!< Мьютекс для защиты m_ready.
-    bool m_isImageNeeded;  //!< Флаг необходимости отправлять изображения в GUI.
+    std::atomic<bool>
+        m_isImageNeeded;  //!< Флаг необходимости отправлять изображения
+                          //!< в GUI (0 — false, 1 — true)
     bool m_stopped;  //!< Флаг, что остановка уже выполнена (защита от
                      //!< повторного вызова).
 
