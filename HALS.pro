@@ -17,6 +17,7 @@ SOURCES += \
     Components/HalsFacade.cpp \
     Components/Logger.cpp \
     Components/UsbChecker.cpp \
+    GUI/SensorCharacteristicsForm.cpp \
     GUI/StatusIndicator.cpp \
     main.cpp \
     GUI/HalsWindow.cpp
@@ -27,11 +28,13 @@ HEADERS += \
     Components/Logger.h \
     Components/UsbChecker.h \
     GUI/HalsWindow.h \
+    GUI/SensorCharacteristicsForm.h \
     GUI/StatusIndicator.h \
     version.h
 
 FORMS += \
     GUI/HalsWindow.ui \
+    GUI/SensorCharacteristicsForm.ui \
     GUI/StatusIndicator.ui
 
 # Default rules for deployment.

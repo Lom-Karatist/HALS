@@ -222,6 +222,12 @@ void HalsWindow::applyStyleSheet() {
             min-height: 48px;
             padding: 8px 12px;
         }
+
+        QFrame#line {
+            background-color: #3f3f46;
+            max-height: 2px;
+            border: none;
+        }
     )";
     qApp->setStyleSheet(styleSheet);
 }
@@ -231,6 +237,8 @@ void HalsWindow::addStatusIndicators() {
     m_usbIndicator->setLabelText("Флеш-накопитель");
 
     m_hsIndicator = new StatusIndicator(this, ":/Icons/focus");
+    connect(m_hsIndicator, &StatusIndicator::clicked, this,
+            [this]() { makePageSwitch(ui->mainPage, ui->cameraPage); });
     m_hsIndicator->setLabelText("Сенсор ГС");
 
     m_ocIndicator = new StatusIndicator(this, ":/Icons/camera");
@@ -301,6 +309,26 @@ void HalsWindow::updateUsbState(bool mounted, qint64 availableBytes,
     }
 }
 
+void HalsWindow::updateHsState(bool connectionStatus) {
+    if (connectionStatus) {
+        m_hsIndicator->setState(StatusIndicator::State::Active);
+        m_hsIndicator->setValueText("Активен");
+    } else {
+        m_hsIndicator->setState(StatusIndicator::State::Inactive);
+        m_hsIndicator->setValueText("Не подключен");
+    }
+}
+
+void HalsWindow::updateOcState(bool connectionStatus) {
+    if (connectionStatus) {
+        m_ocIndicator->setState(StatusIndicator::State::Active);
+        m_ocIndicator->setValueText("Активен");
+    } else {
+        m_ocIndicator->setState(StatusIndicator::State::Inactive);
+        m_ocIndicator->setValueText("Не подключен");
+    }
+}
+
 QString HalsWindow::formatBytes(qint64 bytes) {
     return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 1);
 }
@@ -318,6 +346,10 @@ void HalsWindow::initObjects() {
             &HalsWindow::updateCpuTemperature);
     connect(m_facade, &HalsFacade::usbStatusChanged, this,
             &HalsWindow::updateUsbState);
+    connect(m_facade, &HalsFacade::masterConnectionStatusChanged, this,
+            &HalsWindow::updateHsState);
+    connect(m_facade, &HalsFacade::slaveConnectionStatusChanged, this,
+            &HalsWindow::updateOcState);
     m_facade->initialize();
 
     m_updatingTimer = new QTimer(this);

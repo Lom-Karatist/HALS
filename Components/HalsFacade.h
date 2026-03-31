@@ -35,7 +35,10 @@ public:
     bool isMissionLoaded() const;     // заглушка
 
 signals:
+    void masterConnectionStatusChanged(bool connectionStatus);
+    void slaveConnectionStatusChanged(bool connectionStatus);
     void overviewImageReady(const QImage &image);
+    void hsImageReady(const QImage &image);
     void cameraError(const QString &error);
     void gpsSatellitesCountUpdated(const int &count);
     void cpuTemperatureUpdated(QString temperature);
@@ -45,6 +48,7 @@ signals:
 
 private slots:
     void onGpsDataUpdated(const GpsData &gpsData);
+    void updateHsData(const QByteArray &data, int w, int h);
 
 private:
     void startLogger();

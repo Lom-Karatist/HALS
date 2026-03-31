@@ -73,11 +73,19 @@ void HalsFacade::startUsbChecker() {
 bool HalsFacade::startCameras() {
     m_cameraManager = std::make_unique<CameraManager>(this);
     if (m_cameraManager) {
+        connect(m_cameraManager.get(),
+                &CameraManager::slaveConnectionStatusChanged, this,
+                &HalsFacade::slaveConnectionStatusChanged);
+        connect(m_cameraManager.get(),
+                &CameraManager::masterConnectionStatusChanged, this,
+                &HalsFacade::masterConnectionStatusChanged);
         connect(m_cameraManager.get(), &CameraManager::slaveImageReady, this,
                 &HalsFacade::overviewImageReady);
+        connect(m_cameraManager.get(), &CameraManager::masterRawData, this,
+                &HalsFacade::updateHsData);
         connect(m_cameraManager.get(), &CameraManager::errorOccurred, this,
                 &HalsFacade::cameraError, Qt::QueuedConnection);
-        logMessage(Logger::Info, "Hyperspectrometer sensors was initted");
+        m_cameraManager->initCameras();
         return true;
     } else {
         logMessage(Logger::Critical, "Hyperspectrometer sensors init error");
@@ -145,3 +153,5 @@ void HalsFacade::onGpsDataUpdated(const GpsData &gpsData) {
         emit gpsSatellitesCountUpdated(m_satellitesCount);
     }
 }
+
+void HalsFacade::updateHsData(const QByteArray &data, int w, int h) {}

@@ -33,6 +33,9 @@ private slots:
 
     void updateUsbState(bool mounted, qint64 availableBytes, qint64 totalBytes);
 
+    void updateHsState(bool connectionStatus);
+    void updateOcState(bool connectionStatus);
+
     QString formatBytes(qint64 bytes);
 
     void updateTime();
