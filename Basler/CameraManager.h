@@ -97,6 +97,12 @@ public:
     void setIsNeedToSave(bool newIsNeedToSave, bool isNeedToSaveHS,
                          bool isNeedToSaveOC);
 
+    /**
+     * @brief Включить/выключить передачу изображений в главное окно
+     * @param newIsImageNeeded Флаг для передачи
+     */
+    void setIsImageNeeded(bool newIsImageNeeded);
+
 signals:
     /**
      * @brief Сигнал о готовности обеих камер.
@@ -141,7 +147,7 @@ signals:
      * @param w Ширина.
      * @param h Высота.
      */
-    void masterRawData(const QByteArray &data, int w, int h);
+    void masterRawData(const QByteArray &data, int w, int h, int pixelFormat);
 
     /**
      * @brief Сигнал с сырыми данными обзорной камеры.

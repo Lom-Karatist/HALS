@@ -19,13 +19,9 @@ public:
 
     void initialize();
     void refreshUsbState();
+    void stopBaslerCameras();
+    void setVideoStreamEnabled(bool enabled);
 
-    // Управление захватом
-    void startCapture();
-    void pauseCapture();
-    void stopCapture();
-
-    // Сохранение
     void setSaveFormat(int format);  // 0 - BMP, 1 - Binary
 
     // Статусные индикаторы (для GUI)
@@ -48,13 +44,14 @@ signals:
 
 private slots:
     void onGpsDataUpdated(const GpsData &gpsData);
-    void updateHsData(const QByteArray &data, int w, int h);
+    void startBaslerCameras();
+    void updateHsData(const QByteArray &data, int w, int h, int pixelFormat);
 
 private:
     void startLogger();
     void startTempController();
     void startUsbChecker();
-    bool startCameras();
+    bool initCameras();
     bool startGps();
 
     std::unique_ptr<CameraManager> m_cameraManager;

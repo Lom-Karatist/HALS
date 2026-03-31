@@ -258,13 +258,9 @@ void HalsWindow::addStatusIndicators() {
     ui->centerHLayout->addWidget(m_ocIndicator);
     ui->centerHLayout->addWidget(m_missionIndicator);
 
-    //    hsIndicator->setState(StatusIndicator::State::Active);
-    //    ocIndicator->setState(StatusIndicator::State::Active);
     //    sunIndicator->setState(StatusIndicator::State::Inactive);
     //    missionIndicator->setState(StatusIndicator::State::Active);
 
-    //    hsIndicator->setValueText("Активен");
-    //    ocIndicator->setValueText("Активна");
     //    sunIndicator->setValueText("Не активен");
     //    missionIndicator->setValueText("Загружено");
 }
@@ -272,6 +268,12 @@ void HalsWindow::addStatusIndicators() {
 void HalsWindow::makePageSwitch(QWidget* fromPage, QWidget* toPage) {
     if (!fromPage || !toPage) return;
     ui->stackedWidget->setCurrentWidget(toPage);
+
+    if (toPage == ui->cameraPage) {
+        m_facade->setVideoStreamEnabled(true);
+    } else {
+        m_facade->setVideoStreamEnabled(false);
+    }
 }
 
 void HalsWindow::on_pushButtonUpdateConfiguration_clicked() {
@@ -329,6 +331,15 @@ void HalsWindow::updateOcState(bool connectionStatus) {
     }
 }
 
+void HalsWindow::updateOcImageLabel(QImage imageToShow) {
+    QPixmap pix = QPixmap::fromImage(imageToShow);
+    ui->labelCameraImage->setPixmap(pix.scaled(ui->labelCameraImage->size(),
+                                               Qt::KeepAspectRatio,
+                                               Qt::SmoothTransformation));
+}
+
+void HalsWindow::updateHsImageLabel(QImage imageToShow) {}
+
 QString HalsWindow::formatBytes(qint64 bytes) {
     return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 1);
 }
@@ -350,6 +361,11 @@ void HalsWindow::initObjects() {
             &HalsWindow::updateHsState);
     connect(m_facade, &HalsFacade::slaveConnectionStatusChanged, this,
             &HalsWindow::updateOcState);
+    connect(m_facade, &HalsFacade::overviewImageReady, this,
+            &HalsWindow::updateOcImageLabel);
+    connect(m_facade, &HalsFacade::hsImageReady, this,
+            &HalsWindow::updateHsImageLabel);
+    m_facade->setVideoStreamEnabled(false);
     m_facade->initialize();
 
     m_updatingTimer = new QTimer(this);

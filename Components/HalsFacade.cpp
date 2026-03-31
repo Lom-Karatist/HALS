@@ -23,7 +23,7 @@ HalsFacade::~HalsFacade() {
 
     qDebug() << "----------------GPS finish";
 
-    stopCapture();
+    stopBaslerCameras();
 
     qDebug() << "----------------Basler finish";
 }
@@ -32,7 +32,7 @@ void HalsFacade::initialize() {
     startLogger();
     startTempController();
     startUsbChecker();
-    startCameras();
+    initCameras();
     startGps();
 }
 
@@ -70,7 +70,7 @@ void HalsFacade::startUsbChecker() {
     m_usbChecker->check();
 }
 
-bool HalsFacade::startCameras() {
+bool HalsFacade::initCameras() {
     m_cameraManager = std::make_unique<CameraManager>(this);
     if (m_cameraManager) {
         connect(m_cameraManager.get(),
@@ -79,10 +79,8 @@ bool HalsFacade::startCameras() {
         connect(m_cameraManager.get(),
                 &CameraManager::masterConnectionStatusChanged, this,
                 &HalsFacade::masterConnectionStatusChanged);
-        connect(m_cameraManager.get(), &CameraManager::slaveImageReady, this,
-                &HalsFacade::overviewImageReady);
-        connect(m_cameraManager.get(), &CameraManager::masterRawData, this,
-                &HalsFacade::updateHsData);
+        connect(m_cameraManager.get(), &CameraManager::ready, this,
+                &HalsFacade::startBaslerCameras);
         connect(m_cameraManager.get(), &CameraManager::errorOccurred, this,
                 &HalsFacade::cameraError, Qt::QueuedConnection);
         m_cameraManager->initCameras();
@@ -107,21 +105,15 @@ bool HalsFacade::startGps() {
     }
 }
 
-void HalsFacade::startCapture() {
-    if (m_cameraManager) {
-        m_cameraManager->start();
-    }
-}
-
-void HalsFacade::pauseCapture() {
-    if (m_cameraManager) {
-        m_cameraManager->pause();
-    }
-}
-
-void HalsFacade::stopCapture() {
+void HalsFacade::stopBaslerCameras() {
     if (m_cameraManager) {
         m_cameraManager->stop();
+    }
+}
+
+void HalsFacade::setVideoStreamEnabled(bool enabled) {
+    if (m_cameraManager) {
+        m_cameraManager->setIsImageNeeded(enabled);
     }
 }
 
@@ -154,4 +146,13 @@ void HalsFacade::onGpsDataUpdated(const GpsData &gpsData) {
     }
 }
 
-void HalsFacade::updateHsData(const QByteArray &data, int w, int h) {}
+void HalsFacade::startBaslerCameras() {
+    connect(m_cameraManager.get(), &CameraManager::slaveImageReady, this,
+            &HalsFacade::overviewImageReady);
+    connect(m_cameraManager.get(), &CameraManager::masterRawData, this,
+            &HalsFacade::updateHsData);
+    m_cameraManager->start();
+}
+
+void HalsFacade::updateHsData(const QByteArray &data, int w, int h,
+                              int pixelFormat) {}

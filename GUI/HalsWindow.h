@@ -36,6 +36,9 @@ private slots:
     void updateHsState(bool connectionStatus);
     void updateOcState(bool connectionStatus);
 
+    void updateOcImageLabel(QImage imageToShow);
+    void updateHsImageLabel(QImage imageToShow);
+
     QString formatBytes(qint64 bytes);
 
     void updateTime();

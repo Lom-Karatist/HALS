@@ -12,7 +12,7 @@ CameraManager::CameraManager(QObject *parent, bool isMasterSlaveNeeded)
       m_slaveSettings(this, QDir::currentPath() + "/OC.ini"),
       m_connectedCount(0),
       m_ready(false),
-      m_isImageNeeded(true),
+      m_isImageNeeded(false),
       m_stopped(false),
       m_isNeedToSaveHS(true),
       m_isNeedToSaveOC(true) {
@@ -149,10 +149,15 @@ void CameraManager::onSlaveError(const QString &err) {
 
 void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
                                     int pixelFormat) {
-    QImage img = SavingModule::convertToQImage(data, w, h, pixelFormat);
-    if (!img.isNull() && m_isImageNeeded) {
-        emit masterImageReady(img);
+    //    qDebug() << "master raw";
+    if (m_isImageNeeded) {
+        QImage img = SavingModule::convertToQImage(data, w, h, pixelFormat);
+        if (!img.isNull()) {
+            emit masterImageReady(img);
+        }
     }
+    emit masterRawData(data, w, h, pixelFormat);
+
     if (m_savingModule.isNeedToSave() && m_isNeedToSaveHS) {
         m_savingModule.saveDataAsync(data, w, h, pixelFormat, "/master",
                                      m_frameTimeStamp);
@@ -161,10 +166,13 @@ void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
 
 void CameraManager::onSlaveRawData(const QByteArray &data, int w, int h,
                                    int pixelFormat) {
-    QImage img = SavingModule::convertToQImage(data, w, h, pixelFormat);
-    if (!img.isNull()) {
-        emit slaveImageReady(img);
+    if (m_isImageNeeded) {
+        QImage img = SavingModule::convertToQImage(data, w, h, pixelFormat);
+        if (!img.isNull()) {
+            emit slaveImageReady(img);
+        }
     }
+
     if (m_savingModule.isNeedToSave()) {
         m_frameTimeStamp =
             QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss_zzz");
@@ -451,6 +459,10 @@ void CameraManager::submitCommands(
         m_master->submitCommands(std::move(commands));
     else
         m_slave->submitCommands(std::move(commands));
+}
+
+void CameraManager::setIsImageNeeded(bool newIsImageNeeded) {
+    m_isImageNeeded = newIsImageNeeded;
 }
 
 void CameraManager::setIsNeedToSave(bool newIsNeedToSave, bool isNeedToSaveHS,
