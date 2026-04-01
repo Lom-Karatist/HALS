@@ -52,6 +52,11 @@ private slots:
     void setSpectrometerFovRect(const QRect &rect);
 
 private:
+    /**
+     * @brief Общая настройка проекта.
+     */
+    void setupProject();
+
     void initObjects();
     void setupGui();
     void applyStyleSheet();
@@ -60,6 +65,8 @@ private:
     void makePageSwitch(QWidget *fromPage, QWidget *toPage);
 
     Ui::HalsWindow *ui;
+    QString m_title;        //!< Заголовок окна.
+    QSettings *m_settings;  //!< Объект для работы с настройками приложения.
     qreal m_touchStartPos;
 
     HalsFacade *m_facade;

@@ -26,5 +26,9 @@
         <file>Icons/sun_unknown.png</file>
         <file>Icons/refresh.png</file>
         <file>Icons/home.png</file>
+        <file>../4Release/Basler.Pylon.dll</file>
+        <file>../4Release/HALS.ini</file>
+        <file>../4Release/HS.ini</file>
+        <file>../4Release/OC.ini</file>
     </qresource>
 </RCC>

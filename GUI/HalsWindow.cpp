@@ -1,15 +1,18 @@
 #include "HalsWindow.h"
 
+#include <BaseTools/IniFileLoader.h>
+
 #include <QMessageBox>
 #include <QPixmap>
 #include <QStyle>
 #include <QTouchEvent>
 
 #include "ui_HalsWindow.h"
+#include "version.h"
 
 HalsWindow::HalsWindow(QWidget* parent)
     : QMainWindow(parent), ui(new Ui::HalsWindow), m_touchStartPos(0) {
-    ui->setupUi(this);
+    setupProject();
     setupGui();
     initObjects();
 }
@@ -91,7 +94,6 @@ void HalsWindow::setupGui() {
     connect(ui->pushButtonToMainPage_2, &QPushButton::clicked, this,
             [this]() { makePageSwitch(ui->cameraPage, ui->mainPage); });
 
-    m_hsFovRect = QRect(960, 10, 12, 1180);  // примерные координаты
     if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
         overlay->setOverlayRect(m_hsFovRect);
 }
@@ -415,7 +417,31 @@ void HalsWindow::initObjects() {
 void HalsWindow::on_pushButtonMakeSnapshot_clicked() {}
 
 void HalsWindow::setSpectrometerFovRect(const QRect& rect) {
-    m_hsFovRect = rect;
-    if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
-        overlay->setOverlayRect(rect);
+    if (m_hsFovRect != rect) {
+        m_hsFovRect = rect;
+        if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
+            overlay->setOverlayRect(rect);
+
+        m_settings->setValue("Cameras/hsFovXOffset", rect.x());
+        m_settings->setValue("Cameras/hsFovYOffset", rect.y());
+        m_settings->setValue("Cameras/hsFovWidth", rect.width());
+        m_settings->setValue("Cameras/hsFovHeight", rect.height());
+    }
+}
+
+void HalsWindow::setupProject() {
+    ui->setupUi(this);
+    m_title.append(VER_PRODUCTNAME_STR)
+        .append(" v_")
+        .append(VER_FILEVERSION_STR);
+    this->setWindowTitle(m_title);
+
+    m_settings = IniFileLoader::createSettingsObject(VER_PRODUCTNAME_STR);
+    QString savingPath = m_settings->value("Pathes/saving").toString();
+
+    int hsFovXOffset = m_settings->value("Cameras/hsFovXOffset").toInt();
+    int hsFovYOffset = m_settings->value("Cameras/hsFovYOffset").toInt();
+    int hsFovWidth = m_settings->value("Cameras/hsFovWidth").toInt();
+    int hsFovHeight = m_settings->value("Cameras/hsFovHeight").toInt();
+    m_hsFovRect = QRect(hsFovXOffset, hsFovYOffset, hsFovWidth, hsFovHeight);
 }

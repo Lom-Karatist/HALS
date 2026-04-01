@@ -13,6 +13,8 @@ win32 {
 }
 
 SOURCES += \
+    BaseTools/IniFileLoader.cpp \
+    BaseTools/QrcFilesRestorer.cpp \
     Components/CpuTemperatureController.cpp \
     Components/FlightTaskModule.cpp \
     Components/HalsFacade.cpp \
@@ -25,6 +27,8 @@ SOURCES += \
     GUI/HalsWindow.cpp
 
 HEADERS += \
+    BaseTools/IniFileLoader.h \
+    BaseTools/QrcFilesRestorer.h \
     Components/CpuTemperatureController.h \
     Components/FlightTaskModule.h \
     Components/HalsFacade.h \
