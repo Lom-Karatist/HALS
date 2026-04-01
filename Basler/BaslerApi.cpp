@@ -83,6 +83,12 @@ void BaslerApi::run() {
                 } catch (const GenericException& e) {
                     emit sendErrorMessage(
                         QString("Pylon Exception: %1").arg(e.GetDescription()));
+                } catch (const std::exception& e) {
+                    emit sendErrorMessage(
+                        QString("Standard exception: %1").arg(e.what()));
+                } catch (...) {
+                    emit sendErrorMessage(
+                        "Unknown exception in BaslerApi::run");
                 }
             }
         }

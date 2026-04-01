@@ -51,6 +51,8 @@ private slots:
 
     void setSpectrometerFovRect(const QRect &rect);
 
+    void on_pushButtonChoosePreset_clicked();
+
 private:
     /**
      * @brief Общая настройка проекта.
@@ -59,6 +61,7 @@ private:
 
     void initObjects();
     void setupGui();
+    void initSettingsForms();
     void applyStyleSheet();
 
     void addStatusIndicators();

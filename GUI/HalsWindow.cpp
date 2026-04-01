@@ -96,6 +96,32 @@ void HalsWindow::setupGui() {
 
     if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
         overlay->setOverlayRect(m_hsFovRect);
+
+    initSettingsForms();
+}
+
+void HalsWindow::initSettingsForms() {
+    ui->widgetHsParams->setDeviceName("Сенсор ГС");
+    ui->widgetHsParams->addParameter("Экспозиция", "мс", 1, 2000, 50, 5, 50,
+                                     100);
+    ui->widgetHsParams->addParameter("Частота кадров", "fps", 1, 60, 20, 1, 5,
+                                     10);
+
+    ui->widgetOcParams->setDeviceName("Обзорная камера");
+    ui->widgetOcParams->addParameter("Экспозиция", "мс", 0, 1000, 10, 1, 10,
+                                     50);
+    ui->widgetOcParams->addParameter("Частота кадров", "fps", 1, 60, 30, 1, 5,
+                                     10);
+
+    ui->widgetBrightnessParams->setDeviceName("Сенсор освещенности");
+    ui->widgetBrightnessParams->addParameter("Экспозиция", "мс", 1, 1000, 100,
+                                             1, 10, 100);
+
+    ui->widgetExperimentParams->setDeviceName("Настройки эксперимента");
+    ui->widgetExperimentParams->addParameter("Высота измерений", "м", 2, 1000,
+                                             2, 1, 10, 100);
+    ui->widgetExperimentParams->addParameter("Высота начала записи", "м", 2,
+                                             1000, 50, 1, 10, 100);
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -154,6 +180,17 @@ void HalsWindow::applyStyleSheet() {
         QPushButton#pushButtonUpdateConfiguration:pressed {
             background-color: #1d4ed8;
         }
+
+        QPushButton#pushButtonChoosePreset {
+            background-color: #2563eb;   /* blue-600 */
+            border-color: #3b82f6;
+            padding: 8px;
+            font-size: 12pt;
+        }
+        QPushButton#pushButtonChoosePreset:pressed {
+            background-color: #1d4ed8;
+        }
+
         QPushButton#pushButtonStartStop {
             background-color: #d97706;   /* amber-600 */
             border-color: #eab308;
@@ -445,3 +482,5 @@ void HalsWindow::setupProject() {
     int hsFovHeight = m_settings->value("Cameras/hsFovHeight").toInt();
     m_hsFovRect = QRect(hsFovXOffset, hsFovYOffset, hsFovWidth, hsFovHeight);
 }
+
+void HalsWindow::on_pushButtonChoosePreset_clicked() {}

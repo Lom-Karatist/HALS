@@ -89,5 +89,4 @@ void StatusIndicator::updateStyle() {
             }
                         )")
                       .arg(bgColor, stateColor));
-    //    update();  // принудительно перерисовать
 }

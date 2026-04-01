@@ -237,21 +237,84 @@
       </property>
       <widget class="QWidget" name="settingsPage">
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="leftMargin">
+           <number>6</number>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
+          <property name="rightMargin">
+           <number>6</number>
           </property>
-         </spacer>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="DeviceParametersForm" name="widgetHsParams" native="true"/>
+            </item>
+            <item>
+             <widget class="DeviceParametersForm" name="widgetExperimentParams" native="true"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="DeviceParametersForm" name="widgetOcParams" native="true"/>
+            </item>
+            <item>
+             <widget class="DeviceParametersForm" name="widgetBrightnessParams" native="true"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="pushButtonChoosePreset">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>253</width>
+              <height>48</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>  Выбрать пресет</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
@@ -666,6 +729,12 @@
    <class>OverlayLabel</class>
    <extends>QLabel</extends>
    <header>OverlayLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DeviceParametersForm</class>
+   <extends>QWidget</extends>
+   <header>DeviceParametersForm.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

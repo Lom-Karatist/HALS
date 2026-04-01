@@ -20,7 +20,9 @@ SOURCES += \
     Components/HalsFacade.cpp \
     Components/Logger.cpp \
     Components/UsbChecker.cpp \
+    GUI/DeviceParametersForm.cpp \
     GUI/OverlayLabel.cpp \
+    GUI/ParameterModificator.cpp \
     GUI/SensorCharacteristicsForm.cpp \
     GUI/StatusIndicator.cpp \
     main.cpp \
@@ -34,14 +36,18 @@ HEADERS += \
     Components/HalsFacade.h \
     Components/Logger.h \
     Components/UsbChecker.h \
+    GUI/DeviceParametersForm.h \
     GUI/HalsWindow.h \
     GUI/OverlayLabel.h \
+    GUI/ParameterModificator.h \
     GUI/SensorCharacteristicsForm.h \
     GUI/StatusIndicator.h \
     version.h
 
 FORMS += \
+    GUI/DeviceParametersForm.ui \
     GUI/HalsWindow.ui \
+    GUI/ParameterModificator.ui \
     GUI/SensorCharacteristicsForm.ui \
     GUI/StatusIndicator.ui
 
