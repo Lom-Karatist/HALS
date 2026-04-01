@@ -49,7 +49,7 @@ void BaslerApi::run() {
         }
     }
     setupCameraFeatures();
-    m_camera->StartGrabbing();
+    //    m_camera->StartGrabbing();
 
     while (m_isActive.load()) {
         if (m_commandsPending.load()) {

@@ -79,6 +79,9 @@ void HalsWindow::setupGui() {
     ui->pushButtonMakeSnapshot->setIcon(QIcon(":/Icons/save.png"));
     ui->pushButtonMakeSnapshot->setIconSize(QSize(24, 24));
 
+    ui->pushButtonChoosePreset->setIcon(QIcon(":/Icons/control.png"));
+    ui->pushButtonChoosePreset->setIconSize(QSize(24, 24));
+
     QList<QPushButton*> buttons = findChildren<QPushButton*>();
     for (QPushButton* btn : buttons) {
         btn->style()->polish(btn);
@@ -101,23 +104,25 @@ void HalsWindow::setupGui() {
 }
 
 void HalsWindow::initSettingsForms() {
-    ui->widgetHsParams->setDeviceName("Сенсор ГС");
+    ui->widgetHsParams->setDeviceName("Сенсор ГС      ");
     ui->widgetHsParams->addParameter("Экспозиция", "мс", 1, 2000, 50, 5, 50,
                                      100);
-    ui->widgetHsParams->addParameter("Частота кадров", "fps", 1, 60, 20, 1, 5,
-                                     10);
+    ui->widgetHsParams->addParameter("Частота регистрации", "кадров/с", 1, 60,
+                                     20, 1, 5, 10);
 
-    ui->widgetOcParams->setDeviceName("Обзорная камера");
+    ui->widgetOcParams->setDeviceName("Обзорная камера      ");
     ui->widgetOcParams->addParameter("Экспозиция", "мс", 0, 1000, 10, 1, 10,
                                      50);
-    ui->widgetOcParams->addParameter("Частота кадров", "fps", 1, 60, 30, 1, 5,
-                                     10);
+    ui->widgetOcParams->addParameter("Частота регистрации", "кадров/с", 1, 60,
+                                     30, 1, 5, 10);
 
-    ui->widgetBrightnessParams->setDeviceName("Сенсор освещенности");
+    ui->widgetBrightnessParams->setDeviceName("Сенсор освещенности      ");
     ui->widgetBrightnessParams->addParameter("Экспозиция", "мс", 1, 1000, 100,
                                              1, 10, 100);
+    ui->widgetBrightnessParams->addParameter("Частота регистрации", "кадров/с",
+                                             1, 60, 1, 1, 5, 10);
 
-    ui->widgetExperimentParams->setDeviceName("Настройки эксперимента");
+    ui->widgetExperimentParams->setDeviceName("Эксперимент      ");
     ui->widgetExperimentParams->addParameter("Высота измерений", "м", 2, 1000,
                                              2, 1, 10, 100);
     ui->widgetExperimentParams->addParameter("Высота начала записи", "м", 2,
