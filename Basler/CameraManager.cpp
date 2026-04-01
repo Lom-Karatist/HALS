@@ -46,11 +46,11 @@ CameraManager::CameraManager(QObject *parent, bool isMasterSlaveNeeded)
 }
 
 CameraManager::~CameraManager() {
-    qDebug() << "CameraManager destructor started";
+    //    qDebug() << "CameraManager destructor started";
     stop();
-    qDebug() << "CameraManager destructor calling PylonTerminate()";
+    //    qDebug() << "CameraManager destructor calling PylonTerminate()";
     PylonTerminate();
-    qDebug() << "CameraManager destructor finished";
+    //    qDebug() << "CameraManager destructor finished";
 }
 
 void CameraManager::initCameras() {
@@ -70,31 +70,31 @@ void CameraManager::pause() {
 }
 
 void CameraManager::stop() {
-    qDebug() << "CameraManager::stop() entered, m_stopped =" << m_stopped;
+    //    qDebug() << "CameraManager::stop() entered, m_stopped =" << m_stopped;
     if (m_stopped) {
-        qDebug() << "Already stopped, returning";
+        //        qDebug() << "Already stopped, returning";
         return;
     }
     m_stopped = true;
 
-    qDebug() << "Stopping cameras...";
+    //    qDebug() << "Stopping cameras...";
     if (m_master) m_master->stopGrabbing();
     if (m_slave) m_slave->stopGrabbing();
 
-    qDebug() << "Waiting for threads...";
+    //    qDebug() << "Waiting for threads...";
     QThreadPool::globalInstance()->waitForDone(2000);
 
-    qDebug() << "Deleting master...";
+    //    qDebug() << "Deleting master...";
     if (m_master) {
         delete m_master;
         m_master = nullptr;
     }
-    qDebug() << "Deleting slave...";
+    //    qDebug() << "Deleting slave...";
     if (m_slave) {
         delete m_slave;
         m_slave = nullptr;
     }
-    qDebug() << "CameraManager::stop() finished";
+    //    qDebug() << "CameraManager::stop() finished";
 }
 
 void CameraManager::setSavingPath(const QString path) {

@@ -16,8 +16,12 @@ CpuTemperatureController::CpuTemperatureController(QObject *parent)
     m_tempTimer->start(10000);
 }
 
-CpuTemperatureController::~CpuTemperatureController() {
-    if (m_tempTimer->isActive()) m_tempTimer->stop();
+CpuTemperatureController::~CpuTemperatureController() {}
+
+void CpuTemperatureController::stopTimer() {
+    if (m_tempTimer->isActive()) {
+        m_tempTimer->stop();
+    }
 }
 
 void CpuTemperatureController::getCpuTemperature() {

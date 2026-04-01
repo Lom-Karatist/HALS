@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QStorageInfo>
-#include <QTimer>
 
 /**
  * @brief Класс для периодической проверки подключения USB-накопителей.

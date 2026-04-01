@@ -111,7 +111,7 @@ void GpsDataBase::createDefaultDatabaseIfNotExist() {
 
     file.write(doc.toJson(QJsonDocument::Indented));
     file.close();
-    qDebug() << QString(msgs::kJsonMsgFileCreated) << jsonFilePath;
+    //    qDebug() << QString(msgs::kJsonMsgFileCreated) << jsonFilePath;
 }
 
 QList<GpsDeviceEntry> GpsDataBase::loadDatabase() {
@@ -149,6 +149,7 @@ QList<GpsDeviceEntry> GpsDataBase::loadDatabase() {
         gpsDatabase.append(entry);
     }
 
-    qDebug() << QString(msgs::kJsonMsgDevicesLoaded) << gpsDatabase.size();
+    //    qDebug() << QString(msgs::kJsonMsgDevicesLoaded) <<
+    //    gpsDatabase.size();
     return gpsDatabase;
 }

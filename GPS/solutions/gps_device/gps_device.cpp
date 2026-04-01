@@ -33,16 +33,13 @@ void GPSDevice::attachView(IGpsView *view) {
 
 void GPSDevice::start() {
     if (m_future.isRunning()) return;
-    m_future = QtConcurrent::run([this]() {
-        m_gps_receiver->start();
-    });
+    m_future = QtConcurrent::run([this]() { m_gps_receiver->start(); });
 }
 
 void GPSDevice::start(const QString &portName) {
     if (m_future.isRunning()) return;
-    m_future = QtConcurrent::run([this, portName]() {
-        m_gps_receiver->start(portName);
-    });
+    m_future = QtConcurrent::run(
+        [this, portName]() { m_gps_receiver->start(portName); });
 }
 
 void GPSDevice::start(const QString &portName, QSerialPort::BaudRate baudRate) {
@@ -54,7 +51,7 @@ void GPSDevice::start(const QString &portName, QSerialPort::BaudRate baudRate) {
 
 void GPSDevice::stop() {
     if (!m_future.isRunning()) return;
-    qDebug() << "GPS device received request to be stopped";
+    //    qDebug() << "GPS device received request to be stopped";
     m_gps_receiver->stop();
     m_future.waitForFinished();
 }

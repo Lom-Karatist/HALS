@@ -31,6 +31,15 @@ public:
     explicit CpuTemperatureController(QObject *parent = nullptr);
     ~CpuTemperatureController();
 
+public slots:
+    /**
+     * @brief Остановить таймер опроса температуры.
+     *
+     * Вызывается перед завершением потока, чтобы таймер был остановлен
+     * в том же потоке, где был создан.
+     */
+    void stopTimer();
+
 signals:
     /**
      * @brief Сигнал с текущей температурой процессора.

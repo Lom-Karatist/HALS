@@ -7,25 +7,28 @@ HalsFacade::HalsFacade(QObject *parent) : QObject(parent) {
 }
 
 HalsFacade::~HalsFacade() {
-    qDebug() << "----------------ending facade";
+    //    qDebug() << "----------------ending facade";
 
     m_loggerThread->quit();
     m_loggerThread->wait();
 
-    qDebug() << "----------------logger finish";
-
+    //    qDebug() << "----------------logger finish";
+    if (m_tempController) {
+        QMetaObject::invokeMethod(m_tempController.get(), "stopTimer",
+                                  Qt::BlockingQueuedConnection);
+    }
     m_tempControllerThread->quit();
     m_tempControllerThread->wait();
 
-    qDebug() << "----------------CPU TC finish";
+    //    qDebug() << "----------------CPU TC finish";
 
     if (m_gpsDevice) m_gpsDevice->stop();
 
-    qDebug() << "----------------GPS finish";
+    //    qDebug() << "----------------GPS finish";
 
     stopBaslerCameras();
 
-    qDebug() << "----------------Basler finish";
+    //    qDebug() << "----------------Basler finish";
 }
 
 void HalsFacade::initialize() {
@@ -46,8 +49,6 @@ void HalsFacade::startLogger() {
     m_logger = std::make_unique<Logger>();
     m_logger->moveToThread(m_loggerThread);
 
-    //    connect(m_loggerThread, &QThread::finished, m_logger.get(),
-    //            &QObject::deleteLater);
     connect(this, &HalsFacade::logMessage, m_logger.get(), &Logger::log,
             Qt::QueuedConnection);
     m_loggerThread->start();

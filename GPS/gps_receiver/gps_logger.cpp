@@ -14,7 +14,6 @@ const char kGpsFileLogName[] = "/gps_log.txt";
 void saveGpsDataToFile(const GpsData& data, saveFormat format,
                        const QString& filePath) {
     QFile file(filePath);
-    qDebug()<<"--------------Creating file:"<<filePath;
     if (file.open(QIODevice::Append | QIODevice::Text)) {
         QTextStream out(&file);
         switch (format) {

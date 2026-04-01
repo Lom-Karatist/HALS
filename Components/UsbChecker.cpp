@@ -48,7 +48,6 @@ void UsbChecker::check() {
 #endif
     }
 
-    qDebug() << "in check USB" << found;
     if (found != m_lastMounted ||
         (found && (mountPath != m_lastPath || available != m_lastAvailable ||
                    total != m_lastTotal))) {
