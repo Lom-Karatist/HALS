@@ -46,8 +46,8 @@ void HalsFacade::startLogger() {
     m_logger = std::make_unique<Logger>();
     m_logger->moveToThread(m_loggerThread);
 
-    connect(m_loggerThread, &QThread::finished, m_logger.get(),
-            &QObject::deleteLater);
+    //    connect(m_loggerThread, &QThread::finished, m_logger.get(),
+    //            &QObject::deleteLater);
     connect(this, &HalsFacade::logMessage, m_logger.get(), &Logger::log,
             Qt::QueuedConnection);
     m_loggerThread->start();

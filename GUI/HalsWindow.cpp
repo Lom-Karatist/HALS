@@ -18,8 +18,11 @@ HalsWindow::HalsWindow(QWidget* parent)
 }
 
 HalsWindow::~HalsWindow() {
+    qDebug() << "-------------window destructor";
     delete m_facade;
+    qDebug() << "-------------facade deleted";
     delete ui;
+    qDebug() << "-------------ui deleted";
 }
 
 bool HalsWindow::eventFilter(QObject* watched, QEvent* event) {
