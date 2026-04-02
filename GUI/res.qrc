@@ -28,5 +28,6 @@
         <file>Icons/home.png</file>
         <file>../4Release/HALS.ini</file>
         <file>Icons/control.png</file>
+        <file>style.qss</file>
     </qresource>
 </RCC>
