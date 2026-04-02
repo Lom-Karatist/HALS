@@ -6,6 +6,8 @@
 
 #include "CameraManager.h"
 #include "CpuTemperatureController.h"
+#include "DataSaver.h"
+#include "ExperimentController.h"
 #include "FlightTaskModule.h"
 #include "Logger.h"
 #include "UsbChecker.h"
@@ -25,7 +27,11 @@ public:
 
     void setFlightAltitude(int altitude);
 
+    void setSavingPath(QString savingPath);
     void setSaveFormat(int format);  // 0 - BMP, 1 - Binary
+
+    void startExperiment();
+    void stopExperiment();
 
     // Статусные индикаторы (для GUI)
     bool isLightSensorReady() const;  // заглушка
@@ -54,14 +60,21 @@ private:
     void startLogger();
     void startTempController();
     void startUsbChecker();
+    void initDataSaver();
     bool initCameras();
     bool startGps();
+    void initExperimentController();
     void initFlightTaskModule();
 
     std::unique_ptr<CameraManager> m_cameraManager;
 
     std::unique_ptr<GPSDevice> m_gpsDevice;
     int m_satellitesCount;
+
+    std::unique_ptr<DataSaver> m_dataSaver;
+    QThread *m_saverThread;
+
+    std::unique_ptr<ExperimentController> m_experimentController;
 
     std::unique_ptr<Logger> m_logger;
     QThread *m_loggerThread;

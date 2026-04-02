@@ -355,9 +355,11 @@ void HalsWindow::on_pushButtonStartStop_clicked() {
     if (ui->pushButtonStartStop->isChecked()) {
         ui->pushButtonStartStop->setText("  Остановить");
         ui->pushButtonStartStop->setIcon(QIcon(":/Icons/stop-button.png"));
+        m_facade->startExperiment();
     } else {
         ui->pushButtonStartStop->setText("  Начать эксперимент");
         ui->pushButtonStartStop->setIcon(QIcon(":/Icons/play.png"));
+        m_facade->stopExperiment();
     }
 }
 
@@ -477,6 +479,9 @@ void HalsWindow::initObjects() {
     m_facade->setFlightAltitude(2);
     ui->labelAltitudeValue->setText("2");
 
+    QString savingPath = m_settings->value("Pathes/saving").toString();
+    m_facade->setSavingPath(savingPath);
+
     m_updatingTimer = new QTimer(this);
     connect(m_updatingTimer, &QTimer::timeout, this, &HalsWindow::updateTime);
     m_updatingTimer->start(1000);
@@ -505,7 +510,6 @@ void HalsWindow::setupProject() {
     this->setWindowTitle(m_title);
 
     m_settings = IniFileLoader::createSettingsObject(VER_PRODUCTNAME_STR);
-    QString savingPath = m_settings->value("Pathes/saving").toString();
 
     int hsFovXOffset = m_settings->value("Cameras/hsFovXOffset").toInt();
     int hsFovYOffset = m_settings->value("Cameras/hsFovYOffset").toInt();

@@ -16,6 +16,8 @@ SOURCES += \
     BaseTools/IniFileLoader.cpp \
     BaseTools/QrcFilesRestorer.cpp \
     Components/CpuTemperatureController.cpp \
+    Components/DataSaver.cpp \
+    Components/ExperimentController.cpp \
     Components/FlightTaskModule.cpp \
     Components/HalsFacade.cpp \
     Components/Logger.cpp \
@@ -32,6 +34,8 @@ HEADERS += \
     BaseTools/IniFileLoader.h \
     BaseTools/QrcFilesRestorer.h \
     Components/CpuTemperatureController.h \
+    Components/DataSaver.h \
+    Components/ExperimentController.h \
     Components/FlightTaskModule.h \
     Components/HalsFacade.h \
     Components/Logger.h \

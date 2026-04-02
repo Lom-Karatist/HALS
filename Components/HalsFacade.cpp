@@ -9,16 +9,23 @@ HalsFacade::HalsFacade(QObject *parent) : QObject(parent) {
 HalsFacade::~HalsFacade() {
     //    qDebug() << "----------------ending facade";
 
-    m_loggerThread->quit();
-    m_loggerThread->wait();
+    if (m_loggerThread) {
+        m_loggerThread->quit();
+        m_loggerThread->wait();
+    }
 
     //    qDebug() << "----------------logger finish";
     if (m_tempController) {
         QMetaObject::invokeMethod(m_tempController.get(), "stopTimer",
                                   Qt::BlockingQueuedConnection);
+        m_tempControllerThread->quit();
+        m_tempControllerThread->wait();
     }
-    m_tempControllerThread->quit();
-    m_tempControllerThread->wait();
+
+    if (m_saverThread) {
+        m_saverThread->quit();
+        m_saverThread->wait();
+    }
 
     //    qDebug() << "----------------CPU TC finish";
 
@@ -35,8 +42,10 @@ void HalsFacade::initialize() {
     startLogger();
     startTempController();
     startUsbChecker();
+    initDataSaver();
     initCameras();
     initFlightTaskModule();
+    initExperimentController();
     startGps();
 }
 
@@ -70,6 +79,13 @@ void HalsFacade::startUsbChecker() {
     connect(m_usbChecker.get(), &UsbChecker::usbStatusChanged, this,
             &HalsFacade::usbStatusChanged);
     m_usbChecker->check();
+}
+
+void HalsFacade::initDataSaver() {
+    m_saverThread = new QThread(this);
+    m_dataSaver = std::make_unique<DataSaver>();
+    m_dataSaver->moveToThread(m_saverThread);
+    m_saverThread->start();
 }
 
 bool HalsFacade::initCameras() {
@@ -107,6 +123,20 @@ bool HalsFacade::startGps() {
     }
 }
 
+void HalsFacade::initExperimentController() {
+    m_experimentController = std::make_unique<ExperimentController>(this);
+    m_experimentController->setCameraManager(m_cameraManager.get());
+    m_experimentController->setFlightTaskModule(m_flightTaskModule.get());
+    m_experimentController->setDataSaver(m_dataSaver.get());
+
+    // Загрузить полётное задание из настроек
+    // QString missionPath = ... ;
+    // m_experimentController->loadMission(missionPath);
+
+    // Также можно автоматически запускать мониторинг при старте системы
+    //    m_experimentController->startMonitoring();
+}
+
 void HalsFacade::initFlightTaskModule() {
     m_flightTaskModule = std::make_unique<FlightTaskModule>(
         this, m_cameraManager->ocParams().width,
@@ -135,8 +165,21 @@ void HalsFacade::setFlightAltitude(int altitude) {
     }
 }
 
+void HalsFacade::setSavingPath(QString savingPath) {
+    m_dataSaver->setSavingPath(savingPath);
+    m_cameraManager->setSavingPath(savingPath);
+}
+
 void HalsFacade::setSaveFormat(int format) {
     // saving format is need to be set in camera manager
+}
+
+void HalsFacade::startExperiment() {
+    m_experimentController->forceStartExperiment();
+}
+
+void HalsFacade::stopExperiment() {
+    m_experimentController->forceStopExperiment();
 }
 
 bool HalsFacade::isLightSensorReady() const {
@@ -153,6 +196,9 @@ void HalsFacade::onGpsDataUpdated(const GpsData &gpsData) {
     if (m_satellitesCount != gpsData.satellites) {
         m_satellitesCount = gpsData.satellites;
         emit gpsSatellitesCountUpdated(m_satellitesCount);
+    }
+    if (m_experimentController) {
+        m_experimentController->updateGpsData(gpsData);
     }
 }
 
