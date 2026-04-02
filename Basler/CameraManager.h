@@ -104,6 +104,11 @@ public:
      */
     void setIsImageNeeded(bool newIsImageNeeded);
 
+    /**
+     * @brief Запустить сохранение одного кадра при следующем приеме данных
+     */
+    void makeSingleShootNeeded();
+
 signals:
     /**
      * @brief Сигнал о готовности обеих камер.
@@ -378,6 +383,8 @@ private:
     std::atomic<bool>
         m_isImageNeeded;  //!< Флаг необходимости отправлять изображения
                           //!< в GUI (0 — false, 1 — true)
+    std::atomic<bool>
+        m_isSingleShotNeeded;  //!< Флаг: нужно ли единичное сохранение
     bool m_stopped;  //!< Флаг, что остановка уже выполнена (защита от
                      //!< повторного вызова).
 

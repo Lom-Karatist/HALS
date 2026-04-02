@@ -174,6 +174,8 @@ void HalsFacade::setSaveFormat(int format) {
     // saving format is need to be set in camera manager
 }
 
+void HalsFacade::makeSnapshot() { m_cameraManager->makeSingleShootNeeded(); }
+
 void HalsFacade::startExperiment() {
     m_experimentController->forceStartExperiment();
 }

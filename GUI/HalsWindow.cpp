@@ -487,7 +487,9 @@ void HalsWindow::initObjects() {
     m_updatingTimer->start(1000);
 }
 
-void HalsWindow::on_pushButtonMakeSnapshot_clicked() {}
+void HalsWindow::on_pushButtonMakeSnapshot_clicked() {
+    m_facade->makeSnapshot();
+}
 
 void HalsWindow::setSpectrometerFovRect(const QRect& rect) {
     if (m_hsFovRect != rect) {

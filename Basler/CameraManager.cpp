@@ -15,6 +15,7 @@ CameraManager::CameraManager(QObject *parent, bool isMasterSlaveNeeded)
       m_connectedCount(0),
       m_ready(false),
       m_isImageNeeded(false),
+      m_isSingleShotNeeded(false),
       m_stopped(false),
       m_isNeedToSaveHS(true),
       m_isNeedToSaveOC(true) {
@@ -166,9 +167,18 @@ void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
 
     emit masterRawData(data, w, h, pixelFormat);
 
-    if (m_savingModule.isNeedToSave() && m_isNeedToSaveHS) {
+    if ((m_savingModule.isNeedToSave() || m_isSingleShotNeeded) &&
+        m_isNeedToSaveHS) {
+        int masterExpoMs = ceil(m_hsParams.exposureTime);
+        m_frameTimeStamp = QDateTime::currentDateTime()
+                               .addMSecs(-masterExpoMs)
+                               .toString("yyyyMMdd_HHmmss_zzz");
         m_savingModule.saveDataAsync(data, w, h, pixelFormat, "/master",
                                      m_frameTimeStamp);
+        if (m_isSingleShotNeeded) {
+            m_isNeedToSaveHS = false;
+            if (!m_isNeedToSaveOC) m_isSingleShotNeeded = false;
+        }
     }
 }
 
@@ -183,12 +193,13 @@ void CameraManager::onSlaveRawData(const QByteArray &data, int w, int h,
         }
     }
 
-    if (m_savingModule.isNeedToSave()) {
-        m_frameTimeStamp =
-            QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss_zzz");
-        if (m_savingModule.isNeedToSave() && m_isNeedToSaveOC) {
-            m_savingModule.saveDataAsync(data, w, h, pixelFormat, "/slave",
-                                         m_frameTimeStamp);
+    if ((m_savingModule.isNeedToSave() || m_isSingleShotNeeded) &&
+        m_isNeedToSaveOC) {
+        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "/slave",
+                                     m_frameTimeStamp);
+        if (m_isSingleShotNeeded) {
+            m_isNeedToSaveOC = false;
+            if (!m_isNeedToSaveHS) m_isSingleShotNeeded = false;
         }
     }
 }
@@ -518,6 +529,13 @@ int CameraManager::findMaxBrightness(const QByteArray &data, int w, int h,
 
 void CameraManager::setIsImageNeeded(bool newIsImageNeeded) {
     m_isImageNeeded = newIsImageNeeded;
+}
+
+void CameraManager::makeSingleShootNeeded() {
+    //    qDebug() << "single shot";
+    m_isSingleShotNeeded.store(true);
+    m_isNeedToSaveHS = true;
+    m_isNeedToSaveOC = true;
 }
 
 void CameraManager::setIsNeedToSave(bool newIsNeedToSave, bool isNeedToSaveHS,

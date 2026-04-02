@@ -30,6 +30,7 @@ public:
     void setSavingPath(QString savingPath);
     void setSaveFormat(int format);  // 0 - BMP, 1 - Binary
 
+    void makeSnapshot();
     void startExperiment();
     void stopExperiment();
 
