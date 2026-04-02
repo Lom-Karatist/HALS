@@ -123,3 +123,7 @@ void ParameterModificator::applyButtonStyle(QPushButton *btn,
                            .arg(pressedColor.green())
                            .arg(pressedColor.blue()));
 }
+
+void ParameterModificator::on_spinBoxValue_editingFinished() {
+    emit valueChanged(ui->spinBoxValue->value());
+}

@@ -23,6 +23,8 @@ public:
     void stopBaslerCameras();
     void setVideoStreamEnabled(bool enabled);
 
+    void setFlightAltitude(int altitude);
+
     void setSaveFormat(int format);  // 0 - BMP, 1 - Binary
 
     // Статусные индикаторы (для GUI)

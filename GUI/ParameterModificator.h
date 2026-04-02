@@ -135,6 +135,8 @@ private slots:
      */
     void on_spinBoxValue_valueChanged(int value);
 
+    void on_spinBoxValue_editingFinished();
+
 private:
     /**
      * @brief Обновить тексты кнопок в соответствии с шагами.

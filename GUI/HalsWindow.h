@@ -53,6 +53,11 @@ private slots:
 
     void on_pushButtonChoosePreset_clicked();
 
+    void onHsParameterChanged(const QString &paramName, int value);
+    void onOcParameterChanged(const QString &paramName, int value);
+    void onLightParameterChanged(const QString &paramName, int value);
+    void onExperimentParameterChanged(const QString &paramName, int value);
+
 private:
     /**
      * @brief Общая настройка проекта.

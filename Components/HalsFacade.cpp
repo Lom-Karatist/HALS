@@ -115,7 +115,6 @@ void HalsFacade::initFlightTaskModule() {
             this, &HalsFacade::ocCharsWereUpdated, Qt::QueuedConnection);
     connect(m_flightTaskModule.get(), &FlightTaskModule::hsCharsWereUpdated,
             this, &HalsFacade::hsCharsWereUpdated, Qt::QueuedConnection);
-    m_flightTaskModule->setAltitude(2);
 }
 
 void HalsFacade::stopBaslerCameras() {
@@ -127,6 +126,12 @@ void HalsFacade::stopBaslerCameras() {
 void HalsFacade::setVideoStreamEnabled(bool enabled) {
     if (m_cameraManager) {
         m_cameraManager->setIsImageNeeded(enabled);
+    }
+}
+
+void HalsFacade::setFlightAltitude(int altitude) {
+    if (m_flightTaskModule) {
+        m_flightTaskModule->setAltitude(altitude);
     }
 }
 

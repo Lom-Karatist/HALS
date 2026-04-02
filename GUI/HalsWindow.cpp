@@ -131,6 +131,15 @@ void HalsWindow::initSettingsForms() {
                                              2, 1, 10, 100);
     ui->widgetExperimentParams->addParameter("Высота начала записи", "м", 2,
                                              1000, 50, 1, 10, 100);
+
+    connect(ui->widgetHsParams, &DeviceParametersForm::parameterChanged, this,
+            &HalsWindow::onHsParameterChanged);
+    connect(ui->widgetOcParams, &DeviceParametersForm::parameterChanged, this,
+            &HalsWindow::onOcParameterChanged);
+    connect(ui->widgetBrightnessParams, &DeviceParametersForm::parameterChanged,
+            this, &HalsWindow::onLightParameterChanged);
+    connect(ui->widgetExperimentParams, &DeviceParametersForm::parameterChanged,
+            this, &HalsWindow::onExperimentParameterChanged);
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -279,6 +288,16 @@ void HalsWindow::applyStyleSheet() {
             background-color: #3f3f46;
             max-height: 2px;
             border: none;
+        }
+
+        QLabel#labelAltitudeValue {
+            color: #fe9a00;
+            font-family: "LCDMono", "Courier New", monospace;
+            font-size: 20pt;
+            qproperty-alignment: AlignCenter;
+        }
+        QLabel#labelTextAltitude {
+            color: #fe9a00;
         }
     )";
     qApp->setStyleSheet(styleSheet);
@@ -455,6 +474,9 @@ void HalsWindow::initObjects() {
     m_facade->setVideoStreamEnabled(false);
     m_facade->initialize();
 
+    m_facade->setFlightAltitude(2);
+    ui->labelAltitudeValue->setText("2");
+
     m_updatingTimer = new QTimer(this);
     connect(m_updatingTimer, &QTimer::timeout, this, &HalsWindow::updateTime);
     m_updatingTimer->start(1000);
@@ -493,3 +515,37 @@ void HalsWindow::setupProject() {
 }
 
 void HalsWindow::on_pushButtonChoosePreset_clicked() {}
+
+void HalsWindow::onHsParameterChanged(const QString& paramName, int value) {
+    //    if (paramName == "Экспозиция") {
+    //        m_facade->setHsExposure(value);
+    //    } else if (paramName == "Частота регистрации") {
+    //        m_facade->setHsFrameRate(value);
+    //    }
+}
+
+void HalsWindow::onOcParameterChanged(const QString& paramName, int value) {
+    //    if (paramName == "Экспозиция") {
+    //        m_facade->setHsExposure(value);
+    //    } else if (paramName == "Частота регистрации") {
+    //        m_facade->setHsFrameRate(value);
+    //    }
+}
+
+void HalsWindow::onLightParameterChanged(const QString& paramName, int value) {
+    //    if (paramName == "Экспозиция") {
+    //        m_facade->setHsExposure(value);
+    //    } else if (paramName == "Частота регистрации") {
+    //        m_facade->setHsFrameRate(value);
+    //    }
+}
+
+void HalsWindow::onExperimentParameterChanged(const QString& paramName,
+                                              int value) {
+    if (paramName == "Высота измерений") {
+        m_facade->setFlightAltitude(value);
+        ui->labelAltitudeValue->setText(QString::number(value));
+    } else if (paramName == "Высота начала записи") {
+        // m_facade->setRecordingStartAltitude(value);
+    }
+}
