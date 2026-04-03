@@ -374,7 +374,6 @@ void HalsWindow::setupProject() {
 void HalsWindow::on_pushButtonChoosePreset_clicked() {}
 
 void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
-    qDebug() << "in force parameter changing" << value;
     DeviceParametersForm* form = nullptr;
     switch (type) {
         case ParameterType::HS_EXPOSURE:

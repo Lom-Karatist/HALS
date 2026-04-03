@@ -43,7 +43,9 @@ void DeviceParametersForm::addParameter(const ParameterInfo &info) {
 
 void DeviceParametersForm::setParameterValue(ParameterType type, int value) {
     if (m_paramMap.contains(type)) {
+        m_paramMap[type]->blockSignals(true);
         m_paramMap[type]->setValue(value);
+        m_paramMap[type]->blockSignals(false);
     }
 }
 
