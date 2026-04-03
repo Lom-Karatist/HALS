@@ -47,6 +47,7 @@ void HalsFacade::initialize() {
     initFlightTaskModule();
     initExperimentController();
     startGps();
+    initLightSensor();
 }
 
 void HalsFacade::refreshUsbState() {
@@ -143,6 +144,7 @@ void HalsFacade::initExperimentController() {
     m_experimentController->setCameraManager(m_cameraManager.get());
     m_experimentController->setFlightTaskModule(m_flightTaskModule.get());
     m_experimentController->setDataSaver(m_dataSaver.get());
+    m_experimentController->setLightSensor(m_lightSensorManager.get());
 
     // Загрузить полётное задание из настроек
     // QString missionPath = ... ;
@@ -168,6 +170,19 @@ void HalsFacade::initFlightTaskModule() {
     m_flightTaskModule->updateChars();
 }
 
+void HalsFacade::initLightSensor() {
+    m_lightSensorManager = std::make_unique<LightSensorManager>(this);
+    qRegisterMetaType<LightSensorData>();
+    qRegisterMetaType<LightSensorParameters>();
+    connect(m_lightSensorManager.get(), &LightSensorManager::dataReady, this,
+            &HalsFacade::onLightDataReady);
+    connect(m_lightSensorManager.get(), &LightSensorManager::settingsChanged,
+            this, &HalsFacade::onLightForceParameterChanging);
+    connect(m_lightSensorManager.get(), &LightSensorManager::errorOccurred,
+            this, &HalsFacade::cameraError);
+    m_lightSensorManager->initialize();
+}
+
 void HalsFacade::stopBaslerCameras() {
     if (m_cameraManager) {
         m_cameraManager->stop();
@@ -189,6 +204,7 @@ void HalsFacade::setFlightAltitude(int altitude) {
 void HalsFacade::setSavingPath(QString savingPath) {
     m_dataSaver->setSavingPath(savingPath);
     m_cameraManager->setSavingPath(savingPath);
+    m_lightSensorManager->setSavingPath(savingPath);
 }
 
 void HalsFacade::setSaveFormat(int format) {
@@ -240,10 +256,12 @@ void HalsFacade::onParameterChanged(ParameterType type, int newValue) {
                     newValue);
             break;
         case ParameterType::LIGHT_EXPOSURE:
-            // вызов модуля датчика освещённости (пока заглушка)
+            if (m_lightSensorManager)
+                m_lightSensorManager->setIntegrationTimeMs(newValue);
             break;
         case ParameterType::LIGHT_FRAMERATE:
-            // заглушка
+            if (m_lightSensorManager)
+                m_lightSensorManager->setFrameRateHz(newValue);
             break;
         case ParameterType::EXP_ALTITUDE:
             setFlightAltitude(newValue);
@@ -301,4 +319,15 @@ void HalsFacade::onCameraForceParameterChanging(
             return;
     }
     emit parameterValueChanged(type, value.toInt());
+}
+
+void HalsFacade::onLightForceParameterChanging(
+    const LightSensorParameters &params) {
+    emit parameterValueChanged(ParameterType::LIGHT_EXPOSURE,
+                               params.exposureMs);
+    emit parameterValueChanged(ParameterType::LIGHT_FRAMERATE, params.fps);
+}
+
+void HalsFacade::onLightDataReady(const LightSensorData &data) {
+    // data ready slot
 }

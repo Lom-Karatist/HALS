@@ -62,28 +62,29 @@ void HalsWindow::on_pushButtonQuit_clicked() {
 
 void HalsWindow::setupGui() {
     setWindowFlags(Qt::FramelessWindowHint);
-    ui->labelLogo->setPixmap(QPixmap(":/Icons/hals_image.png"));
-    ui->labelGps->setPixmap(QPixmap(":/Icons/satellite.png"));
+    ui->labelLogo->setPixmap(QPixmap(":/Hals/Icons/hals_image.png"));
+    ui->labelGps->setPixmap(QPixmap(":/Hals/Icons/satellite.png"));
     applyStyleSheet();
 
-    ui->pushButtonUpdateConfiguration->setIcon(QIcon(":/Icons/refresh.png"));
+    ui->pushButtonUpdateConfiguration->setIcon(
+        QIcon(":/Hals/Icons/refresh.png"));
     ui->pushButtonUpdateConfiguration->setIconSize(QSize(24, 24));
 
-    ui->pushButtonSettings->setIcon(QIcon(":/Icons/setting.png"));
+    ui->pushButtonSettings->setIcon(QIcon(":/Hals/Icons/setting.png"));
     ui->pushButtonSettings->setIconSize(QSize(24, 24));
 
-    ui->pushButtonStartStop->setIcon(QIcon(":/Icons/play.png"));
+    ui->pushButtonStartStop->setIcon(QIcon(":/Hals/Icons/play.png"));
     ui->pushButtonStartStop->setIconSize(QSize(24, 24));
 
-    ui->pushButtonToMainPage->setIcon(QIcon(":/Icons/home.png"));
+    ui->pushButtonToMainPage->setIcon(QIcon(":/Hals/Icons/home.png"));
     ui->pushButtonToMainPage->setIconSize(QSize(24, 24));
-    ui->pushButtonToMainPage_2->setIcon(QIcon(":/Icons/home.png"));
+    ui->pushButtonToMainPage_2->setIcon(QIcon(":/Hals/Icons/home.png"));
     ui->pushButtonToMainPage_2->setIconSize(QSize(24, 24));
 
-    ui->pushButtonMakeSnapshot->setIcon(QIcon(":/Icons/save.png"));
+    ui->pushButtonMakeSnapshot->setIcon(QIcon(":/Hals/Icons/save.png"));
     ui->pushButtonMakeSnapshot->setIconSize(QSize(24, 24));
 
-    ui->pushButtonChoosePreset->setIcon(QIcon(":/Icons/control.png"));
+    ui->pushButtonChoosePreset->setIcon(QIcon(":/Hals/Icons/control.png"));
     ui->pushButtonChoosePreset->setIconSize(QSize(24, 24));
 
     QList<QPushButton*> buttons = findChildren<QPushButton*>();
@@ -142,7 +143,7 @@ void HalsWindow::setupSettingBox(DeviceParametersForm* form, QString deviceName,
 }
 
 void HalsWindow::applyStyleSheet() {
-    QFile file(":/style.qss");
+    QFile file(":/Hals/style.qss");
     if (file.open(QFile::ReadOnly)) {
         QString styleSheet = QLatin1String(file.readAll());
         qApp->setStyleSheet(styleSheet);
@@ -152,23 +153,23 @@ void HalsWindow::applyStyleSheet() {
 }
 
 void HalsWindow::addStatusIndicators() {
-    m_usbIndicator = new StatusIndicator(this, ":/Icons/flash-drive");
+    m_usbIndicator = new StatusIndicator(this, ":/Hals/Icons/flash-drive");
     m_usbIndicator->setLabelText("Флеш-накопитель");
 
-    m_hsIndicator = new StatusIndicator(this, ":/Icons/focus");
+    m_hsIndicator = new StatusIndicator(this, ":/Hals/Icons/focus");
     connect(m_hsIndicator, &StatusIndicator::clicked, this,
             [this]() { makePageSwitch(ui->mainPage, ui->cameraPage); });
     m_hsIndicator->setLabelText("Сенсор ГС");
 
-    m_ocIndicator = new StatusIndicator(this, ":/Icons/camera");
+    m_ocIndicator = new StatusIndicator(this, ":/Hals/Icons/camera");
     connect(m_ocIndicator, &StatusIndicator::clicked, this,
             [this]() { makePageSwitch(ui->mainPage, ui->cameraPage); });
     m_ocIndicator->setLabelText("Обзорная камера");
 
-    m_sunIndicator = new StatusIndicator(this, ":/Icons/sun");
+    m_sunIndicator = new StatusIndicator(this, ":/Hals/Icons/sun");
     m_sunIndicator->setLabelText("Сенсор освещенности");
 
-    m_missionIndicator = new StatusIndicator(this, ":/Icons/checklist");
+    m_missionIndicator = new StatusIndicator(this, ":/Hals/Icons/checklist");
     m_missionIndicator->setLabelText("Полётное задание");
 
     ui->centerHLayout->addWidget(m_usbIndicator);
@@ -177,10 +178,7 @@ void HalsWindow::addStatusIndicators() {
     ui->centerHLayout->addWidget(m_ocIndicator);
     ui->centerHLayout->addWidget(m_missionIndicator);
 
-    //    sunIndicator->setState(StatusIndicator::State::Inactive);
     //    missionIndicator->setState(StatusIndicator::State::Active);
-
-    //    sunIndicator->setValueText("Не активен");
     //    missionIndicator->setValueText("Загружено");
 }
 
@@ -202,11 +200,11 @@ void HalsWindow::on_pushButtonUpdateConfiguration_clicked() {
 void HalsWindow::on_pushButtonStartStop_clicked() {
     if (ui->pushButtonStartStop->isChecked()) {
         ui->pushButtonStartStop->setText("  Остановить");
-        ui->pushButtonStartStop->setIcon(QIcon(":/Icons/stop-button.png"));
+        ui->pushButtonStartStop->setIcon(QIcon(":/Hals/Icons/stop-button.png"));
         m_facade->startExperiment();
     } else {
         ui->pushButtonStartStop->setText("  Начать эксперимент");
-        ui->pushButtonStartStop->setIcon(QIcon(":/Icons/play.png"));
+        ui->pushButtonStartStop->setIcon(QIcon(":/Hals/Icons/play.png"));
         m_facade->stopExperiment();
     }
 }
@@ -374,6 +372,7 @@ void HalsWindow::setupProject() {
 void HalsWindow::on_pushButtonChoosePreset_clicked() {}
 
 void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
+    qDebug() << "force changing" << value;
     DeviceParametersForm* form = nullptr;
     switch (type) {
         case ParameterType::HS_EXPOSURE:

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/LightSensor">
+        <file>4Release/LS.ini</file>
+    </qresource>
+</RCC>

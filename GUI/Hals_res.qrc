@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="/Hals">
         <file>Icons/hals_128.png</file>
         <file>Icons/satellite.png</file>
         <file>Icons/power.png</file>

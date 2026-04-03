@@ -7,6 +7,7 @@ RC_FILE = recource.rc
 
 include(Basler/Basler.pri)
 include(GPS/solutions/gps_device/gps_device.pri)
+include(LightSensor/LightSensor.pri)
 
 win32 {
     LIBS += -lwbemuuid
@@ -62,4 +63,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    GUI/res.qrc
+    GUI/Hals_res.qrc

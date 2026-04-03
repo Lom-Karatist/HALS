@@ -8,6 +8,7 @@
 #include "Basler/CameraManager.h"
 #include "DataSaver.h"
 #include "FlightTaskModule.h"
+#include "LightSensor/LightSensorManager.h"
 #include "gps_device.h"
 
 /**
@@ -23,6 +24,7 @@ public:
     void setCameraManager(CameraManager *manager);
     void setFlightTaskModule(FlightTaskModule *module);
     void setDataSaver(DataSaver *saver);
+    void setLightSensor(LightSensorManager *sensor);
 
     // Загрузка полётного задания из файла JSON
     bool loadMission(const QString &filePath);
@@ -57,6 +59,7 @@ private:
     CameraManager *m_cameraManager;
     FlightTaskModule *m_flightTaskModule;
     DataSaver *m_dataSaver;
+    LightSensorManager *m_lightSensor;
 
     // Состояние эксперимента
     bool m_experimentActive;  // флаг, что эксперимент запущен (идёт запись)

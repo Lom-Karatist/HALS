@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="/Basler">
         <file>4Release/Basler.Pylon.dll</file>
         <file>4Release/HS.ini</file>
         <file>4Release/OC.ini</file>

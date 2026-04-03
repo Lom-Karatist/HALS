@@ -9,6 +9,7 @@
 #include "DataSaver.h"
 #include "ExperimentController.h"
 #include "FlightTaskModule.h"
+#include "LightSensor/LightSensorManager.h"
 #include "Logger.h"
 #include "ParameterTypes.h"
 #include "UsbChecker.h"
@@ -65,6 +66,8 @@ private slots:
     void onCameraForceParameterChanging(
         bool isMaster, BaslerConstants::SettingTypes settingType,
         QVariant value);
+    void onLightForceParameterChanging(const LightSensorParameters &params);
+    void onLightDataReady(const LightSensorData &data);
 
 private:
     void startLogger();
@@ -75,6 +78,7 @@ private:
     bool startGps();
     void initExperimentController();
     void initFlightTaskModule();
+    void initLightSensor();
 
     std::unique_ptr<CameraManager> m_cameraManager;
 
@@ -95,6 +99,8 @@ private:
     std::unique_ptr<UsbChecker> m_usbChecker;
 
     std::unique_ptr<FlightTaskModule> m_flightTaskModule;
+
+    std::unique_ptr<LightSensorManager> m_lightSensorManager;
 };
 
 #endif  // HALSFACADE_H

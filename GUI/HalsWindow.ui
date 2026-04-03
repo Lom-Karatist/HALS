@@ -233,7 +233,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="settingsPage">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -448,12 +448,12 @@
               <string notr="true">#pushButtonQuit{
 		   background-color: transparent;
             border: none;
-            background-image: url(:/Icons/power.png);
+            background-image: url(:/Hals/Icons/power.png);
             background-repeat: no-repeat;
             background-position: center;
 }
 #pushButtonQuit:pressed{	
-	border-image: url(:/Icons/power_pressed.png);
+	border-image: url(:/Hals/Icons/power_pressed.png);
 	
 }
 </string>

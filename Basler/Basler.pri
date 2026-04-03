@@ -60,4 +60,4 @@ HEADERS += \
     $$PWD/ImageFormatConverter.h
 
 RESOURCES += \
-    $$PWD/restoring.qrc
+    $$PWD/Basler_res.qrc

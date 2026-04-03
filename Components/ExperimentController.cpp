@@ -34,6 +34,10 @@ void ExperimentController::setDataSaver(DataSaver *saver) {
     m_dataSaver = saver;
 }
 
+void ExperimentController::setLightSensor(LightSensorManager *sensor) {
+    m_lightSensor = sensor;
+}
+
 bool ExperimentController::loadMission(const QString &filePath) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
