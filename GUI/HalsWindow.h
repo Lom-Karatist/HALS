@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "Components/HalsFacade.h"
+#include "DeviceParametersForm.h"
 #include "OverlayLabel.h"
 #include "StatusIndicator.h"
 
@@ -67,6 +68,9 @@ private:
     void initObjects();
     void setupGui();
     void initSettingsForms();
+    void setupSettingBox(DeviceParametersForm *form, QString deviceName,
+                         ParameterInfo firstParameterInfo,
+                         ParameterInfo secondParameterInfo);
     void applyStyleSheet();
 
     void addStatusIndicators();

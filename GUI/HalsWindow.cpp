@@ -108,29 +108,21 @@ void HalsWindow::setupGui() {
 }
 
 void HalsWindow::initSettingsForms() {
-    ui->widgetHsParams->setDeviceName("Сенсор ГС      ");
-    ui->widgetHsParams->addParameter("Экспозиция", "мс", 1, 2000, 50, 5, 50,
-                                     100);
-    ui->widgetHsParams->addParameter("Частота регистрации", "кадров/с", 1, 60,
-                                     20, 1, 5, 10);
+    setupSettingBox(ui->widgetHsParams, "Сенсор ГС      ",
+                    {"Экспозиция", "мс", 1, 2000, 50, 5, 50, 100},
+                    {"Частота регистрации", "кадров/с", 1, 60, 20, 1, 5, 10});
 
-    ui->widgetOcParams->setDeviceName("Обзорная камера      ");
-    ui->widgetOcParams->addParameter("Экспозиция", "мс", 0, 1000, 10, 1, 10,
-                                     50);
-    ui->widgetOcParams->addParameter("Частота регистрации", "кадров/с", 1, 60,
-                                     30, 1, 5, 10);
+    setupSettingBox(ui->widgetOcParams, "Обзорная камера      ",
+                    {"Экспозиция", "мс", 0, 1000, 10, 1, 10, 50},
+                    {"Частота регистрации", "кадров/с", 1, 60, 30, 1, 5, 10});
 
-    ui->widgetBrightnessParams->setDeviceName("Сенсор освещенности      ");
-    ui->widgetBrightnessParams->addParameter("Экспозиция", "мс", 1, 1000, 100,
-                                             1, 10, 100);
-    ui->widgetBrightnessParams->addParameter("Частота регистрации", "кадров/с",
-                                             1, 60, 1, 1, 5, 10);
+    setupSettingBox(ui->widgetBrightnessParams, "Сенсор освещенности      ",
+                    {"Экспозиция", "мс", 1, 1000, 100, 1, 10, 100},
+                    {"Частота регистрации", "кадров/с", 1, 60, 1, 1, 5, 10});
 
-    ui->widgetExperimentParams->setDeviceName("Эксперимент      ");
-    ui->widgetExperimentParams->addParameter("Высота измерений", "м", 2, 1000,
-                                             2, 1, 10, 100);
-    ui->widgetExperimentParams->addParameter("Высота начала записи", "м", 2,
-                                             1000, 50, 1, 10, 100);
+    setupSettingBox(ui->widgetExperimentParams, "Эксперимент      ",
+                    {"Высота измерений", "м", 2, 1000, 2, 1, 10, 100},
+                    {"Высота начала записи", "м", 2, 1000, 50, 1, 10, 100});
 
     connect(ui->widgetHsParams, &DeviceParametersForm::parameterChanged, this,
             &HalsWindow::onHsParameterChanged);
@@ -140,6 +132,14 @@ void HalsWindow::initSettingsForms() {
             this, &HalsWindow::onLightParameterChanged);
     connect(ui->widgetExperimentParams, &DeviceParametersForm::parameterChanged,
             this, &HalsWindow::onExperimentParameterChanged);
+}
+
+void HalsWindow::setupSettingBox(DeviceParametersForm* form, QString deviceName,
+                                 ParameterInfo firstParameterInfo,
+                                 ParameterInfo secondParameterInfo) {
+    form->setDeviceName(deviceName);
+    form->addParameter(firstParameterInfo);
+    form->addParameter(secondParameterInfo);
 }
 
 void HalsWindow::applyStyleSheet() {

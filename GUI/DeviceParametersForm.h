@@ -6,6 +6,57 @@
 
 #include "ParameterModificator.h"
 
+/**
+ * @brief Структура для хранения всех параметров, необходимых для создания
+ * виджета ParameterModificator.
+ *
+ * Позволяет компактно передавать в метод addParameter полный набор настроек:
+ * - имя и единицу измерения;
+ * - диапазон допустимых значений;
+ * - начальное значение;
+ * - три шага изменения (малый, средний, большой).
+ *
+ * Использование этой структуры упрощает добавление параметров из
+ * конфигурационных файлов, массивов или при массовом создании виджетов.
+ */
+struct ParameterInfo {
+    QString name;  //!< Отображаемое имя параметра.
+    QString unit;  //!< Единица измерения (например, "мс", "fps").
+    int minVal;  //!< Минимальное допустимое значение.
+    int maxVal;  //!< Максимальное допустимое значение.
+    int initialValue;  //!< Начальное значение.
+    int step1;         //!< Первый шаг изменения (малый).
+    int step2;  //!< Второй шаг изменения (средний).
+    int step3;  //!< Третий шаг изменения (большой).
+
+    /**
+     * @brief Конструктор для удобного создания структуры.
+     * @param name_ Имя параметра.
+     * @param unit_ Единица измерения.
+     * @param min_ Минимум.
+     * @param max_ Максимум.
+     * @param initialValue_ Начальное значение.
+     * @param step1_ Малый шаг.
+     * @param step2_ Средний шаг.
+     * @param step3_ Большой шаг.
+     *
+     * Все параметры имеют значения по умолчанию, что позволяет создавать
+     * структуру с частичной инициализацией.
+     */
+    ParameterInfo(const QString &name_ = QString(),
+                  const QString &unit_ = QString(), int min_ = 0,
+                  int max_ = 100, int initialValue_ = 0, int step1_ = 1,
+                  int step2_ = 10, int step3_ = 100)
+        : name(name_),
+          unit(unit_),
+          minVal(min_),
+          maxVal(max_),
+          initialValue(initialValue_),
+          step1(step1_),
+          step2(step2_),
+          step3(step3_) {}
+};
+
 namespace Ui {
 class DeviceParametersForm;
 }
@@ -58,6 +109,25 @@ public:
     void addParameter(const QString &name, const QString &unit, int min,
                       int max, int initialValue, int step1 = 1, int step2 = 10,
                       int step3 = 100);
+
+    /**
+     * @brief Добавить параметр в форму, используя структуру ParameterInfo.
+     * @param info Структура, содержащая все параметры настройки.
+     *
+     * Перегруженная версия метода addParameter, принимающая структуру
+     * ParameterInfo. Позволяет вызывать добавление параметра более компактно,
+     * особенно при работе со списками или конфигурационными данными.
+     *
+     * Пример использования:
+     * @code
+     * ParameterInfo expInfo("Экспозиция", "мс", 1, 2000, 50, 5, 50, 100);
+     * deviceForm->addParameter(expInfo);
+     *
+     * // Или с использованием конструктора прямо в вызове:
+     * deviceForm->addParameter({"Частота", "Гц", 1, 100, 30, 1, 10, 20});
+     * @endcode
+     */
+    void addParameter(const ParameterInfo &info);
 
 signals:
     /**

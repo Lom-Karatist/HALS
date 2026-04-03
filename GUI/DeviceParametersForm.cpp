@@ -36,6 +36,11 @@ void DeviceParametersForm::addParameter(const QString &name,
             &DeviceParametersForm::onParameterValueChanged);
 }
 
+void DeviceParametersForm::addParameter(const ParameterInfo &info) {
+    addParameter(info.name, info.unit, info.minVal, info.maxVal,
+                 info.initialValue, info.step1, info.step2, info.step3);
+}
+
 void DeviceParametersForm::onParameterValueChanged(int value) {
     ParameterModificator *param =
         qobject_cast<ParameterModificator *>(sender());
