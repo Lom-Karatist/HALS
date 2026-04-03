@@ -39,6 +39,7 @@ HEADERS += \
     Components/FlightTaskModule.h \
     Components/HalsFacade.h \
     Components/Logger.h \
+    Components/ParameterTypes.h \
     Components/UsbChecker.h \
     GUI/DeviceParametersForm.h \
     GUI/HalsWindow.h \

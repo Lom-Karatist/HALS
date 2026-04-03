@@ -103,35 +103,32 @@ void HalsWindow::setupGui() {
 
     if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
         overlay->setOverlayRect(m_hsFovRect);
-
-    initSettingsForms();
 }
 
 void HalsWindow::initSettingsForms() {
     setupSettingBox(ui->widgetHsParams, "Сенсор ГС      ",
-                    {"Экспозиция", "мс", 1, 2000, 50, 5, 50, 100},
-                    {"Частота регистрации", "кадров/с", 1, 60, 20, 1, 5, 10});
+                    {ParameterType::HS_EXPOSURE, "Экспозиция", "мс", 1, 2000,
+                     50, 5, 50, 100},
+                    {ParameterType::HS_FRAMERATE, "Частота регистрации",
+                     "кадров/с", 1, 60, 20, 1, 5, 10});
 
     setupSettingBox(ui->widgetOcParams, "Обзорная камера      ",
-                    {"Экспозиция", "мс", 0, 1000, 10, 1, 10, 50},
-                    {"Частота регистрации", "кадров/с", 1, 60, 30, 1, 5, 10});
+                    {ParameterType::OC_EXPOSURE, "Экспозиция", "мс", 0, 1000,
+                     10, 1, 10, 50},
+                    {ParameterType::OC_FRAMERATE, "Частота регистрации",
+                     "кадров/с", 1, 60, 30, 1, 5, 10});
 
     setupSettingBox(ui->widgetBrightnessParams, "Сенсор освещенности      ",
-                    {"Экспозиция", "мс", 1, 1000, 100, 1, 10, 100},
-                    {"Частота регистрации", "кадров/с", 1, 60, 1, 1, 5, 10});
+                    {ParameterType::LIGHT_EXPOSURE, "Экспозиция", "мс", 1, 1000,
+                     100, 1, 10, 100},
+                    {ParameterType::LIGHT_FRAMERATE, "Частота регистрации",
+                     "кадров/с", 1, 60, 1, 1, 5, 10});
 
     setupSettingBox(ui->widgetExperimentParams, "Эксперимент      ",
-                    {"Высота измерений", "м", 2, 1000, 2, 1, 10, 100},
-                    {"Высота начала записи", "м", 2, 1000, 50, 1, 10, 100});
-
-    connect(ui->widgetHsParams, &DeviceParametersForm::parameterChanged, this,
-            &HalsWindow::onHsParameterChanged);
-    connect(ui->widgetOcParams, &DeviceParametersForm::parameterChanged, this,
-            &HalsWindow::onOcParameterChanged);
-    connect(ui->widgetBrightnessParams, &DeviceParametersForm::parameterChanged,
-            this, &HalsWindow::onLightParameterChanged);
-    connect(ui->widgetExperimentParams, &DeviceParametersForm::parameterChanged,
-            this, &HalsWindow::onExperimentParameterChanged);
+                    {ParameterType::EXP_ALTITUDE, "Высота измерений", "м", 2,
+                     1000, 2, 1, 10, 100},
+                    {ParameterType::EXP_RECORD_START_ALTITUDE,
+                     "Высота начала записи", "м", 2, 1000, 50, 1, 10, 100});
 }
 
 void HalsWindow::setupSettingBox(DeviceParametersForm* form, QString deviceName,
@@ -140,6 +137,8 @@ void HalsWindow::setupSettingBox(DeviceParametersForm* form, QString deviceName,
     form->setDeviceName(deviceName);
     form->addParameter(firstParameterInfo);
     form->addParameter(secondParameterInfo);
+    connect(form, &DeviceParametersForm::parameterChanged, m_facade,
+            &HalsFacade::onParameterChanged);
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -322,11 +321,14 @@ void HalsWindow::initObjects() {
             &HalsWindow::updateOcChars);
     connect(m_facade, &HalsFacade::hsCharsWereUpdated, this,
             &HalsWindow::updateHsChars);
+    connect(m_facade, &HalsFacade::altitudeWasUpdated, this, [this](int value) {
+        ui->labelAltitudeValue->setText(QString::number(value));
+    });
+    connect(m_facade, &HalsFacade::parameterValueChanged, this,
+            &HalsWindow::onForceParameterChanging);
+    initSettingsForms();
     m_facade->setVideoStreamEnabled(false);
     m_facade->initialize();
-
-    m_facade->setFlightAltitude(2);
-    ui->labelAltitudeValue->setText("2");
 
     QString savingPath = m_settings->value("Pathes/saving").toString();
     m_facade->setSavingPath(savingPath);
@@ -371,36 +373,32 @@ void HalsWindow::setupProject() {
 
 void HalsWindow::on_pushButtonChoosePreset_clicked() {}
 
-void HalsWindow::onHsParameterChanged(const QString& paramName, int value) {
-    //    if (paramName == "Экспозиция") {
-    //        m_facade->setHsExposure(value);
-    //    } else if (paramName == "Частота регистрации") {
-    //        m_facade->setHsFrameRate(value);
-    //    }
-}
-
-void HalsWindow::onOcParameterChanged(const QString& paramName, int value) {
-    //    if (paramName == "Экспозиция") {
-    //        m_facade->setHsExposure(value);
-    //    } else if (paramName == "Частота регистрации") {
-    //        m_facade->setHsFrameRate(value);
-    //    }
-}
-
-void HalsWindow::onLightParameterChanged(const QString& paramName, int value) {
-    //    if (paramName == "Экспозиция") {
-    //        m_facade->setHsExposure(value);
-    //    } else if (paramName == "Частота регистрации") {
-    //        m_facade->setHsFrameRate(value);
-    //    }
-}
-
-void HalsWindow::onExperimentParameterChanged(const QString& paramName,
-                                              int value) {
-    if (paramName == "Высота измерений") {
-        m_facade->setFlightAltitude(value);
-        ui->labelAltitudeValue->setText(QString::number(value));
-    } else if (paramName == "Высота начала записи") {
-        // m_facade->setRecordingStartAltitude(value);
+void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
+    qDebug() << "in force parameter changing" << value;
+    DeviceParametersForm* form = nullptr;
+    switch (type) {
+        case ParameterType::HS_EXPOSURE:
+        case ParameterType::HS_FRAMERATE:
+            form = ui->widgetHsParams;
+            break;
+        case ParameterType::OC_EXPOSURE:
+        case ParameterType::OC_FRAMERATE:
+            form = ui->widgetOcParams;
+            break;
+        case ParameterType::LIGHT_EXPOSURE:
+        case ParameterType::LIGHT_FRAMERATE:
+            form = ui->widgetBrightnessParams;
+            break;
+        case ParameterType::EXP_ALTITUDE:
+        case ParameterType::EXP_RECORD_START_ALTITUDE:
+            form = ui->widgetExperimentParams;
+            if (type == ParameterType::EXP_ALTITUDE)
+                ui->labelAltitudeValue->setText(QString::number(value));
+            break;
+        default:
+            return;
+    }
+    if (form) {
+        form->setParameterValue(type, value);
     }
 }

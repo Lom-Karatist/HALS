@@ -14,12 +14,16 @@ public:
 
     void setHsSensorHeight(int newHsSensorHeight);
 
+    int flightAltitude() const;
+    void updateChars();
+
 public slots:
     void setAltitude(int altitude);
 
 signals:
     void ocCharsWereUpdated(double fovMeters, double gsd);
     void hsCharsWereUpdated(double fovMeters, double gsd);
+    void altitudeWasUpdated(int altitude);
 
 private:
     void recaculateCamerasChars();

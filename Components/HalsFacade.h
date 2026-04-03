@@ -10,6 +10,7 @@
 #include "ExperimentController.h"
 #include "FlightTaskModule.h"
 #include "Logger.h"
+#include "ParameterTypes.h"
 #include "UsbChecker.h"
 #include "gps_device.h"
 
@@ -51,11 +52,19 @@ signals:
                           qint64 totalBytes);
     void ocCharsWereUpdated(double fovMeters, double gsd);
     void hsCharsWereUpdated(double fovMeters, double gsd);
+    void altitudeWasUpdated(int altitude);
+    void parameterValueChanged(ParameterType type, int value);
+
+public slots:
+    void onParameterChanged(ParameterType type, int newValue);
 
 private slots:
     void onGpsDataUpdated(const GpsData &gpsData);
     void startBaslerCameras();
     void updateHsData(const QByteArray &data, int w, int h, int pixelFormat);
+    void onCameraForceParameterChanging(
+        bool isMaster, BaslerConstants::SettingTypes settingType,
+        QVariant value);
 
 private:
     void startLogger();

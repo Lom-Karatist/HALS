@@ -4,58 +4,8 @@
 #include <QMap>
 #include <QWidget>
 
+#include "Components/ParameterTypes.h"
 #include "ParameterModificator.h"
-
-/**
- * @brief Структура для хранения всех параметров, необходимых для создания
- * виджета ParameterModificator.
- *
- * Позволяет компактно передавать в метод addParameter полный набор настроек:
- * - имя и единицу измерения;
- * - диапазон допустимых значений;
- * - начальное значение;
- * - три шага изменения (малый, средний, большой).
- *
- * Использование этой структуры упрощает добавление параметров из
- * конфигурационных файлов, массивов или при массовом создании виджетов.
- */
-struct ParameterInfo {
-    QString name;  //!< Отображаемое имя параметра.
-    QString unit;  //!< Единица измерения (например, "мс", "fps").
-    int minVal;  //!< Минимальное допустимое значение.
-    int maxVal;  //!< Максимальное допустимое значение.
-    int initialValue;  //!< Начальное значение.
-    int step1;         //!< Первый шаг изменения (малый).
-    int step2;  //!< Второй шаг изменения (средний).
-    int step3;  //!< Третий шаг изменения (большой).
-
-    /**
-     * @brief Конструктор для удобного создания структуры.
-     * @param name_ Имя параметра.
-     * @param unit_ Единица измерения.
-     * @param min_ Минимум.
-     * @param max_ Максимум.
-     * @param initialValue_ Начальное значение.
-     * @param step1_ Малый шаг.
-     * @param step2_ Средний шаг.
-     * @param step3_ Большой шаг.
-     *
-     * Все параметры имеют значения по умолчанию, что позволяет создавать
-     * структуру с частичной инициализацией.
-     */
-    ParameterInfo(const QString &name_ = QString(),
-                  const QString &unit_ = QString(), int min_ = 0,
-                  int max_ = 100, int initialValue_ = 0, int step1_ = 1,
-                  int step2_ = 10, int step3_ = 100)
-        : name(name_),
-          unit(unit_),
-          minVal(min_),
-          maxVal(max_),
-          initialValue(initialValue_),
-          step1(step1_),
-          step2(step2_),
-          step3(step3_) {}
-};
 
 namespace Ui {
 class DeviceParametersForm;
@@ -106,9 +56,9 @@ public:
      * @param step2 Второй шаг изменения (средний).
      * @param step3 Третий шаг изменения (большой).
      */
-    void addParameter(const QString &name, const QString &unit, int min,
-                      int max, int initialValue, int step1 = 1, int step2 = 10,
-                      int step3 = 100);
+    void addParameter(ParameterType type, const QString &name,
+                      const QString &unit, int min, int max, int initialValue,
+                      int step1 = 1, int step2 = 10, int step3 = 100);
 
     /**
      * @brief Добавить параметр в форму, используя структуру ParameterInfo.
@@ -129,13 +79,29 @@ public:
      */
     void addParameter(const ParameterInfo &info);
 
+    /**
+     * @brief Установить значение параметра по его типу.
+     * @param type Тип параметра (из перечисления ParameterType).
+     * @param value Новое целочисленное значение.
+     *
+     * Метод используется для синхронизации значений параметров в GUI при их
+     * принудительном изменении извне (например, когда камера автоматически
+     * корректирует экспозицию из-за ограничений частоты кадров).
+     *
+     * Если параметр с указанным типом присутствует в форме, его значение
+     * обновляется без генерации сигнала parameterChanged (чтобы избежать
+     * циклической обратной связи). Виджет ParameterModificator при этом
+     * обновляет своё отображение.
+     */
+    void setParameterValue(ParameterType type, int value);
+
 signals:
     /**
      * @brief Сигнал об изменении значения параметра.
-     * @param paramName Имя параметра (переданное в addParameter).
+     * @param type Тип параметра (передан в addParameter).
      * @param newValue Новое значение.
      */
-    void parameterChanged(const QString &paramName, int newValue);
+    void parameterChanged(ParameterType type, int newValue);
 
 private slots:
     /**
@@ -151,8 +117,8 @@ private:
     void updateStyleSheet();
 
     Ui::DeviceParametersForm *ui;  //!< Интерфейс, сгенерированный из .ui.
-    QMap<ParameterModificator *, QString>
-        m_paramMap;  //!< Связь между объектами параметров и их именами.
+    QMap<ParameterType, ParameterModificator *>
+        m_paramMap;  //!< Связь между объектами параметров и их типами.
 };
 
 #endif  // DEVICEPARAMETERSFORM_H

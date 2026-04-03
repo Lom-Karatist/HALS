@@ -54,10 +54,21 @@ private slots:
 
     void on_pushButtonChoosePreset_clicked();
 
-    void onHsParameterChanged(const QString &paramName, int value);
-    void onOcParameterChanged(const QString &paramName, int value);
-    void onLightParameterChanged(const QString &paramName, int value);
-    void onExperimentParameterChanged(const QString &paramName, int value);
+    /**
+     * @brief Слот для принудительного изменения значения параметра из фасада.
+     * @param type Тип параметра.
+     * @param value Новое значение.
+     *
+     * Слот подключается к сигналу HalsFacade::parameterValueChanged, который
+     * испускается при внутреннем изменении параметров (например, когда камера
+     * автоматически уменьшает экспозицию из-за ограничений по частоте кадров).
+     *
+     * В зависимости от типа параметра определяет соответствующую форму настроек
+     * (DeviceParametersForm) и обновляет в ней значение без генерации ответного
+     * сигнала. Это обеспечивает синхронизацию интерфейса с реальным состоянием
+     * аппаратуры.
+     */
+    void onForceParameterChanging(ParameterType type, int value);
 
 private:
     /**

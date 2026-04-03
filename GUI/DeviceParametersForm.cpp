@@ -17,7 +17,7 @@ void DeviceParametersForm::setDeviceName(const QString &name) {
     updateStyleSheet();
 }
 
-void DeviceParametersForm::addParameter(const QString &name,
+void DeviceParametersForm::addParameter(ParameterType type, const QString &name,
                                         const QString &unit, int min, int max,
                                         int initialValue, int step1, int step2,
                                         int step3) {
@@ -30,22 +30,29 @@ void DeviceParametersForm::addParameter(const QString &name,
     param->setRange(min, max);
     param->setSteps(step1, step2, step3);
     param->setValue(initialValue);
-    m_paramMap[param] = name;
+    m_paramMap[type] = param;
 
     connect(param, &ParameterModificator::valueChanged, this,
             &DeviceParametersForm::onParameterValueChanged);
 }
 
 void DeviceParametersForm::addParameter(const ParameterInfo &info) {
-    addParameter(info.name, info.unit, info.minVal, info.maxVal,
+    addParameter(info.type, info.name, info.unit, info.minVal, info.maxVal,
                  info.initialValue, info.step1, info.step2, info.step3);
+}
+
+void DeviceParametersForm::setParameterValue(ParameterType type, int value) {
+    if (m_paramMap.contains(type)) {
+        m_paramMap[type]->setValue(value);
+    }
 }
 
 void DeviceParametersForm::onParameterValueChanged(int value) {
     ParameterModificator *param =
         qobject_cast<ParameterModificator *>(sender());
-    if (param && m_paramMap.contains(param)) {
-        emit parameterChanged(m_paramMap[param], value);
+    if (param) {
+        ParameterType type = m_paramMap.key(param);
+        emit parameterChanged(type, value);
     }
 }
 

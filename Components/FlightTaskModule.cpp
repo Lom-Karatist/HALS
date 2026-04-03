@@ -8,12 +8,14 @@ FlightTaskModule::FlightTaskModule(QObject *parent, int ocSensorWidth,
     : QObject{parent} {
     m_ocSensorWidth = ocSensorWidth;
     m_hsSensorHeight = hsSensorHeight;
-    m_flightAltitude = 0;
+    m_flightAltitude = 2;
+    recaculateCamerasChars();
 }
 
 void FlightTaskModule::setAltitude(int altitude) {
     if (m_flightAltitude != altitude) {
         m_flightAltitude = altitude;
+        emit altitudeWasUpdated(altitude);
         recaculateCamerasChars();
     }
 }
@@ -37,6 +39,10 @@ void FlightTaskModule::recalculateSingleCameraChars(const int &fovDegree,
     fovMeters = 2 * m_flightAltitude * tan(M_PI * fovDegree / (2 * 180));
     gsd = fovMeters * 1000 / sensorSizePx;
 }
+
+int FlightTaskModule::flightAltitude() const { return m_flightAltitude; }
+
+void FlightTaskModule::updateChars() { recaculateCamerasChars(); }
 
 void FlightTaskModule::setHsSensorHeight(int newHsSensorHeight) {
     m_hsSensorHeight = newHsSensorHeight;

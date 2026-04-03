@@ -102,9 +102,24 @@ bool HalsFacade::initCameras() {
         connect(m_cameraManager.get(), &CameraManager::errorOccurred, this,
                 &HalsFacade::cameraError, Qt::QueuedConnection);
         m_cameraManager->initCameras();
+
+        connect(m_cameraManager.get(), &CameraManager::forceParameterChanging,
+                this, &HalsFacade::onCameraForceParameterChanging);
+
+        emit parameterValueChanged(ParameterType::HS_EXPOSURE,
+                                   m_cameraManager->hsParams().exposureTime);
+        emit parameterValueChanged(
+            ParameterType::HS_FRAMERATE,
+            m_cameraManager->hsParams().acquisitionFrameRate);
+        emit parameterValueChanged(ParameterType::OC_EXPOSURE,
+                                   m_cameraManager->ocParams().exposureTime);
+        emit parameterValueChanged(
+            ParameterType::OC_FRAMERATE,
+            m_cameraManager->ocParams().acquisitionFrameRate);
         return true;
     } else {
-        logMessage(Logger::Critical, "Hyperspectrometer sensors init error");
+        emit logMessage(Logger::Critical,
+                        "Hyperspectrometer sensors init error");
         return false;
     }
 }
@@ -145,6 +160,12 @@ void HalsFacade::initFlightTaskModule() {
             this, &HalsFacade::ocCharsWereUpdated, Qt::QueuedConnection);
     connect(m_flightTaskModule.get(), &FlightTaskModule::hsCharsWereUpdated,
             this, &HalsFacade::hsCharsWereUpdated, Qt::QueuedConnection);
+    connect(m_flightTaskModule.get(), &FlightTaskModule::altitudeWasUpdated,
+            this, &HalsFacade::altitudeWasUpdated, Qt::QueuedConnection);
+
+    emit parameterValueChanged(ParameterType::EXP_ALTITUDE,
+                               m_flightTaskModule->flightAltitude());
+    m_flightTaskModule->updateChars();
 }
 
 void HalsFacade::stopBaslerCameras() {
@@ -194,6 +215,47 @@ bool HalsFacade::isMissionLoaded() const {
     return true;
 }
 
+void HalsFacade::onParameterChanged(ParameterType type, int newValue) {
+    switch (type) {
+        case ParameterType::HS_EXPOSURE:
+            if (m_cameraManager)
+                m_cameraManager->onSettingsChanged(
+                    true, BaslerConstants::SettingTypes::Exposure, newValue);
+            break;
+        case ParameterType::HS_FRAMERATE:
+            if (m_cameraManager)
+                m_cameraManager->onSettingsChanged(
+                    true, BaslerConstants::SettingTypes::AcquisitionFramerate,
+                    newValue);
+            break;
+        case ParameterType::OC_EXPOSURE:
+            if (m_cameraManager)
+                m_cameraManager->onSettingsChanged(
+                    false, BaslerConstants::SettingTypes::Exposure, newValue);
+            break;
+        case ParameterType::OC_FRAMERATE:
+            if (m_cameraManager)
+                m_cameraManager->onSettingsChanged(
+                    false, BaslerConstants::SettingTypes::AcquisitionFramerate,
+                    newValue);
+            break;
+        case ParameterType::LIGHT_EXPOSURE:
+            // вызов модуля датчика освещённости (пока заглушка)
+            break;
+        case ParameterType::LIGHT_FRAMERATE:
+            // заглушка
+            break;
+        case ParameterType::EXP_ALTITUDE:
+            setFlightAltitude(newValue);
+            break;
+        case ParameterType::EXP_RECORD_START_ALTITUDE:
+            // сохранить в настройках эксперимента
+            break;
+        default:
+            break;
+    }
+}
+
 void HalsFacade::onGpsDataUpdated(const GpsData &gpsData) {
     if (m_satellitesCount != gpsData.satellites) {
         m_satellitesCount = gpsData.satellites;
@@ -216,3 +278,27 @@ void HalsFacade::startBaslerCameras() {
 
 void HalsFacade::updateHsData(const QByteArray &data, int w, int h,
                               int pixelFormat) {}
+
+void HalsFacade::onCameraForceParameterChanging(
+    bool isMaster, BaslerConstants::SettingTypes settingType, QVariant value) {
+    qDebug() << "in fasade force parameter changing";
+    ParameterType type;
+    if (isMaster) {
+        if (settingType == BaslerConstants::SettingTypes::Exposure)
+            type = ParameterType::HS_EXPOSURE;
+        else if (settingType ==
+                 BaslerConstants::SettingTypes::AcquisitionFramerate)
+            type = ParameterType::HS_FRAMERATE;
+        else
+            return;
+    } else {
+        if (settingType == BaslerConstants::SettingTypes::Exposure)
+            type = ParameterType::OC_EXPOSURE;
+        else if (settingType ==
+                 BaslerConstants::SettingTypes::AcquisitionFramerate)
+            type = ParameterType::OC_FRAMERATE;
+        else
+            return;
+    }
+    emit parameterValueChanged(type, value.toInt());
+}
