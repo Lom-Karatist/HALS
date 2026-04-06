@@ -193,9 +193,6 @@ void HalsWindow::addStatusIndicators() {
     ui->centerHLayout->addWidget(m_hsIndicator);
     ui->centerHLayout->addWidget(m_ocIndicator);
     ui->centerHLayout->addWidget(m_missionIndicator);
-
-    //    missionIndicator->setState(StatusIndicator::State::Active);
-    //    missionIndicator->setValueText("Загружено");
 }
 
 void HalsWindow::makePageSwitch(QWidget* fromPage, QWidget* toPage) {
@@ -243,6 +240,16 @@ void HalsWindow::updateUsbState(bool mounted, qint64 availableBytes,
     } else {
         m_usbIndicator->setState(StatusIndicator::State::Inactive);
         m_usbIndicator->setValueText("Не подключен");
+    }
+}
+
+void HalsWindow::updateMissionLoaderState(bool loaded) {
+    if (loaded) {
+        m_missionIndicator->setState(StatusIndicator::State::Active);
+        m_missionIndicator->setValueText("Загружено");
+    } else {
+        m_missionIndicator->setState(StatusIndicator::State::Inactive);
+        m_missionIndicator->setValueText("Не найдено");
     }
 }
 
@@ -323,6 +330,8 @@ void HalsWindow::initObjects() {
             &HalsWindow::updateCpuTemperature);
     connect(m_facade, &HalsFacade::usbStatusChanged, this,
             &HalsWindow::updateUsbState);
+    connect(m_facade, &HalsFacade::flightTaskLoaderStatusChanged, this,
+            &HalsWindow::updateMissionLoaderState);
     connect(m_facade, &HalsFacade::masterConnectionStatusChanged, this,
             &HalsWindow::updateHsState);
     connect(m_facade, &HalsFacade::slaveConnectionStatusChanged, this,
@@ -388,7 +397,6 @@ void HalsWindow::setupProject() {
 void HalsWindow::on_pushButtonChoosePreset_clicked() {}
 
 void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
-    qDebug() << "force changing" << value;
     DeviceParametersForm* form = nullptr;
     switch (type) {
         case ParameterType::HS_EXPOSURE:

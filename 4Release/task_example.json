@@ -1,0 +1,37 @@
+{
+  "mission_name": "Пример задания",
+  "version": 1,
+  "area": {
+    "type": "rectangle",
+    "coordinates": [
+      27.123456, 53.123456,
+      27.654321, 53.654321
+    ],
+    "coordinate_system": "WGS84"
+  },
+  "kml_reference": {
+    "file": "area.kml",
+    "polygon_name": "Polygon1"
+  },
+  "flight_altitude_m": 150,
+  "overlap_percent": 70,
+  "flight_speed_mps": 5,
+  "settings_preset": "default",
+  "camera_settings": {
+    "hs_exposure_ms": 10,
+    "hs_framerate": 20,
+    "oc_exposure_ms": 10,
+    "oc_framerate": 30
+  },
+  "light_sensor_settings": {
+    "exposure_ms": 50,
+    "framerate": 10
+  },
+  "recording": {
+    "start_altitude_m": 50,
+    "save_raw_data": true,
+    "save_classification": true
+  },
+  "classification_model": "model_svm.json",
+  "auto_start": true
+}

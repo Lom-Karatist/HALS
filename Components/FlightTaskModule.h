@@ -2,6 +2,14 @@
 #define FLIGHTTASKMODULE_H
 
 #include <QObject>
+#include <QTimer>
+#include <memory>
+
+#include "MissionTypes.h"
+#include "gps_device.h"
+
+class CameraManager;
+class LightSensorManager;
 
 class FlightTaskModule : public QObject {
     Q_OBJECT
@@ -9,10 +17,9 @@ public:
     explicit FlightTaskModule(QObject *parent = nullptr,
                               int ocSensorWidth = 1920,
                               int hsSensorHeight = 600);
+    ~FlightTaskModule();
 
-    void setOcSensorWidth(int newOcSensorWidth);
-
-    void setHsSensorHeight(int newHsSensorHeight);
+    void loadMission(QString dirPath);
 
     int flightAltitude() const;
     void updateChars();
@@ -24,22 +31,30 @@ signals:
     void ocCharsWereUpdated(double fovMeters, double gsd);
     void hsCharsWereUpdated(double fovMeters, double gsd);
     void altitudeWasUpdated(int altitude);
+    void missionLoaded(bool success);
+    void startExperimentRequested();
+    void stopExperimentRequested();
+
+private slots:
+    void onAltitudeChanged(int altitude);
 
 private:
-    void recaculateCamerasChars();
-    void recalculateSingleCameraChars(const int &fovDegree, int sensorSizePx,
+    void recalculateCamerasChars();
+    void recalculateSingleCameraChars(int fovDegree, int sensorSizePx,
                                       double &fovMeters, double &gsd);
+    void applyMissionSettings();
 
-    int m_flightAltitude;  //!< Высота полета в метрах
+    // Данные полётного задания
+    MissionTask m_mission;
+    bool m_missionValid;
 
+    // Геометрические параметры
+    int m_flightAltitude;
     int m_ocSensorWidth;
     int m_hsSensorHeight;
 
-    const int m_ocFovWidthDegree =
-        39;  //!< Размеры поля зрения по ширине в градусах (для обзорной камеры)
-    const int m_hsFovWidthDegree =
-        25;  //!< Размеры поля зрения по ширине в градусах (для сенсора
-             //!< гиперспектрометра)
+    const int m_ocFovWidthDegree = 39;
+    const int m_hsFovWidthDegree = 25;
 };
 
 #endif  // FLIGHTTASKMODULE_H

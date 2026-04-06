@@ -36,6 +36,8 @@ public:
      */
     void check();
 
+    const QString &lastPath() const;
+
 signals:
     /**
      * @brief Сигнал об изменении состояния USB-накопителя.

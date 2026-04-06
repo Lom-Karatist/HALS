@@ -22,6 +22,7 @@ SOURCES += \
     Components/FlightTaskModule.cpp \
     Components/HalsFacade.cpp \
     Components/Logger.cpp \
+    Components/MissionLoader.cpp \
     Components/UsbChecker.cpp \
     GUI/DeviceParametersForm.cpp \
     GUI/OverlayLabel.cpp \
@@ -41,6 +42,8 @@ HEADERS += \
     Components/FlightTaskModule.h \
     Components/HalsFacade.h \
     Components/Logger.h \
+    Components/MissionLoader.h \
+    Components/MissionTypes.h \
     Components/ParameterTypes.h \
     Components/UsbChecker.h \
     GUI/DeviceParametersForm.h \

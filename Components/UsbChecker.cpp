@@ -27,7 +27,6 @@ void UsbChecker::check() {
 #ifdef Q_OS_WIN
         if (root != "C:/" && root != "D:/" && root != "E:/" && root != "F:/" &&
             root != "G:/" && root != "S:/" && fsType != "CDFS") {
-            qDebug() << root;
             mountPath = root;
             available = storage.bytesAvailable();
             total = storage.bytesTotal();
@@ -66,3 +65,5 @@ void UsbChecker::check() {
         if (!found) emit usbStatusChanged(found, m_lastAvailable, m_lastTotal);
     }
 }
+
+const QString &UsbChecker::lastPath() const { return m_lastPath; }

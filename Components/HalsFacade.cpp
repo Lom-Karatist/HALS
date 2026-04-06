@@ -41,10 +41,10 @@ HalsFacade::~HalsFacade() {
 void HalsFacade::initialize() {
     startLogger();
     startTempController();
-    startUsbChecker();
     initDataSaver();
     initCameras();
     initFlightTaskModule();
+    startUsbChecker();
     initExperimentController();
     startGps();
     initLightSensor();
@@ -78,7 +78,7 @@ void HalsFacade::startTempController() {
 void HalsFacade::startUsbChecker() {
     m_usbChecker = std::make_unique<UsbChecker>(this);
     connect(m_usbChecker.get(), &UsbChecker::usbStatusChanged, this,
-            &HalsFacade::usbStatusChanged);
+            &HalsFacade::onUsbStatusChanged);
     m_usbChecker->check();
 }
 
@@ -164,6 +164,8 @@ void HalsFacade::initFlightTaskModule() {
             this, &HalsFacade::hsCharsWereUpdated, Qt::QueuedConnection);
     connect(m_flightTaskModule.get(), &FlightTaskModule::altitudeWasUpdated,
             this, &HalsFacade::altitudeWasUpdated, Qt::QueuedConnection);
+    connect(m_flightTaskModule.get(), &FlightTaskModule::missionLoaded, this,
+            &HalsFacade::flightTaskLoaderStatusChanged, Qt::QueuedConnection);
 
     emit parameterValueChanged(ParameterType::EXP_ALTITUDE,
                                m_flightTaskModule->flightAltitude());
@@ -219,16 +221,6 @@ void HalsFacade::startExperiment() {
 
 void HalsFacade::stopExperiment() {
     m_experimentController->forceStopExperiment();
-}
-
-bool HalsFacade::isLightSensorReady() const {
-    // Пока заглушка
-    return true;
-}
-
-bool HalsFacade::isMissionLoaded() const {
-    // Заглушка
-    return true;
 }
 
 void HalsFacade::onParameterChanged(ParameterType type, int newValue) {
@@ -299,7 +291,6 @@ void HalsFacade::updateHsData(const QByteArray &data, int w, int h,
 
 void HalsFacade::onCameraForceParameterChanging(
     bool isMaster, BaslerConstants::SettingTypes settingType, QVariant value) {
-    qDebug() << "in fasade force parameter changing";
     ParameterType type;
     if (isMaster) {
         if (settingType == BaslerConstants::SettingTypes::Exposure)
@@ -330,4 +321,15 @@ void HalsFacade::onLightForceParameterChanging(
 
 void HalsFacade::onLightDataReady(const LightSensorData &data) {
     // data ready slot
+}
+
+void HalsFacade::onUsbStatusChanged(bool mounted, qint64 availableBytes,
+                                    qint64 totalBytes) {
+    emit usbStatusChanged(mounted, availableBytes, totalBytes);
+
+    if (!mounted)
+        emit flightTaskLoaderStatusChanged(false);
+    else {
+        m_flightTaskModule->loadMission(m_usbChecker->lastPath());
+    }
 }

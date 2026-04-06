@@ -36,15 +36,12 @@ public:
     void startExperiment();
     void stopExperiment();
 
-    // Статусные индикаторы (для GUI)
-    bool isLightSensorReady() const;  // заглушка
-    bool isMissionLoaded() const;     // заглушка
-
 signals:
     void masterConnectionStatusChanged(bool connectionStatus);
     void slaveConnectionStatusChanged(bool connectionStatus);
     void overviewImageReady(const QImage &image, int maxBrightness);
     void hsImageReady(const QImage &image, int maxBrightness);
+    void flightTaskLoaderStatusChanged(bool loadingStatus);
     void cameraError(const QString &error);
     void gpsSatellitesCountUpdated(const int &count);
     void cpuTemperatureUpdated(QString temperature);
@@ -68,6 +65,8 @@ private slots:
         QVariant value);
     void onLightForceParameterChanging(const LightSensorParameters &params);
     void onLightDataReady(const LightSensorData &data);
+    void onUsbStatusChanged(bool mounted, qint64 availableBytes,
+                            qint64 totalBytes);
 
 private:
     void startLogger();

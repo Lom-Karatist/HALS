@@ -35,6 +35,7 @@ private slots:
     void updateCpuTemperature(QString temperature);
 
     void updateUsbState(bool mounted, qint64 availableBytes, qint64 totalBytes);
+    void updateMissionLoaderState(bool loaded);
 
     void updateHsState(bool connectionStatus);
     void updateOcState(bool connectionStatus);
