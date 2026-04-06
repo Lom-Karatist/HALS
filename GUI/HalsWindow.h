@@ -7,6 +7,7 @@
 #include "DeviceParametersForm.h"
 #include "OverlayLabel.h"
 #include "StatusIndicator.h"
+#include "VirtualKeyboard.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -70,6 +71,8 @@ private slots:
      */
     void onForceParameterChanging(ParameterType type, int value);
 
+    void showKeyboard(QSpinBox *spinBox, bool rightAligned);
+
 private:
     /**
      * @brief Общая настройка проекта.
@@ -82,13 +85,15 @@ private:
     void setupSettingBox(DeviceParametersForm *form, QString deviceName,
                          ParameterInfo firstParameterInfo,
                          ParameterInfo secondParameterInfo);
+    void connectKeyboardForForm(DeviceParametersForm *form);
     void applyStyleSheet();
 
     void addStatusIndicators();
     void makePageSwitch(QWidget *fromPage, QWidget *toPage);
 
     Ui::HalsWindow *ui;
-    QString m_title;        //!< Заголовок окна.
+    QString m_title;  //!< Заголовок окна.
+    VirtualKeyboard *m_keyboard;
     QSettings *m_settings;  //!< Объект для работы с настройками приложения.
     qreal m_touchStartPos;
 

@@ -28,6 +28,7 @@ SOURCES += \
     GUI/ParameterModificator.cpp \
     GUI/SensorCharacteristicsForm.cpp \
     GUI/StatusIndicator.cpp \
+    GUI/VirtualKeyboard.cpp \
     main.cpp \
     GUI/HalsWindow.cpp
 
@@ -48,6 +49,7 @@ HEADERS += \
     GUI/ParameterModificator.h \
     GUI/SensorCharacteristicsForm.h \
     GUI/StatusIndicator.h \
+    GUI/VirtualKeyboard.h \
     version.h
 
 FORMS += \

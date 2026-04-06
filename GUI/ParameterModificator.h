@@ -2,6 +2,7 @@
 #define PARAMETERMODIFICATOR_H
 
 #include <QPushButton>
+#include <QSpinBox>
 #include <QWidget>
 
 namespace Ui {
@@ -79,6 +80,10 @@ signals:
      * @param newValue Новое значение (всегда в пределах [min, max]).
      */
     void valueChanged(int newValue);
+    void requestKeyboard(QSpinBox *spinBox, bool rightAligned);
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
     /**

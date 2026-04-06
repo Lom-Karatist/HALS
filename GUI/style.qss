@@ -31,7 +31,6 @@
             padding: 8px;
             font-size: 12pt;
             font-weight: 500;
-            min-height: 48px;
             color: #ffffff;
             spacing: 8px;
         }
@@ -46,6 +45,7 @@
         QPushButton#pushButtonUpdateConfiguration {
             background-color: #2563eb;   /* blue-600 */
             border-color: #3b82f6;
+            min-height: 48px;
             padding: 8px;
             font-size: 12pt;
         }
@@ -56,6 +56,7 @@
         QPushButton#pushButtonChoosePreset {
             background-color: #2563eb;   /* blue-600 */
             border-color: #3b82f6;
+            min-height: 48px;
             padding: 8px;
             font-size: 12pt;
         }
@@ -66,6 +67,7 @@
         QPushButton#pushButtonStartStop {
             background-color: #d97706;   /* amber-600 */
             border-color: #eab308;
+            min-height: 48px;
             font-size: 12pt;
         }
         QPushButton#pushButtonStartStop:pressed {
@@ -83,6 +85,7 @@
         QPushButton#pushButtonMakeSnapshot {
             background-color: #d97706;   /* amber-600 */
             border-color: #eab308;
+            min-height: 48px;
             font-size: 12pt;
         }
         QPushButton#pushButtonMakeSnapshot:pressed {
@@ -152,4 +155,14 @@
         }
         QLabel#labelTextAltitude {
             color: #fe9a00;
+        }
+
+        QPushButton#pushButtonSettings {
+            min-height: 48px;
+        }
+        QPushButton#pushButtonToMainPage {
+            min-height: 48px;
+        }
+        QPushButton#pushButtonToMainPage_2 {
+            min-height: 48px;
         }

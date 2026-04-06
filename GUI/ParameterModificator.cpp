@@ -1,5 +1,7 @@
 #include "ParameterModificator.h"
 
+#include <QScreen>
+
 #include "ui_ParameterModificator.h"
 
 ParameterModificator::ParameterModificator(QWidget *parent)
@@ -12,6 +14,7 @@ ParameterModificator::ParameterModificator(QWidget *parent)
       m_max(100) {
     ui->setupUi(this);
     ui->spinBoxValue->setRange(m_min, m_max);
+    ui->spinBoxValue->installEventFilter(this);
     updateButtonTexts();
 
     applyButtonStyle(ui->pushButtonMinus, QColor(0xff, 0x64, 0x67),
@@ -55,6 +58,18 @@ void ParameterModificator::setValue(int value) {
 }
 
 int ParameterModificator::value() const { return ui->spinBoxValue->value(); }
+
+bool ParameterModificator::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == ui->spinBoxValue && event->type() == QEvent::FocusIn) {
+        QPoint globalPos = ui->spinBoxValue->mapToGlobal(QPoint(0, 0));
+        bool rightAligned =
+            (globalPos.x() >
+             (QApplication::primaryScreen()->geometry().width() / 2));
+        emit requestKeyboard(ui->spinBoxValue, !rightAligned);
+        return false;
+    }
+    return QWidget::eventFilter(obj, event);
+}
 
 void ParameterModificator::on_pushButtonMinus_clicked() {
     int newVal = ui->spinBoxValue->value() - m_step1;

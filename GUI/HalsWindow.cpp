@@ -104,6 +104,13 @@ void HalsWindow::setupGui() {
 
     if (auto* overlay = qobject_cast<OverlayLabel*>(ui->labelCameraImage))
         overlay->setOverlayRect(m_hsFovRect);
+
+    m_keyboard = new VirtualKeyboard(ui->stackedWidget);
+    m_keyboard->hide();
+    connectKeyboardForForm(ui->widgetHsParams);
+    connectKeyboardForForm(ui->widgetOcParams);
+    connectKeyboardForForm(ui->widgetBrightnessParams);
+    connectKeyboardForForm(ui->widgetExperimentParams);
 }
 
 void HalsWindow::initSettingsForms() {
@@ -140,6 +147,15 @@ void HalsWindow::setupSettingBox(DeviceParametersForm* form, QString deviceName,
     form->addParameter(secondParameterInfo);
     connect(form, &DeviceParametersForm::parameterChanged, m_facade,
             &HalsFacade::onParameterChanged);
+}
+
+void HalsWindow::connectKeyboardForForm(DeviceParametersForm* form) {
+    QList<ParameterModificator*> params =
+        form->findChildren<ParameterModificator*>();
+    for (ParameterModificator* p : params) {
+        connect(p, &ParameterModificator::requestKeyboard, this,
+                &HalsWindow::showKeyboard);
+    }
 }
 
 void HalsWindow::applyStyleSheet() {
@@ -399,4 +415,9 @@ void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
     if (form) {
         form->setParameterValue(type, value);
     }
+}
+
+void HalsWindow::showKeyboard(QSpinBox* spinBox, bool rightAligned) {
+    m_keyboard->setTarget(spinBox, rightAligned);
+    m_keyboard->show();
 }
