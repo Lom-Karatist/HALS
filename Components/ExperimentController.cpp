@@ -8,7 +8,8 @@
 #include "CameraManager.h"
 #include "DataSaver.h"
 #include "FlightTaskModule.h"
-#include "gps_device.h"  // для GpsData
+#include "gps_device.h"
+#include "spa.h"
 
 ExperimentController::ExperimentController(QObject *parent)
     : QObject(parent),
@@ -16,7 +17,8 @@ ExperimentController::ExperimentController(QObject *parent)
       m_flightTaskModule(nullptr),
       m_dataSaver(nullptr),
       m_experimentActive(false),
-      m_monitoring(false) {
+      m_monitoring(false),
+      m_sunElevation(0.0) {
     m_checkTimer = new QTimer(this);
     connect(m_checkTimer, &QTimer::timeout, this,
             &ExperimentController::checkExperimentCondition);
@@ -96,6 +98,30 @@ void ExperimentController::forceStopExperiment() {
 
 void ExperimentController::updateGpsData(const GpsData &gpsData) {
     m_currentGpsData = gpsData;
+
+    QDateTime dt = QDateTime::currentDateTime();
+    spa_data spa;
+    spa.year = dt.date().year();
+    spa.month = dt.date().month();
+    spa.day = dt.date().day();
+    spa.hour = dt.time().hour();
+    spa.minute = dt.time().minute();
+    spa.second = dt.time().second();
+    spa.timezone = 3.0;
+    spa.delta_ut1 = 0;
+    spa.delta_t = 67;
+    spa.longitude = m_currentGpsData.longitude;
+    spa.latitude = m_currentGpsData.latitude;
+    spa.elevation = 156;
+    spa.pressure = 1013;
+    spa.temperature = 15;
+    spa.slope = 0;
+    spa.azm_rotation = 0;
+    spa.atmos_refract = 0.5667;
+    spa.function = SPA_ZA;
+
+    spa_calculate(&spa);
+    m_sunElevation = spa.e;
 }
 
 void ExperimentController::checkExperimentCondition() {

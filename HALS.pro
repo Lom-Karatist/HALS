@@ -24,6 +24,7 @@ SOURCES += \
     Components/Logger.cpp \
     Components/MissionLoader.cpp \
     Components/UsbChecker.cpp \
+    Components/spa.cpp \
     GUI/DeviceParametersForm.cpp \
     GUI/OverlayLabel.cpp \
     GUI/ParameterModificator.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     Components/MissionTypes.h \
     Components/ParameterTypes.h \
     Components/UsbChecker.h \
+    Components/spa.h \
     GUI/DeviceParametersForm.h \
     GUI/HalsWindow.h \
     GUI/OverlayLabel.h \

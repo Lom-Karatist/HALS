@@ -67,6 +67,7 @@ private:
 
     // Текущие данные
     GpsData m_currentGpsData;
+    double m_sunElevation;
 
     // Параметры полётного задания
     struct Mission {
