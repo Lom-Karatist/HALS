@@ -51,6 +51,7 @@ signals:
     void ocCharsWereUpdated(double fovMeters, double gsd);
     void hsCharsWereUpdated(double fovMeters, double gsd);
     void altitudeWasUpdated(int altitude);
+    void shootingAltitudeWasUpdated(int altitude);
     void parameterValueChanged(ParameterType type, int value);
 
 public slots:

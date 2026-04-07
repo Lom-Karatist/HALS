@@ -19,10 +19,14 @@ public:
                               int hsSensorHeight = 600);
     ~FlightTaskModule();
 
-    void loadMission(QString dirPath);
+    bool loadMission(QString dirPath);
 
     int flightAltitude() const;
     void updateChars();
+
+    const MissionTask &mission() const;
+
+    int shootingAltitude() const;
 
 public slots:
     void setAltitude(int altitude);
@@ -48,8 +52,8 @@ private:
     MissionTask m_mission;
     bool m_missionValid;
 
-    // Геометрические параметры
     int m_flightAltitude;
+    int m_shootingAltitude;
     int m_ocSensorWidth;
     int m_hsSensorHeight;
 

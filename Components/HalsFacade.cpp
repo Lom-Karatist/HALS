@@ -330,6 +330,11 @@ void HalsFacade::onUsbStatusChanged(bool mounted, qint64 availableBytes,
     if (!mounted)
         emit flightTaskLoaderStatusChanged(false);
     else {
-        m_flightTaskModule->loadMission(m_usbChecker->lastPath());
+        if (m_flightTaskModule->loadMission(m_usbChecker->lastPath())) {
+            emit parameterValueChanged(ParameterType::EXP_ALTITUDE,
+                                       m_flightTaskModule->flightAltitude());
+            emit parameterValueChanged(ParameterType::EXP_RECORD_START_ALTITUDE,
+                                       m_flightTaskModule->shootingAltitude());
+        }
     }
 }

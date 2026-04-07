@@ -12,6 +12,7 @@ FlightTaskModule::FlightTaskModule(QObject *parent, int ocSensorWidth,
     : QObject(parent),
       m_missionValid(false),
       m_flightAltitude(2),
+      m_shootingAltitude(10),
       m_ocSensorWidth(ocSensorWidth),
       m_hsSensorHeight(hsSensorHeight) {
     recalculateCamerasChars();
@@ -19,14 +20,14 @@ FlightTaskModule::FlightTaskModule(QObject *parent, int ocSensorWidth,
 
 FlightTaskModule::~FlightTaskModule() {}
 
-void FlightTaskModule::loadMission(QString dirPath) {
-    dirPath.append("HALS/");
+bool FlightTaskModule::loadMission(QString dirPath) {
+    dirPath.append("HALS");
 
     QDir dir(dirPath);
     if (!dir.exists()) {
         qDebug() << "Directory not found:" << dirPath;
         emit missionLoaded(false);
-        return;
+        return false;
     }
 
     QStringList filters;
@@ -35,7 +36,7 @@ void FlightTaskModule::loadMission(QString dirPath) {
     if (jsonFiles.isEmpty()) {
         qDebug() << "No JSON files found in" << dirPath;
         emit missionLoaded(false);
-        return;
+        return false;
     }
 
     QString missionFilePath = dirPath + "/" + jsonFiles.first();
@@ -44,18 +45,31 @@ void FlightTaskModule::loadMission(QString dirPath) {
     if (!MissionLoader::load(missionFilePath, m_mission)) {
         m_missionValid = false;
         emit missionLoaded(false);
-        return;
+        return false;
     }
 
     m_missionValid = true;
+    applyMissionSettings();
     emit missionLoaded(true);
+    return true;
 }
 
 void FlightTaskModule::applyMissionSettings() {
     if (!m_missionValid) return;
 
     setAltitude(m_mission.flightAltitudeM);
+
+    m_shootingAltitude = m_mission.recording.startAltitudeM;
+    if (m_shootingAltitude >= m_flightAltitude)
+        m_shootingAltitude = m_flightAltitude - 10;
 }
+
+int FlightTaskModule::shootingAltitude() const
+{
+    return m_shootingAltitude;
+}
+
+const MissionTask &FlightTaskModule::mission() const { return m_mission; }
 
 void FlightTaskModule::setAltitude(int altitude) {
     if (m_flightAltitude != altitude) {
