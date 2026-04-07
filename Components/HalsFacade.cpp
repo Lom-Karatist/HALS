@@ -223,6 +223,11 @@ void HalsFacade::stopExperiment() {
     m_experimentController->forceStopExperiment();
 }
 
+void HalsFacade::loadPreset(const QString &presetName)
+{
+
+}
+
 void HalsFacade::onParameterChanged(ParameterType type, int newValue) {
     switch (type) {
         case ParameterType::HS_EXPOSURE:

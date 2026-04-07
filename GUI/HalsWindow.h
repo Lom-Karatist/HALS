@@ -6,6 +6,7 @@
 #include "Components/HalsFacade.h"
 #include "DeviceParametersForm.h"
 #include "OverlayLabel.h"
+#include "PresetSelectionDialog.h"
 #include "StatusIndicator.h"
 #include "VirtualKeyboard.h"
 
@@ -75,6 +76,8 @@ private slots:
     void showKeyboard(QSpinBox *spinBox, bool rightAligned);
 
 private:
+    QStringList scanAvailablePresets();
+
     /**
      * @brief Общая настройка проекта.
      */
@@ -95,6 +98,7 @@ private:
     Ui::HalsWindow *ui;
     QString m_title;  //!< Заголовок окна.
     VirtualKeyboard *m_keyboard;
+    QStringList m_availablePresets;
     QSettings *m_settings;  //!< Объект для работы с настройками приложения.
     qreal m_touchStartPos;
 

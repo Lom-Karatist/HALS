@@ -35,6 +35,7 @@ public:
     void makeSnapshot();
     void startExperiment();
     void stopExperiment();
+    void loadPreset(const QString &presetName);
 
 signals:
     void masterConnectionStatusChanged(bool connectionStatus);

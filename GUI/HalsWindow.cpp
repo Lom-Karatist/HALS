@@ -392,9 +392,25 @@ void HalsWindow::setupProject() {
     int hsFovWidth = m_settings->value("Cameras/hsFovWidth").toInt();
     int hsFovHeight = m_settings->value("Cameras/hsFovHeight").toInt();
     m_hsFovRect = QRect(hsFovXOffset, hsFovYOffset, hsFovWidth, hsFovHeight);
+    m_availablePresets = scanAvailablePresets();
 }
 
-void HalsWindow::on_pushButtonChoosePreset_clicked() {}
+void HalsWindow::on_pushButtonChoosePreset_clicked() {
+    PresetSelectionDialog dlg(m_availablePresets, this);
+    if (dlg.exec() == QDialog::Accepted) {
+        QString preset = dlg.selectedPreset();
+        if (preset != "default") {
+            QMessageBox::StandardButton reply = QMessageBox::question(
+                this, "Смена пресета",
+                QString("Вы действительно хотите загрузить пресет '%1'?\nЭто "
+                        "остановит эксперимент и перезапустит камеры.")
+                    .arg(preset),
+                QMessageBox::Yes | QMessageBox::No);
+            if (reply != QMessageBox::Yes) return;
+        }
+        m_facade->loadPreset(preset);
+    }
+}
 
 void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
     DeviceParametersForm* form = nullptr;
@@ -428,4 +444,29 @@ void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
 void HalsWindow::showKeyboard(QSpinBox* spinBox, bool rightAligned) {
     m_keyboard->setTarget(spinBox, rightAligned);
     m_keyboard->show();
+}
+
+QStringList HalsWindow::scanAvailablePresets() {
+    QStringList presets;
+    presets << "По умолчанию";
+
+    QDir dir = QDir::currentPath();
+    QStringList halsFiles =
+        dir.entryList(QStringList() << "HALS_*.ini", QDir::Files);
+    for (const QString& file : halsFiles) {
+        QString name = file.mid(5);
+        name.chop(4);
+        if (name.isEmpty()) continue;
+
+        QString halsFile = QString("HS_%1.ini").arg(name);
+        QString lsFile = QString("LS_%1.ini").arg(name);
+        QString ocFile = QString("OC_%1.ini").arg(name);
+        if (dir.exists(halsFile) && dir.exists(lsFile) && dir.exists(ocFile)) {
+            if (name == "lab")
+                presets << "Лаборатория";
+            else
+                presets << name;
+        }
+    }
+    return presets;
 }

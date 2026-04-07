@@ -30,5 +30,6 @@
         <file>Icons/control.png</file>
         <file>style.qss</file>
         <file>../4Release/task_example.json</file>
+        <file>Icons/down-arrow.png</file>
     </qresource>
 </RCC>

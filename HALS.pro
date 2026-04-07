@@ -28,6 +28,7 @@ SOURCES += \
     GUI/DeviceParametersForm.cpp \
     GUI/OverlayLabel.cpp \
     GUI/ParameterModificator.cpp \
+    GUI/PresetSelectionDialog.cpp \
     GUI/SensorCharacteristicsForm.cpp \
     GUI/StatusIndicator.cpp \
     GUI/VirtualKeyboard.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
     GUI/HalsWindow.h \
     GUI/OverlayLabel.h \
     GUI/ParameterModificator.h \
+    GUI/PresetSelectionDialog.h \
     GUI/SensorCharacteristicsForm.h \
     GUI/StatusIndicator.h \
     GUI/VirtualKeyboard.h \

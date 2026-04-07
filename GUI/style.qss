@@ -1,168 +1,252 @@
-        /* Основное окно и виджеты */
-        QMainWindow, QWidget {
-            background-color: #1a1a1a;   /* zinc-900 */
-            color: #ffffff;
-            font-size: 14pt;
-            font-family: "Geologica Thin", "Arial", "Helvetica", sans-serif;
-        }
-        QLabel {
-            color: #ffffff;
-        }
-        QGroupBox {
-            border: 1px solid #CCAA66;
-            border-radius: 5px;
-            margin-top: 0.5em;
-            font-size: 15pt;
-            font-weight: bold;
-            color: #ffffff;
-        }
-        QGroupBox::title {
-            subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 3px 0 3px;
-            background-color: #1a1a1a;
-        }
+/* Основное окно и виджеты */
+QMainWindow, QWidget {
+    background-color: #1a1a1a;   /* zinc-900 */
+    color: #ffffff;
+    font-size: 14pt;
+    font-family: "Geologica Thin", "Arial", "Helvetica", sans-serif;
+}
+QLabel {
+    color: #ffffff;
+}
+QGroupBox {
+    border: 1px solid #CCAA66;
+    border-radius: 5px;
+    margin-top: 0.5em;
+    font-size: 15pt;
+    font-weight: bold;
+    color: #ffffff;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+    background-color: #1a1a1a;
+}
 
-        /* ---- Базовый стиль для всех кнопок ---- */
-        QPushButton {
-            background-color: #27272a;   /* zinc-800 */
-            border: 2px solid #3f3f46;   /* zinc-600 */
-            border-radius: 12px;
-            padding: 8px;
-            font-size: 12pt;
-            font-weight: 500;
-            color: #ffffff;
-            spacing: 8px;
-        }
-        QPushButton:hover {
-            background-color: #3f3f46;
-        }
-        QPushButton:pressed {
-            background-color: #52525b;
-        }
+/* ---- Базовый стиль для всех кнопок ---- */
+QPushButton {
+    background-color: #27272a;   /* zinc-800 */
+    border: 2px solid #3f3f46;   /* zinc-600 */
+    border-radius: 12px;
+    padding: 8px;
+    font-size: 12pt;
+    font-weight: 500;
+    color: #ffffff;
+    spacing: 8px;
+}
+QPushButton:hover {
+    background-color: #3f3f46;
+}
+QPushButton:pressed {
+    background-color: #52525b;
+}
 
-        /* ---- Специальные кнопки ---- */
-        QPushButton#pushButtonUpdateConfiguration {
-            background-color: #2563eb;   /* blue-600 */
-            border-color: #3b82f6;
-            min-height: 48px;
-            padding: 8px;
-            font-size: 12pt;
-        }
-        QPushButton#pushButtonUpdateConfiguration:pressed {
-            background-color: #1d4ed8;
-        }
+/* ---- Специальные кнопки ---- */
+QPushButton#pushButtonUpdateConfiguration {
+    background-color: #2563eb;   /* blue-600 */
+    border-color: #3b82f6;
+    min-height: 48px;
+    padding: 8px;
+    font-size: 12pt;
+}
+QPushButton#pushButtonUpdateConfiguration:pressed {
+    background-color: #1d4ed8;
+}
 
-        QPushButton#pushButtonChoosePreset {
-            background-color: #2563eb;   /* blue-600 */
-            border-color: #3b82f6;
-            min-height: 48px;
-            padding: 8px;
-            font-size: 12pt;
-        }
-        QPushButton#pushButtonChoosePreset:pressed {
-            background-color: #1d4ed8;
-        }
+QPushButton#pushButtonChoosePreset {
+    background-color: #2563eb;   /* blue-600 */
+    border-color: #3b82f6;
+    min-height: 48px;
+    padding: 8px;
+    font-size: 12pt;
+}
+QPushButton#pushButtonChoosePreset:pressed {
+    background-color: #1d4ed8;
+}
 
-        QPushButton#pushButtonStartStop {
-            background-color: #d97706;   /* amber-600 */
-            border-color: #eab308;
-            min-height: 48px;
-            font-size: 12pt;
-        }
-        QPushButton#pushButtonStartStop:pressed {
-            background-color: #b45309;
-        }
-        /* Состояние "активно" (checked) – красный фон */
-        QPushButton#pushButtonStartStop:checked {
-            background-color: #E7000B;   /* ярко-красный */
-            border-color: #C30009;
-        }
-        QPushButton#pushButtonStartStop:checked:pressed {
-            background-color: #C30009;   /* тёмно-красный при нажатии */
-        }
+QPushButton#pushButtonStartStop {
+    background-color: #d97706;   /* amber-600 */
+    border-color: #eab308;
+    min-height: 48px;
+    font-size: 12pt;
+}
+QPushButton#pushButtonStartStop:pressed {
+    background-color: #b45309;
+}
+/* Состояние "активно" (checked) – красный фон */
+QPushButton#pushButtonStartStop:checked {
+    background-color: #E7000B;   /* ярко-красный */
+    border-color: #C30009;
+}
+QPushButton#pushButtonStartStop:checked:pressed {
+    background-color: #C30009;   /* тёмно-красный при нажатии */
+}
 
-        QPushButton#pushButtonMakeSnapshot {
-            background-color: #d97706;   /* amber-600 */
-            border-color: #eab308;
-            min-height: 48px;
-            font-size: 12pt;
-        }
-        QPushButton#pushButtonMakeSnapshot:pressed {
-            background-color: #b45309;
-        }
+QPushButton#pushButtonMakeSnapshot {
+    background-color: #d97706;   /* amber-600 */
+    border-color: #eab308;
+    min-height: 48px;
+    font-size: 12pt;
+}
+QPushButton#pushButtonMakeSnapshot:pressed {
+    background-color: #b45309;
+}
 
-        /* Кнопка выхода (иконка) – прозрачная */
-        QPushButton#pushButtonQuit {
-            background-color: transparent;
-            border: none;
-            background-image: url(:/Hals/Icons/power.png);
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-        QPushButton#pushButtonQuit:hover,
-        QPushButton#pushButtonQuit:pressed {
-            background-color: transparent; /* убираем эффект наведения */
-        }
+/* Кнопка выхода (иконка) – прозрачная */
+QPushButton#pushButtonQuit {
+    background-color: transparent;
+    border: none;
+    background-image: url(:/Hals/Icons/power.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+QPushButton#pushButtonQuit:hover,
+QPushButton#pushButtonQuit:pressed {
+    background-color: transparent; /* убираем эффект наведения */
+}
 
-        /* ---- Верхняя панель (статус) ---- */
-        QWidget#upperStatusWidget {
-            background-color: rgba(128, 128, 128, 64);
-            border-bottom: 2px solid #fe9a00;
-            height: 48px;
-        }
-        QWidget#upperStatusWidget QLabel {
-            background-color: transparent;
-            border: none;
-            padding: 0;
-            font-weight: bold;
-            font-size: 13pt;
-            color: #ffffff;
-        }
+/* ---- Верхняя панель (статус) ---- */
+QWidget#upperStatusWidget {
+    background-color: rgba(128, 128, 128, 64);
+    border-bottom: 2px solid #fe9a00;
+    height: 48px;
+}
+QWidget#upperStatusWidget QLabel {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    font-weight: bold;
+    font-size: 13pt;
+    color: #ffffff;
+}
 
-        /* ---- Верхний и нижний виджеты ---- */
-        QWidget#upperWidget {
-            border-bottom: 2px solid #3f3f46;
-        }
-        QWidget#downWidget {
-            border-top: 2px solid #3f3f46;
-        }
+/* ---- Верхний и нижний виджеты ---- */
+QWidget#upperWidget {
+    border-bottom: 2px solid #3f3f46;
+}
+QWidget#downWidget {
+    border-top: 2px solid #3f3f46;
+}
 
 
-        QMessageBox {
-            background-color: #1a1a1a;
-            font-size: 13pt;
-        }
-        QMessageBox QPushButton {
-            font-size: 14pt;
-            font-weight: bold;
-            min-width: 120px;
-            min-height: 48px;
-            padding: 8px 12px;
-        }
+QMessageBox {
+    background-color: #1a1a1a;
+    font-size: 13pt;
+}
+QMessageBox QPushButton {
+    font-size: 14pt;
+    font-weight: bold;
+    min-width: 120px;
+    min-height: 48px;
+    padding: 8px 12px;
+}
 
-        QFrame#line {
-            background-color: #3f3f46;
-            max-height: 2px;
-            border: none;
-        }
+QFrame#line {
+    background-color: #3f3f46;
+    max-height: 2px;
+    border: none;
+}
 
-        QLabel#labelAltitudeValue {
-            color: #fe9a00;
-            font-family: "LCDMono", "Courier New", monospace;
-            font-size: 20pt;
-            qproperty-alignment: AlignCenter;
-        }
-        QLabel#labelTextAltitude {
-            color: #fe9a00;
-        }
+QLabel#labelAltitudeValue {
+    color: #fe9a00;
+    font-family: "LCDMono", "Courier New", monospace;
+    font-size: 20pt;
+    qproperty-alignment: AlignCenter;
+}
+QLabel#labelTextAltitude {
+    color: #fe9a00;
+}
 
-        QPushButton#pushButtonSettings {
-            min-height: 48px;
-        }
-        QPushButton#pushButtonToMainPage {
-            min-height: 48px;
-        }
-        QPushButton#pushButtonToMainPage_2 {
-            min-height: 48px;
-        }
+QPushButton#pushButtonSettings {
+    min-height: 48px;
+}
+QPushButton#pushButtonToMainPage {
+    min-height: 48px;
+}
+QPushButton#pushButtonToMainPage_2 {
+    min-height: 48px;
+}
+
+/* ---- Стили для диалога выбора пресета ---- */
+QDialog {
+    background-color: #1a1a1a;   /* zinc-900 */
+    border: 2px solid #CCAA66;   /* золотистая рамка, как у QGroupBox */
+    border-radius: 8px;
+}
+
+/* Заголовок окна (если используется системный, но лучше убрать frameless,
+   однако эти стили помогут сделать выпадающий список единообразным) */
+QDialog QLabel {
+    color: #ffffff;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+/* Выпадающий список (QComboBox) */
+QComboBox {
+    background-color: #27272a;
+    border: 2px solid #3f3f46;
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-size: 13pt;
+    color: #ffffff;
+    min-height: 36px;
+}
+QComboBox:hover {
+    background-color: #3f3f46;
+    border-color: #B4B4B4;
+}
+QComboBox:focus {
+    border-color: #FFFFFF;
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 30px;
+    border-left: 1px solid #3f3f46;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+QComboBox::down-arrow {
+    image: url(:/Hals/Icons/down-arrow.png); /* если есть иконка, иначе стандартная */
+    width: 16px;
+    height: 16px;
+}
+QComboBox QAbstractItemView {
+    background-color: #27272a;
+    border: 2px solid #3f3f46;
+    border-radius: 8px;
+    selection-background-color: #3f3f46;
+    selection-color: #FFFFFF;
+    color: #ffffff;
+    font-size: 12pt;
+    padding: 4px;
+}
+
+/* Кнопки OK / Cancel в диалоге (если они не имеют специального objectName) */
+QDialog QPushButton {
+    background-color: #27272a;
+    border: 2px solid #3f3f46;
+    border-radius: 12px;
+    padding: 8px 16px;
+    font-size: 13pt;
+    font-weight: bold;
+    color: #ffffff;
+    min-width: 100px;
+    min-height: 40px;
+}
+QDialog QPushButton:hover {
+    background-color: #3f3f46;
+    border-color: #D6D6D6;
+}
+QDialog QPushButton:pressed {
+    background-color: #52525b;
+}
+/* Специальный стиль для кнопки OK (можно сделать акцентной) */
+QDialog QPushButton:default {
+    background-color: #2563eb;   /* синий, как у кнопки обновления */
+    border-color: #3b82f6;
+}
+QDialog QPushButton:default:hover {
+    background-color: #1d4ed8;
+}
