@@ -170,7 +170,6 @@ QPushButton#pushButtonToMainPage_2 {
 /* ---- Стили для диалога выбора пресета ---- */
 QDialog {
     background-color: #1a1a1a;   /* zinc-900 */
-    border: 2px solid #CCAA66;   /* золотистая рамка, как у QGroupBox */
     border-radius: 8px;
 }
 
@@ -212,6 +211,7 @@ QComboBox::down-arrow {
     width: 16px;
     height: 16px;
 }
+
 QComboBox QAbstractItemView {
     background-color: #27272a;
     border: 2px solid #3f3f46;
