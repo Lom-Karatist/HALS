@@ -22,9 +22,14 @@ class GPSDevice : public QObject {
 public:
     explicit GPSDevice(EmitMode mode = EmitMode::BothValid,
                        QObject *parent = nullptr);
+    ~GPSDevice();
+
     bool isRunning() const { return m_future.isRunning(); };
     void attachView(IGpsView *view);
-    ~GPSDevice();
+
+    void stopFormattedSaving();
+
+    void setSavingPath(const QString &newSavingPath);
 
 public slots:
     //! запуск приема данных с устройства
@@ -38,9 +43,8 @@ public slots:
 
     //! сохранение форматированных данных на диск.
     //! можно менять путь для сохранения на лету при помощи повторного вызова
-    void writeFormattedGpsDataToFile(
-        logger::saveFormat format,
-        const QString &fileFullPath = kFormattedDataFileName);
+    void writeFormattedGpsDataToFile(logger::saveFormat format,
+        QString fileFullPath = kFormattedDataFileName);
 
     //! сохранение сырых данных на диск.
     //! можно менять путь для сохранения на лету при помощи повторного вызова
@@ -60,6 +64,7 @@ private:
     logger::saveFormat m_formattedSaveFormat{};
     QString m_originFilePath;
     QString m_formattedFilePath;
+    QString m_savingPath;
     GPSReceiver *m_gps_receiver;
     GPSParser *m_gps_parser;
     QFuture<void> m_future;

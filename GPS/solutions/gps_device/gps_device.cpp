@@ -31,6 +31,11 @@ void GPSDevice::attachView(IGpsView *view) {
         [view](const QString &status) { view->showGpsStatus(status); });
 }
 
+void GPSDevice::stopFormattedSaving() {
+    QObject::disconnect(m_saveFormattedConnection);
+    m_formattedFilePath.clear();
+}
+
 void GPSDevice::start() {
     if (m_future.isRunning()) return;
     m_future = QtConcurrent::run([this]() { m_gps_receiver->start(); });
@@ -57,9 +62,10 @@ void GPSDevice::stop() {
 }
 
 void GPSDevice::writeFormattedGpsDataToFile(logger::saveFormat format,
-                                            const QString &fileFullPath) {
+                                            QString fileFullPath) {
+    fileFullPath = m_savingPath + fileFullPath;
     if (m_formattedFilePath == fileFullPath && m_formattedSaveFormat == format)
-        return;  // ничего не изменилось
+        return;
 
     m_formattedFilePath = fileFullPath;
     m_formattedSaveFormat = format;
@@ -83,6 +89,10 @@ void GPSDevice::writeOriginGpsDataToFile(const QString &fileFullPath) {
                          [fileFullPath](const QByteArray &line) {
                              logger::saveGpsLineToFile(line, fileFullPath);
                          });
+}
+
+void GPSDevice::setSavingPath(const QString &newSavingPath) {
+    m_savingPath = newSavingPath;
 }
 
 void GPSDevice::gpsStatusUpdated(GpsStatus status) {

@@ -145,6 +145,7 @@ void HalsFacade::initExperimentController() {
     m_experimentController->setFlightTaskModule(m_flightTaskModule.get());
     m_experimentController->setDataSaver(m_dataSaver.get());
     m_experimentController->setLightSensor(m_lightSensorManager.get());
+    m_experimentController->setGpsDevice(m_gpsDevice.get());
 
     connect(m_experimentController.get(),
             &ExperimentController::sunElevationUpdated,
@@ -214,6 +215,7 @@ void HalsFacade::setSavingPath(QString savingPath) {
     m_dataSaver->setSavingPath(savingPath);
     m_cameraManager->setSavingPath(savingPath);
     m_lightSensorManager->setSavingPath(savingPath);
+    m_gpsDevice->setSavingPath(savingPath);
 }
 
 void HalsFacade::setSaveFormat(int format) {

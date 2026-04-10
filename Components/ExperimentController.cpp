@@ -40,6 +40,10 @@ void ExperimentController::setLightSensor(LightSensorManager *sensor) {
     m_lightSensor = sensor;
 }
 
+void ExperimentController::setGpsDevice(GPSDevice *device) {
+    m_gpsDevice = device;
+}
+
 bool ExperimentController::loadMission(const QString &filePath) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -187,6 +191,15 @@ void ExperimentController::setDataRecording(bool enabled) {
             m_lightSensor->setRecordingEnabled(true);
         } else {
             m_lightSensor->setRecordingEnabled(false);
+        }
+    }
+    if (m_gpsDevice) {
+        if (enabled) {
+            QString gpsFilePath = "/gps_data.json";
+            m_gpsDevice->writeFormattedGpsDataToFile(
+                logger::saveFormat::jsonCompact, gpsFilePath);
+        } else {
+            m_gpsDevice->stopFormattedSaving();
         }
     }
 }

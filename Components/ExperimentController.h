@@ -25,6 +25,7 @@ public:
     void setFlightTaskModule(FlightTaskModule *module);
     void setDataSaver(DataSaver *saver);
     void setLightSensor(LightSensorManager *sensor);
+    void setGpsDevice(GPSDevice *device);
 
     // Загрузка полётного задания из файла JSON
     bool loadMission(const QString &filePath);
@@ -63,6 +64,7 @@ private:
     FlightTaskModule *m_flightTaskModule;
     DataSaver *m_dataSaver;
     LightSensorManager *m_lightSensor;
+    GPSDevice *m_gpsDevice;
 
     // Состояние эксперимента
     bool m_experimentActive;  // флаг, что эксперимент запущен (идёт запись)
