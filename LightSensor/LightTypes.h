@@ -5,13 +5,45 @@
 #include <QVector>
 
 /**
+ * @brief Типы команд для асинхронного управления датчиком освещённости.
+ *
+ * Используются в очереди команд LightSensorWorker для потокобезопасного
+ * изменения параметров из любого потока.
+ */
+enum class LightCommandType {
+    SetIntegrationTime,  //!< Установка времени интеграции (экспозиции)
+    SetGainIndex,        //!< Установка индекса усиления
+    SetFrameRate         //!< Установка частоты опроса
+};
+
+/**
+ * @brief Структура, представляющая одну команду для датчика освещённости.
+ *
+ * Содержит тип команды и соответствующее значение (целое или дробное).
+ * Используется в очереди команд LightSensorWorker для асинхронного
+ * применения изменений в рабочем потоке.
+ */
+struct LightCommand {
+    LightCommandType
+        type;  //!< Тип команды (определяет, какой параметр меняется)
+    int intValue;  //!< Целочисленное значение:
+                   //!< - для SetIntegrationTime: время интеграции (мс)
+                   //!< - для SetGainIndex: индекс усиления (0..10)
+                   //!< - для SetFrameRate: частота опроса (Гц)
+    double doubleValue;  //!< Значение с плавающей точкой (зарезервировано
+                         //!< для будущих команд, например, для установки
+                         //!< порогов или калибровочных коэффициентов)
+};
+
+/**
  * @brief Структура, содержащая данные со всех каналов датчика AS7341.
  */
 struct LightSensorData {
-    quint64 timestamp;  //!< Временная метка в микросекундах (или мс)
+    QString dateTime;  //!< Временная метка
     QVector<quint16> channels;  //!< Значения каналов (индексы см. LightChannel)
     int integrationTimeMs;  //!< Использованное время интеграции (мс)
     int gainIndex;  //!< Использованный индекс усиления (0..10)
+    double sunElevation;  //!< Угол Солнца над горизонтом в градусах (0..90)
 };
 
 /**
@@ -50,6 +82,7 @@ enum LightChannel {
     CH_FD = 10     // Детектор мерцания (flicker)
 };
 
+Q_DECLARE_METATYPE(LightCommand)
 Q_DECLARE_METATYPE(LightSensorData)
 Q_DECLARE_METATYPE(LightSensorParameters)
 

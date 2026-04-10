@@ -43,6 +43,7 @@ signals:
     void experimentStarted();
     void experimentStopped();
     void errorOccurred(const QString &error);
+    void sunElevationUpdated(double elevation);
 
 public slots:
     void updateGpsData(const GpsData &gpsData);  // приём сырых данных GPS

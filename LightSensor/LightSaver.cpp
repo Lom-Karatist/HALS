@@ -30,15 +30,16 @@ void LightSaver::saveDataAsync(const LightSensorData &data) {
 void LightSaver::appendToFile(const LightSensorData &data,
                               const QString &path) {
     QJsonObject obj;
-    obj["timestamp_us"] = (qint64)data.timestamp;
+    obj["timestamp"] = data.dateTime;
     obj["integrationTimeMs"] = data.integrationTimeMs;
     obj["gainIndex"] = data.gainIndex;
+    obj["sunElevation"] = data.sunElevation;
     QJsonArray arr;
     for (quint16 val : data.channels) arr.append(val);
     obj["channels"] = arr;
 
     QJsonDocument doc(obj);
-    QString fileName = path + "/lightsensor_data.jsonl";
+    QString fileName = path + "/lightsensor_data.json";
     QFile file(fileName);
     if (file.open(QIODevice::Append | QIODevice::Text)) {
         file.write(doc.toJson() + "\n");

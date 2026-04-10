@@ -122,6 +122,8 @@ void ExperimentController::updateGpsData(const GpsData &gpsData) {
 
     spa_calculate(&spa);
     m_sunElevation = spa.e;
+
+    emit sunElevationUpdated(m_sunElevation);
 }
 
 void ExperimentController::checkExperimentCondition() {
@@ -179,9 +181,16 @@ void ExperimentController::setDataRecording(bool enabled) {
     if (!m_cameraManager) return;
 
     m_cameraManager->setIsNeedToSave(enabled, enabled, enabled);
+
+    if (m_lightSensor) {
+        if (enabled) {
+            m_lightSensor->setRecordingEnabled(true);
+        } else {
+            m_lightSensor->setRecordingEnabled(false);
+        }
+    }
 }
 
-bool ExperimentController::experimentActive() const
-{
+bool ExperimentController::experimentActive() const {
     return m_experimentActive;
 }

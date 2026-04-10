@@ -1,12 +1,15 @@
 #ifndef LIGHTSENSORMANAGER_H
 #define LIGHTSENSORMANAGER_H
 
+#include <QMutex>
 #include <QObject>
 #include <QTimer>
+#include <atomic>
 #include <memory>
 
 #include "LightSaver.h"
 #include "LightSensorApi.h"
+#include "LightSensorWorker.h"
 #include "LightSettings.h"
 #include "LightTypes.h"
 
@@ -51,19 +54,6 @@ public:
     void initialize();
 
     /**
-     * @brief Запустить периодический опрос датчика.
-     *
-     * Таймер запускается с интервалом, соответствующим установленной частоте
-     * (frameRateHz). Если опрос уже активен, ничего не делает.
-     */
-    void start();
-
-    /**
-     * @brief Остановить периодический опрос датчика.
-     */
-    void stop();
-
-    /**
      * @brief Установить время интеграции (экспозиции).
      * @param ms Время в миллисекундах (1..1000).
      *
@@ -95,6 +85,13 @@ public:
      * Передаёт путь модулю LightSaver.
      */
     void setSavingPath(const QString &path);
+
+    /**
+     * @brief Включить или выключить сохранение данных датчика.
+     * @param enabled true – данные будут сохраняться в JSONL-файл,
+     *                false – сохранение отключено.
+     */
+    void setRecordingEnabled(bool enabled);
 
 signals:
     /**
@@ -130,23 +127,33 @@ signals:
      */
     void connectionStatusChanged(bool connected);
 
+public slots:
+    /**
+     * @brief Обновить текущее значение угла Солнца.
+     * @param elevation Угол в градусах (0..90).
+     *
+     * Потокобезопасно сохраняет значение для последующего добавления в данные.
+     */
+    void updateSunElevation(double elevation);
+
 private slots:
     /**
-     * @brief Слот, вызываемый по таймеру для выполнения одного измерения.
-     *
-     * Читает данные через LightSensorApi, при успехе испускает dataReady()
-     * и, если сохранение включено, вызывает асинхронное сохранение.
+     * @brief Слот для приёма данных от рабочего потока LightSensorWorker.
+     * @param data Структура с измеренными значениями (передаётся по значению,
+     *             что безопасно для跨-потоковой передачи, так как
+     * LightSensorData содержит QVector, который поддерживает копирование с
+     * разделением (implicit sharing)).
      */
-    void onTimer();
+    void onDataReady(LightSensorData data);
 
 private:
-    std::unique_ptr<LightSensorApi>
-        m_api;  //!< Низкоуровневый API для работы с датчиком.
+    LightSensorWorker *m_worker;  //!< Модуль для работы сенсора освещенности в
+                                  //!< отдельном потоке
     std::unique_ptr<LightSettings>
         m_lightSettings;  //!< Настройки датчика (INI-файл).
     std::unique_ptr<LightSaver> m_saver;  //!< Модуль сохранения данных.
-    QTimer *m_timer;  //!< Таймер для периодического опроса.
-    bool m_isActive;  //!< Флаг активности опроса.
+    std::atomic<double>
+        m_currentSunElevation;  //!< Текущий угол возвышения Солнца
 };
 
 #endif  // LIGHTSENSORMANAGER_H

@@ -45,9 +45,9 @@ void HalsFacade::initialize() {
     initCameras();
     initFlightTaskModule();
     startUsbChecker();
-    initExperimentController();
     startGps();
     initLightSensor();
+    initExperimentController();
 }
 
 void HalsFacade::refreshUsbState() {
@@ -146,6 +146,10 @@ void HalsFacade::initExperimentController() {
     m_experimentController->setDataSaver(m_dataSaver.get());
     m_experimentController->setLightSensor(m_lightSensorManager.get());
 
+    connect(m_experimentController.get(),
+            &ExperimentController::sunElevationUpdated,
+            m_lightSensorManager.get(),
+            &LightSensorManager::updateSunElevation);
     // Загрузить полётное задание из настроек
     // QString missionPath = ... ;
     // m_experimentController->loadMission(missionPath);

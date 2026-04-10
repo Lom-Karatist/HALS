@@ -1,5 +1,6 @@
 #include "LightSensorApi.h"
 
+#include <QDateTime>
 #include <QDebug>
 #include <chrono>
 #include <random>
@@ -257,9 +258,8 @@ bool LightSensorApi::emulationReadAllChannels(LightSensorData &data) {
 
     QVector<quint16> channels(11);
     for (int i = 0; i < 11; ++i) channels[i] = dist(gen);
-    data.timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
-                         std::chrono::steady_clock::now().time_since_epoch())
-                         .count();
+    data.dateTime =
+        QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.z");
     data.channels = channels;
     data.integrationTimeMs = m_integrationTimeMs;
     data.gainIndex = m_gainIndex;
