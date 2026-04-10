@@ -119,6 +119,17 @@ signals:
      */
     void settingsChanged(const LightSensorParameters &params);
 
+    /**
+     * @brief Сигнал об изменении состояния подключения датчика освещённости.
+     * @param connected true – датчик инициализирован и готов к работе,
+     *                  false – инициализация не удалась или произошёл сбой.
+     *
+     * Сигнал испускается один раз после вызова initialize().
+     * В будущем может также испускаться при динамическом восстановлении/потере
+     * связи.
+     */
+    void connectionStatusChanged(bool connected);
+
 private slots:
     /**
      * @brief Слот, вызываемый по таймеру для выполнения одного измерения.

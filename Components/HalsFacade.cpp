@@ -101,7 +101,7 @@ bool HalsFacade::initCameras() {
         connect(m_cameraManager.get(), &CameraManager::ready, this,
                 &HalsFacade::startBaslerCameras);
         connect(m_cameraManager.get(), &CameraManager::errorOccurred, this,
-                &HalsFacade::cameraError, Qt::QueuedConnection);
+                &HalsFacade::componentError, Qt::QueuedConnection);
         m_cameraManager->initCameras();
 
         connect(m_cameraManager.get(), &CameraManager::forceParameterChanging,
@@ -181,7 +181,10 @@ void HalsFacade::initLightSensor() {
     connect(m_lightSensorManager.get(), &LightSensorManager::settingsChanged,
             this, &HalsFacade::onLightForceParameterChanging);
     connect(m_lightSensorManager.get(), &LightSensorManager::errorOccurred,
-            this, &HalsFacade::cameraError);
+            this, &HalsFacade::componentError);
+    connect(m_lightSensorManager.get(),
+            &LightSensorManager::connectionStatusChanged, this,
+            &HalsFacade::lightSensorConnectionStatusChanged);
     m_lightSensorManager->initialize();
 }
 
@@ -223,9 +226,11 @@ void HalsFacade::stopExperiment() {
     m_experimentController->forceStopExperiment();
 }
 
-void HalsFacade::loadPreset(const QString &presetName)
-{
-
+void HalsFacade::loadPreset(const QString &presetName) {
+    if (m_experimentController->experimentActive()) {
+        stopExperiment();
+    }
+    setVideoStreamEnabled(false);
 }
 
 void HalsFacade::onParameterChanged(ParameterType type, int newValue) {

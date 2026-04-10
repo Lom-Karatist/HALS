@@ -37,6 +37,8 @@ public:
     void forceStartExperiment();
     void forceStopExperiment();
 
+    bool experimentActive() const;
+
 signals:
     void experimentStarted();
     void experimentStopped();

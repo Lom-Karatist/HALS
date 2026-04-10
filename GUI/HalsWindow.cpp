@@ -349,6 +349,8 @@ void HalsWindow::initObjects() {
     });
     connect(m_facade, &HalsFacade::parameterValueChanged, this,
             &HalsWindow::onForceParameterChanging);
+    connect(m_facade, &HalsFacade::lightSensorConnectionStatusChanged, this,
+            &HalsWindow::updateLightSensorState);
     initSettingsForms();
     m_facade->setVideoStreamEnabled(false);
     m_facade->initialize();
@@ -438,6 +440,16 @@ void HalsWindow::onForceParameterChanging(ParameterType type, int value) {
     }
     if (form) {
         form->setParameterValue(type, value);
+    }
+}
+
+void HalsWindow::updateLightSensorState(bool connected) {
+    if (connected) {
+        m_sunIndicator->setState(StatusIndicator::State::Active);
+        m_sunIndicator->setValueText("Активен");
+    } else {
+        m_sunIndicator->setState(StatusIndicator::State::Inactive);
+        m_sunIndicator->setValueText("Не подключен");
     }
 }
 

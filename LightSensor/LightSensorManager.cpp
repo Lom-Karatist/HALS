@@ -30,6 +30,7 @@ void LightSensorManager::initialize() {
     setGainIndex(params.gain);
     setFrameRateHz(params.fps);
 
+    emit connectionStatusChanged(true);
     emit settingsChanged(params);
 }
 

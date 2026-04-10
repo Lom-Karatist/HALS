@@ -180,3 +180,8 @@ void ExperimentController::setDataRecording(bool enabled) {
 
     m_cameraManager->setIsNeedToSave(enabled, enabled, enabled);
 }
+
+bool ExperimentController::experimentActive() const
+{
+    return m_experimentActive;
+}

@@ -43,7 +43,8 @@ signals:
     void overviewImageReady(const QImage &image, int maxBrightness);
     void hsImageReady(const QImage &image, int maxBrightness);
     void flightTaskLoaderStatusChanged(bool loadingStatus);
-    void cameraError(const QString &error);
+    void lightSensorConnectionStatusChanged(bool connected);
+    void componentError(const QString &error);
     void gpsSatellitesCountUpdated(const int &count);
     void cpuTemperatureUpdated(QString temperature);
     void logMessage(Logger::LogLevel level, const QString &message);
