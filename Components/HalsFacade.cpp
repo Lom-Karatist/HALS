@@ -47,6 +47,7 @@ void HalsFacade::initialize() {
     startUsbChecker();
     startGps();
     initLightSensor();
+    startMemoryMonitor();
     initExperimentController();
 }
 
@@ -79,7 +80,10 @@ void HalsFacade::startUsbChecker() {
     m_usbChecker = std::make_unique<UsbChecker>(this);
     connect(m_usbChecker.get(), &UsbChecker::usbStatusChanged, this,
             &HalsFacade::onUsbStatusChanged);
+    connect(m_usbChecker.get(), &UsbChecker::usbSpaceUpdated, m_dataSaver.get(),
+            &DataSaver::onUsbSpaceUpdated);
     m_usbChecker->check();
+    m_usbChecker->startMonitoring();
 }
 
 void HalsFacade::initDataSaver() {
@@ -151,12 +155,23 @@ void HalsFacade::initExperimentController() {
             &ExperimentController::sunElevationUpdated,
             m_lightSensorManager.get(),
             &LightSensorManager::updateSunElevation);
-    // Загрузить полётное задание из настроек
-    // QString missionPath = ... ;
-    // m_experimentController->loadMission(missionPath);
 
-    // Также можно автоматически запускать мониторинг при старте системы
-    //    m_experimentController->startMonitoring();
+    connect(m_experimentController.get(),
+            &ExperimentController::experimentStarted, this, [this]() {
+                if (m_usbChecker) m_usbChecker->startMonitoring(5000);
+            });
+    connect(m_experimentController.get(),
+            &ExperimentController::experimentStopped, this, [this]() {
+                if (m_usbChecker) m_usbChecker->stopMonitoring();
+            });
+    connect(m_experimentController.get(),
+            &ExperimentController::experimentStarted, this, [this]() {
+                if (m_memoryMonitor) m_memoryMonitor->startMonitoring(5000);
+            });
+    connect(m_experimentController.get(),
+            &ExperimentController::experimentStopped, this, [this]() {
+                if (m_memoryMonitor) m_memoryMonitor->stopMonitoring();
+            });
 }
 
 void HalsFacade::initFlightTaskModule() {
@@ -191,6 +206,12 @@ void HalsFacade::initLightSensor() {
             &LightSensorManager::connectionStatusChanged, this,
             &HalsFacade::lightSensorConnectionStatusChanged);
     m_lightSensorManager->initialize();
+}
+
+void HalsFacade::startMemoryMonitor() {
+    m_memoryMonitor = std::make_unique<MemoryMonitor>(this);
+    connect(m_memoryMonitor.get(), &MemoryMonitor::memoryUsageUpdated,
+            m_dataSaver.get(), &DataSaver::onMemoryUsageUpdated);
 }
 
 void HalsFacade::stopBaslerCameras() {
@@ -346,11 +367,15 @@ void HalsFacade::onUsbStatusChanged(bool mounted, qint64 availableBytes,
     if (!mounted)
         emit flightTaskLoaderStatusChanged(false);
     else {
-        if (m_flightTaskModule->loadMission(m_usbChecker->lastPath())) {
-            emit parameterValueChanged(ParameterType::EXP_ALTITUDE,
-                                       m_flightTaskModule->flightAltitude());
-            emit parameterValueChanged(ParameterType::EXP_RECORD_START_ALTITUDE,
-                                       m_flightTaskModule->shootingAltitude());
+        if (!m_flightTaskModule->missionValid()) {
+            if (m_flightTaskModule->loadMission(m_usbChecker->lastPath())) {
+                emit parameterValueChanged(
+                    ParameterType::EXP_ALTITUDE,
+                    m_flightTaskModule->flightAltitude());
+                emit parameterValueChanged(
+                    ParameterType::EXP_RECORD_START_ALTITUDE,
+                    m_flightTaskModule->shootingAltitude());
+            }
         }
     }
 }

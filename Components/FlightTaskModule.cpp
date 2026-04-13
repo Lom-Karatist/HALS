@@ -64,6 +64,11 @@ void FlightTaskModule::applyMissionSettings() {
         m_shootingAltitude = m_flightAltitude - 10;
 }
 
+bool FlightTaskModule::missionValid() const
+{
+    return m_missionValid;
+}
+
 int FlightTaskModule::shootingAltitude() const
 {
     return m_shootingAltitude;

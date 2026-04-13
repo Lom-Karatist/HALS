@@ -17,6 +17,7 @@ CameraManager::CameraManager(QObject *parent, bool isMasterSlaveNeeded)
       m_isImageNeeded(false),
       m_isSingleShotNeeded(false),
       m_stopped(false),
+      m_pairSaveCounter(0),
       m_isNeedToSaveHS(true),
       m_isNeedToSaveOC(true) {
     PylonInitialize();
@@ -153,7 +154,7 @@ void CameraManager::onSlaveError(const QString &err) {
 void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
                                     int pixelFormat) {
     if (m_isImageNeeded.load()) {
-        QByteArray dataCopy = data;  // копия для передачи в другой поток
+        QByteArray dataCopy = data;
         QtConcurrent::run([this, dataCopy, w, h, pixelFormat]() {
             QImage img = ImageFormatConverter::convertToHeatmapImage(
                 dataCopy, w, h, pixelFormat, 5);
@@ -169,12 +170,29 @@ void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
 
     if ((m_savingModule.isNeedToSave() || m_isSingleShotNeeded) &&
         m_isNeedToSaveHS) {
-        int masterExpoMs = ceil(m_hsParams.exposureTime);
-        m_frameTimeStamp = QDateTime::currentDateTime()
-                               .addMSecs(-masterExpoMs)
-                               .toString("yyyyMMdd_HHmmss_zzz");
-        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "/master",
-                                     m_frameTimeStamp);
+        QString timestamp;
+        bool needSecond = m_isNeedToSaveOC;
+
+        {
+            QMutexLocker locker(&m_timestampMutex);
+            if (m_pairSaveCounter.load() == 0) {
+                timestamp = QDateTime::currentDateTime().toString(
+                    "yyyyMMdd_HHmmss_zzz");
+                m_frameTimeStamp = timestamp;
+            } else {
+                timestamp = m_frameTimeStamp;
+            }
+            int oldCounter = m_pairSaveCounter.fetch_add(1);
+            int newCounter = oldCounter + 1;
+
+            if (newCounter == 2 || (newCounter == 1 && !needSecond)) {
+                m_frameTimeStamp.clear();
+                m_pairSaveCounter = 0;
+            }
+        }
+
+        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "HS", timestamp);
+
         if (m_isSingleShotNeeded) {
             m_isNeedToSaveHS = false;
             if (!m_isNeedToSaveOC) m_isSingleShotNeeded = false;
@@ -195,8 +213,29 @@ void CameraManager::onSlaveRawData(const QByteArray &data, int w, int h,
 
     if ((m_savingModule.isNeedToSave() || m_isSingleShotNeeded) &&
         m_isNeedToSaveOC) {
-        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "/slave",
-                                     m_frameTimeStamp);
+        QString timestamp;
+        bool needSecond = m_isNeedToSaveHS;
+
+        {
+            QMutexLocker locker(&m_timestampMutex);
+            if (m_pairSaveCounter.load() == 0) {
+                timestamp = QDateTime::currentDateTime().toString(
+                    "yyyyMMdd_HHmmss_zzz");
+                m_frameTimeStamp = timestamp;
+            } else {
+                timestamp = m_frameTimeStamp;
+            }
+            int oldCounter = m_pairSaveCounter.fetch_add(1);
+            int newCounter = oldCounter + 1;
+
+            if (newCounter == 2 || (newCounter == 1 && !needSecond)) {
+                m_frameTimeStamp.clear();
+                m_pairSaveCounter = 0;
+            }
+        }
+
+        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "OC", timestamp);
+
         if (m_isSingleShotNeeded) {
             m_isNeedToSaveOC = false;
             if (!m_isNeedToSaveHS) m_isSingleShotNeeded = false;

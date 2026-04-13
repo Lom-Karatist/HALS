@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStorageInfo>
+#include <QTimer>
 
 /**
  * @brief Класс для периодической проверки подключения USB-накопителей.
@@ -26,6 +27,9 @@ public:
     explicit UsbChecker(QObject *parent = nullptr);
     ~UsbChecker();
 
+    void startMonitoring(int intervalMs = 5000);
+    void stopMonitoring();
+
     /**
      * @brief Выполнить проверку подключения USB-накопителей.
      *
@@ -48,12 +52,17 @@ signals:
      */
     void usbStatusChanged(bool mounted, qint64 availableBytes,
                           qint64 totalBytes);
+    void usbSpaceUpdated(qint64 availableBytes, qint64 totalBytes);
+
+private slots:
+    void onTimer();
 
 private:
     bool m_lastMounted;  //!< Предыдущее состояние наличия USB.
     QString m_lastPath;  //!< Путь к последнему найденному USB.
     qint64 m_lastAvailable;  //!< Предыдущее доступное пространство.
     qint64 m_lastTotal;  //!< Предыдущее общее пространство.
+    QTimer *m_timer;
 };
 
 #endif  // USBCHECKER_H

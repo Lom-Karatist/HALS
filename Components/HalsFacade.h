@@ -4,6 +4,7 @@
 #include <QObject>
 #include <memory>
 
+#include "BaseTools/MemoryMonitor.h"
 #include "CameraManager.h"
 #include "CpuTemperatureController.h"
 #include "DataSaver.h"
@@ -81,6 +82,7 @@ private:
     void initExperimentController();
     void initFlightTaskModule();
     void initLightSensor();
+    void startMemoryMonitor();
 
     std::unique_ptr<CameraManager> m_cameraManager;
 
@@ -99,9 +101,8 @@ private:
     QThread *m_tempControllerThread;
 
     std::unique_ptr<UsbChecker> m_usbChecker;
-
+    std::unique_ptr<MemoryMonitor> m_memoryMonitor;
     std::unique_ptr<FlightTaskModule> m_flightTaskModule;
-
     std::unique_ptr<LightSensorManager> m_lightSensorManager;
 };
 

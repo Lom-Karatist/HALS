@@ -15,6 +15,7 @@ win32 {
 
 SOURCES += \
     BaseTools/IniFileLoader.cpp \
+    BaseTools/MemoryMonitor.cpp \
     BaseTools/QrcFilesRestorer.cpp \
     Components/CpuTemperatureController.cpp \
     Components/DataSaver.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
 
 HEADERS += \
     BaseTools/IniFileLoader.h \
+    BaseTools/MemoryMonitor.h \
     BaseTools/QrcFilesRestorer.h \
     Components/CpuTemperatureController.h \
     Components/DataSaver.h \

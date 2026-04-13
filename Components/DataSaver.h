@@ -12,6 +12,14 @@ public:
     const QString &savingPath() const;
     void setSavingPath(const QString &newSavingPath);
 
+    static void appendToJsonFileAsync(const QString &filePath,
+                                      const QJsonObject &obj);
+
+public slots:
+    void onUsbSpaceUpdated(qint64 available, qint64 total);
+    void onMemoryUsageUpdated(qint64 totalBytes, qint64 availableBytes,
+                              qint64 usedBytes);
+
 signals:
 
 private:

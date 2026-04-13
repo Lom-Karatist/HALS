@@ -195,7 +195,7 @@ void ExperimentController::setDataRecording(bool enabled) {
     }
     if (m_gpsDevice) {
         if (enabled) {
-            QString gpsFilePath = "/gps_data.json";
+            QString gpsFilePath = "/gps_data.jsonl";
             m_gpsDevice->writeFormattedGpsDataToFile(
                 logger::saveFormat::jsonCompact, gpsFilePath);
         } else {

@@ -28,6 +28,8 @@ public:
 
     int shootingAltitude() const;
 
+    bool missionValid() const;
+
 public slots:
     void setAltitude(int altitude);
 

@@ -24,7 +24,6 @@ void saveGpsDataToFile(const GpsData& data, saveFormat format,
                 out << gps::toCsvString(data);
                 break;
             case saveFormat::jsonCompact:
-                qDebug() << "saving gps to " << filePath;
                 out << gps::toCompactJson(data);
                 break;
             case saveFormat::jsonIndented:

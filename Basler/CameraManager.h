@@ -391,6 +391,9 @@ private:
     // --- Модуль сохранения ---
     SavingModule m_savingModule;  //!< Модуль сохранения данных.
     QString m_frameTimeStamp;  //!< Временная метка для текущего кадра.
+    std::atomic<int>
+        m_pairSaveCounter;  //!< Счётчик сохранённых кадров в паре (0,1,2)
+    QMutex m_timestampMutex;  //!< Мьютекс для доступа к метке
     bool m_isNeedToSaveHS;  //!< Флаг сохранения данных гиперспектрометра.
     bool m_isNeedToSaveOC;  //!< Флаг сохранения данных обзорной камеры.
 

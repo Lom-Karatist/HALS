@@ -7,9 +7,25 @@ UsbChecker::UsbChecker(QObject *parent)
     : QObject(parent),
       m_lastMounted(false),
       m_lastAvailable(0),
-      m_lastTotal(0) {}
+      m_lastTotal(0),
+      m_timer(nullptr) {}
 
-UsbChecker::~UsbChecker() {}
+UsbChecker::~UsbChecker() {
+    stopMonitoring();
+    if (m_timer) delete m_timer;
+}
+
+void UsbChecker::startMonitoring(int intervalMs) {
+    if (!m_timer) {
+        m_timer = new QTimer(this);
+        connect(m_timer, &QTimer::timeout, this, &UsbChecker::onTimer);
+    }
+    m_timer->start(intervalMs);
+}
+
+void UsbChecker::stopMonitoring() {
+    if (m_timer) m_timer->stop();
+}
 
 void UsbChecker::check() {
     bool found = false;
@@ -67,3 +83,10 @@ void UsbChecker::check() {
 }
 
 const QString &UsbChecker::lastPath() const { return m_lastPath; }
+
+void UsbChecker::onTimer() {
+    check();
+    if (m_lastMounted) {
+        emit usbSpaceUpdated(m_lastAvailable, m_lastTotal);
+    }
+}
