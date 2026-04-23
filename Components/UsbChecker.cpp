@@ -51,6 +51,10 @@ void UsbChecker::check() {
         }
 #else
         // Linux: по пути монтирования или типу ФС
+        if (root == "/" || root == "/boot" || root.startsWith("/etc") ||
+            root.startsWith("/var")) {
+            continue;
+        }
         if (root.startsWith("/media/") || root.startsWith("/mnt/") ||
             fsType == "vfat" || fsType == "exfat" || fsType == "fuseblk") {
             mountPath = root;
