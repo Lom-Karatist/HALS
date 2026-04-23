@@ -15,8 +15,12 @@ win32 {
     LIBS += -L$$PYLON_ROOT/lib/x64 -lPylonBase_v11
 }
 linux {
-    INCLUDEPATH += /opt/pylon/include
-    LIBS += -L/opt/pylon/lib -lpylonbase
+INCLUDEPATH += /opt/pylon/include
+LIBS += /opt/pylon/lib/libpylonbase.so \
+        /opt/pylon/lib/libpylonutility.so \
+        /opt/pylon/lib/libGenApi_gcc_v3_5_Basler_pylon_v1.so \
+        /opt/pylon/lib/libLog_gcc_v3_5_Basler_pylon_v1.so \
+        /opt/pylon/lib/libGCBase_gcc_v3_5_Basler_pylon_v1.so
 }
 
 SOURCES += \

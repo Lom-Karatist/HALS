@@ -192,9 +192,8 @@ bool LightSensorApi::readAllChannels(LightSensorData &data) {
     // CLEAR усредняем с предыдущим значением
     channels[CH_CLEAR] = (channels[CH_CLEAR] + (buf[10] | (buf[11] << 8))) / 2;
 
-    data.timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
-                         std::chrono::steady_clock::now().time_since_epoch())
-                         .count();
+    data.dateTime =
+        QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.z");
     data.channels = channels;
     data.integrationTimeMs = m_integrationTimeMs;
     data.gainIndex = m_gainIndex;

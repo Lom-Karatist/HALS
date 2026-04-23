@@ -13,6 +13,8 @@ win32 {
     LIBS += -lwbemuuid
 }
 
+INCLUDEPATH += $$PWD/GUI
+
 SOURCES += \
     BaseTools/IniFileLoader.cpp \
     BaseTools/MemoryMonitor.cpp \

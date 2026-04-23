@@ -1,6 +1,7 @@
 #include "CpuTemperatureController.h"
 
 #include <QDebug>
+#include <QFile>
 
 #ifdef Q_OS_WIN
 #include <Wbemidl.h>
@@ -33,7 +34,7 @@ void CpuTemperatureController::getCpuTemperature() {
         file.close();
         bool ok;
         int tempInt = tempStr.toInt(&ok);
-        if (ok && temp > 0) {
+        if (ok && tempInt > 0) {
             emit cpuTemperatureUpdated(QString::number(tempInt / 1000));
         }
     }
