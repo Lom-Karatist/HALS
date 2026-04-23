@@ -15,6 +15,7 @@ HalsWindow::HalsWindow(QWidget* parent)
     setupProject();
     setupGui();
     initObjects();
+    // check
 }
 
 HalsWindow::~HalsWindow() {
