@@ -55,8 +55,14 @@ void UsbChecker::check() {
             root.startsWith("/var")) {
             continue;
         }
-        if (root.startsWith("/media/") || root.startsWith("/mnt/") ||
-            fsType == "vfat" || fsType == "exfat" || fsType == "fuseblk") {
+        QString device = storage.device();
+        if (device.startsWith("/dev/mmcblk")) {
+            continue;
+        }
+        // Принимаем только USB-устройства (/dev/sd*) смонтированные в /media/
+        // или /mnt/
+        if (device.startsWith("/dev/sd") &&
+            (root.startsWith("/media/") || root.startsWith("/mnt/"))) {
             mountPath = root;
             available = storage.bytesAvailable();
             total = storage.bytesTotal();
