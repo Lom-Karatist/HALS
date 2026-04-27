@@ -148,7 +148,7 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
             heatmap.setPixelColor(spec, band, QColor(color));
         }
     }
-    qDebug() << "returning heatmap";
+    qDebug() << "returning heatmap" << height << numBands;
     return heatmap;
 }
 
