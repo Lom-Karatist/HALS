@@ -101,6 +101,7 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
     // 1. Получаем пиксельные значения в универсальном формате (16 бит)
     QVector<quint16> pixels = getPixelValues(data, width, height, pixelFormat);
     if (pixels.isEmpty()) {
+        qDebug() << "Pixel values are empty";
         return QImage();
     }
 
@@ -130,6 +131,7 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
             if (maxVal > globalMax) globalMax = maxVal;
         }
     }
+    qDebug() << "Global Max in HeatMap: " << globalMax;
 
     if (globalMax == 0) {
         QImage blackImage(height, numBands, QImage::Format_RGB32);
@@ -137,7 +139,6 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
         return blackImage;
     }
 
-    qDebug() << "Global Max in HeatMap: " << globalMax;
     // 4. Строим тепловую карту
     QImage heatmap(height, numBands, QImage::Format_RGB32);
     for (int band = 0; band < numBands; ++band) {
