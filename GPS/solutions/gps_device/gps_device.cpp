@@ -20,7 +20,7 @@ GPSDevice::~GPSDevice() {
     stop();
     delete m_gps_receiver;
     delete m_gps_parser;
-    qDebug() << "GPSDevice is deleted";
+    //    qDebug() << "GPSDevice is deleted";
 }
 
 void GPSDevice::attachView(IGpsView *view) {
