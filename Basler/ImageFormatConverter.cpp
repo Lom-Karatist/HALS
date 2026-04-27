@@ -101,7 +101,6 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
     // 1. Получаем пиксельные значения в универсальном формате (16 бит)
     QVector<quint16> pixels = getPixelValues(data, width, height, pixelFormat);
     if (pixels.isEmpty()) {
-        qDebug() << "empty pixels";
         return QImage();
     }
 
@@ -135,7 +134,6 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
     if (globalMax == 0) {
         QImage blackImage(height, numBands, QImage::Format_RGB32);
         blackImage.fill(Qt::black);
-        qDebug() << "returning black";
         return blackImage;
     }
 
@@ -148,7 +146,6 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
             heatmap.setPixelColor(spec, band, QColor(color));
         }
     }
-    qDebug() << "returning heatmap" << height << numBands;
     return heatmap;
 }
 
