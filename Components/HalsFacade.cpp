@@ -317,7 +317,7 @@ void HalsFacade::startBaslerCameras() {
     connect(m_cameraManager.get(), &CameraManager::slaveImageReady, this,
             &HalsFacade::overviewImageReady);
     connect(m_cameraManager.get(), &CameraManager::masterImageReady, this,
-            &HalsFacade::onMasterImageReady);
+            &HalsFacade::onMasterImageReady, Qt::QueuedConnection);
     connect(m_cameraManager.get(), &CameraManager::masterRawData, this,
             &HalsFacade::updateHsData);
     m_cameraManager->start();
