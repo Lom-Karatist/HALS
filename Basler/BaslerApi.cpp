@@ -243,12 +243,12 @@ void BaslerApi::setupCameraFeatures() {
         if (m_camera->BalanceWhiteAuto.IsWritable())
             m_camera->BalanceWhiteAuto.SetValue(BalanceWhiteAuto_Off);
 
+        applyBinningHorizontalChanging(m_params.binningHorizontal);
+        applyBinningVerticalChanging(m_params.binningVertical);
         applyWidthChanging(m_params.width);
         applyHeightChanging(m_params.height);
         applyOffsetXChanging(m_params.offsetX);
         applyOffsetYChanging(m_params.offsetY);
-        applyBinningHorizontalChanging(m_params.binningHorizontal);
-        applyBinningVerticalChanging(m_params.binningVertical);
         applyExposureChanging(m_params.exposureTime);
 
         applyGainChanging(m_params.gain);
