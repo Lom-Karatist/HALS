@@ -296,6 +296,7 @@ void HalsWindow::updateOcImageLabel(QImage imageToShow, int maxBrightness) {
 }
 
 void HalsWindow::updateHsImageLabel(QImage imageToShow, int maxBrightness) {
+    qDebug() << "in HS image update function" << maxBrightness;
     QPixmap pix = QPixmap::fromImage(imageToShow);
     ui->labelSpectra->setPixmap(pix.scaled(ui->labelSpectra->size(),
                                            Qt::IgnoreAspectRatio,

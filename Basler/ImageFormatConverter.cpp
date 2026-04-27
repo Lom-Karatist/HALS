@@ -131,7 +131,6 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
             if (maxVal > globalMax) globalMax = maxVal;
         }
     }
-    qDebug() << "Global Max in HeatMap: " << globalMax;
 
     if (globalMax == 0) {
         QImage blackImage(height, numBands, QImage::Format_RGB32);
