@@ -154,19 +154,24 @@ void CameraManager::onSlaveError(const QString &err) {
 void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
                                     int pixelFormat) {
     if (m_isImageNeeded.load()) {
-        QByteArray dataCopy = data;
-        QtConcurrent::run([this, dataCopy, w, h, pixelFormat]() {
-            QImage img = ImageFormatConverter::convertToHeatmapImage(
-                dataCopy, w, h, pixelFormat, 20);
+        //        QByteArray dataCopy = data;
+        //        QtConcurrent::run([this, dataCopy, w, h, pixelFormat]() {
+        //            QImage img = ImageFormatConverter::convertToHeatmapImage(
+        //                dataCopy, w, h, pixelFormat, 20);
 
-            if (!img.isNull()) {
-                int maxBright = findMaxBrightness(dataCopy, w, h, pixelFormat);
-                qDebug() << "Emitting master image" << maxBright;
-                emit this->masterImageReady(img, maxBright);
-            } else {
-                qDebug() << " Master image empty" << img.isNull();
-            }
-        });
+        //            if (!img.isNull()) {
+        //                int maxBright = findMaxBrightness(dataCopy, w, h,
+        //                pixelFormat); qDebug() << "Emitting master image" <<
+        //                maxBright; emit this->masterImageReady(img,
+        //                maxBright);
+        //            }
+        //        });
+        QImage img = ImageFormatConverter::convertToHeatmapImage(
+            data, w, h, pixelFormat, 20);
+        if (!img.isNull()) {
+            int maxBright = findMaxBrightness(data, w, h, pixelFormat);
+            emit masterImageReady(img, maxBright);
+        }
     }
 
     emit masterRawData(data, w, h, pixelFormat);
