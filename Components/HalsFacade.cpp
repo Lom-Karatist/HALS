@@ -317,7 +317,7 @@ void HalsFacade::startBaslerCameras() {
     connect(m_cameraManager.get(), &CameraManager::slaveImageReady, this,
             &HalsFacade::overviewImageReady);
     connect(m_cameraManager.get(), &CameraManager::masterImageReady, this,
-            &HalsFacade::hsImageReady);
+            &HalsFacade::onMasterImageReady);
     connect(m_cameraManager.get(), &CameraManager::masterRawData, this,
             &HalsFacade::updateHsData);
     m_cameraManager->start();
@@ -378,4 +378,9 @@ void HalsFacade::onUsbStatusChanged(bool mounted, qint64 availableBytes,
             }
         }
     }
+}
+
+void HalsFacade::onMasterImageReady(QImage img, int maxBrightness) {
+    qDebug() << "HalsFacade received master image";
+    emit hsImageReady(img, maxBrightness);
 }

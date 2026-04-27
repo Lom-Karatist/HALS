@@ -71,6 +71,7 @@ private slots:
     void onLightDataReady(const LightSensorData &data);
     void onUsbStatusChanged(bool mounted, qint64 availableBytes,
                             qint64 totalBytes);
+    void onMasterImageReady(QImage img, int maxBrightness);
 
 private:
     void startLogger();
