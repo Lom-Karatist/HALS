@@ -161,7 +161,7 @@ void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
 
             if (!img.isNull()) {
                 int maxBright = findMaxBrightness(dataCopy, w, h, pixelFormat);
-                qDebug() << "Emitting master image";
+                qDebug() << "Emitting master image" << maxBright;
                 emit masterImageReady(img, maxBright);
             } else {
                 qDebug() << " Master image empty" << img.isNull();

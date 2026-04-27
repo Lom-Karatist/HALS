@@ -137,6 +137,7 @@ QImage ImageFormatConverter::convertToHeatmapImage(const QByteArray &data,
         return blackImage;
     }
 
+    qDebug() << "Global Max in HeatMap: " << globalMax;
     // 4. Строим тепловую карту
     QImage heatmap(height, numBands, QImage::Format_RGB32);
     for (int band = 0; band < numBands; ++band) {
