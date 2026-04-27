@@ -21,7 +21,7 @@ FlightTaskModule::FlightTaskModule(QObject *parent, int ocSensorWidth,
 FlightTaskModule::~FlightTaskModule() {}
 
 bool FlightTaskModule::loadMission(QString dirPath) {
-    dirPath.append("HALS");
+    dirPath.append("/HALS");
 
     QDir dir(dirPath);
     if (!dir.exists()) {
@@ -64,15 +64,9 @@ void FlightTaskModule::applyMissionSettings() {
         m_shootingAltitude = m_flightAltitude - 10;
 }
 
-bool FlightTaskModule::missionValid() const
-{
-    return m_missionValid;
-}
+bool FlightTaskModule::missionValid() const { return m_missionValid; }
 
-int FlightTaskModule::shootingAltitude() const
-{
-    return m_shootingAltitude;
-}
+int FlightTaskModule::shootingAltitude() const { return m_shootingAltitude; }
 
 const MissionTask &FlightTaskModule::mission() const { return m_mission; }
 
