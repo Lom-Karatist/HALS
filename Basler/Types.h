@@ -106,6 +106,7 @@ enum SettingTypes {
  */
 enum SavingFormat {
     Bmp,    //!< Изображения в формате BMP
+    Png,    //!< Изображения в формате PNG
     Binary  //!< Бинарные файлы
 };
 }  // namespace BaslerConstants

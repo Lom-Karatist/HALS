@@ -81,6 +81,11 @@ public:
                        int pixelFormat, const QString &prefix,
                        const QString &timeStamp);
 
+    void saveDataAsync(const QByteArray &data, int width, int height,
+                       int pixelFormat, const QString &prefix,
+                       const QString &timeStamp,
+                       BaslerConstants::SavingFormat format);
+
     /**
      * @brief Статический метод для асинхронного сохранения в формате BMP.
      * @param data Данные изображения.
@@ -94,6 +99,11 @@ public:
      * Является точкой входа для QtConcurrent. Не зависит от экземпляра класса.
      */
     static void saveAsBmpAsync(const QByteArray &data, int width, int height,
+                               int pixelFormat, const QString &prefix,
+                               const QString timeStamp,
+                               const QString savingPath);
+
+    static void saveAsPngAsync(const QByteArray &data, int width, int height,
                                int pixelFormat, const QString &prefix,
                                const QString timeStamp,
                                const QString savingPath);

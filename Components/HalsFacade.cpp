@@ -381,6 +381,6 @@ void HalsFacade::onUsbStatusChanged(bool mounted, qint64 availableBytes,
 }
 
 void HalsFacade::onMasterImageReady(QImage img, int maxBrightness) {
-    qDebug() << "HalsFacade received master image";
+    //    qDebug() << "HalsFacade received master image";
     emit hsImageReady(img, maxBrightness);
 }

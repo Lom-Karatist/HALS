@@ -9,7 +9,9 @@
 #include "ImageFormatConverter.h"
 
 SavingModule::SavingModule(QObject *parent)
-    : QObject{parent}, m_isNeedToSave(false), m_format(BaslerConstants::Bmp) {}
+    : QObject{parent},
+      m_isNeedToSave(false),
+      m_format(BaslerConstants::Binary) {}
 
 void SavingModule::setSavingPath(const QString &newSavingPath) {
     m_savingPath = newSavingPath;
@@ -32,7 +34,20 @@ void SavingModule::setFormat(BaslerConstants::SavingFormat newFormat) {
 void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
                                  int pixelFormat, const QString &prefix,
                                  const QString &timeStamp) {
-    switch (m_format) {
+    saveDataAsync(data, width, height, pixelFormat, prefix, timeStamp,
+                  m_format);
+}
+
+void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
+                                 int pixelFormat, const QString &prefix,
+                                 const QString &timeStamp,
+                                 BaslerConstants::SavingFormat format) {
+    switch (format) {
+        case BaslerConstants::Png:
+            (void)QtConcurrent::run(&SavingModule::saveAsPngAsync, data, width,
+                                    height, pixelFormat, prefix, timeStamp,
+                                    m_savingPath);
+            break;
         case BaslerConstants::Bmp:
             (void)QtConcurrent::run(&SavingModule::saveAsBmpAsync, data, width,
                                     height, pixelFormat, prefix, timeStamp,
@@ -64,12 +79,32 @@ void SavingModule::saveAsBmpAsync(const QByteArray &data, int width, int height,
     }
 }
 
+void SavingModule::saveAsPngAsync(const QByteArray &data, int width, int height,
+                                  int pixelFormat, const QString &prefix,
+                                  const QString timeStamp,
+                                  const QString savingPath) {
+    QImage img =
+        ImageFormatConverter::convertToQImage(data, width, height, pixelFormat);
+    if (img.isNull()) {
+        qWarning() << "Failed to convert to QImage for PNG save";
+        return;
+    }
+
+    QString fileName =
+        QString("%1/%2/%3.png").arg(savingPath).arg(prefix).arg(timeStamp);
+    qDebug() << fileName;
+    if (!img.save(fileName, "PNG")) {
+        qWarning() << "Failed to save PNG:" << fileName;
+    }
+}
+
 void SavingModule::saveAsBinaryAsync(const QByteArray &data,
                                      const QString &prefix,
                                      const QString timeStamp,
                                      const QString savingPath) {
     QString fileName =
-        QString("%1/%2_%3.raw").arg(savingPath).arg(prefix).arg(timeStamp);
+        QString("%1/%2/%3.raw").arg(savingPath).arg(prefix).arg(timeStamp);
+    qDebug() << fileName;
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly)) {
         file.write(data);

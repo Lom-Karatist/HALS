@@ -131,8 +131,25 @@ void BaslerApi::applyGainChanging(double value) {
 }
 
 void BaslerApi::applyPixelFormatChanging(int value) {
-    if (m_camera->PixelFormat.IsWritable())
-        m_camera->PixelFormat.SetValue(static_cast<PixelFormatEnums>(value));
+    qDebug() << "pixel format is setting to " << value;
+    if (m_camera->PixelFormat.IsWritable()) {
+        qDebug() << "trying to write";
+        try {
+            m_camera->PixelFormat.SetIntValue(
+                static_cast<PixelFormatEnums>(value));
+            qDebug() << "written successfully";
+        } catch (const GenericException& e) {
+            qDebug() << "Pylon exception:" << e.GetDescription();
+            emit sendErrorMessage(QString("Failed to set pixel format: %1")
+                                      .arg(e.GetDescription()));
+        } catch (const std::exception& e) {
+            qDebug() << "std exception:" << e.what();
+        } catch (...) {
+            qDebug() << "Unknown exception in applyPixelFormatChanging";
+        }
+    } else {
+        qDebug() << "PixelFormat not writable";
+    }
 }
 
 void BaslerApi::applyBinningHorizontalModeChanging(
@@ -252,7 +269,7 @@ void BaslerApi::setupCameraFeatures() {
         applyExposureChanging(m_params.exposureTime);
 
         applyGainChanging(m_params.gain);
-        applyPixelFormatChanging(PixelFormat_Mono8);
+        applyPixelFormatChanging(m_params.pixelFormat);
 
     } catch (const GenericException& e) {
         emit sendErrorMessage(

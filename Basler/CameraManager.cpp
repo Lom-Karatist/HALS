@@ -154,18 +154,6 @@ void CameraManager::onSlaveError(const QString &err) {
 void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
                                     int pixelFormat) {
     if (m_isImageNeeded.load()) {
-        //        QByteArray dataCopy = data;
-        //        QtConcurrent::run([this, dataCopy, w, h, pixelFormat]() {
-        //            QImage img = ImageFormatConverter::convertToHeatmapImage(
-        //                dataCopy, w, h, pixelFormat, 20);
-
-        //            if (!img.isNull()) {
-        //                int maxBright = findMaxBrightness(dataCopy, w, h,
-        //                pixelFormat); qDebug() << "Emitting master image" <<
-        //                maxBright; emit this->masterImageReady(img,
-        //                maxBright);
-        //            }
-        //        });
         QImage img = ImageFormatConverter::convertToHeatmapImage(
             data, w, h, pixelFormat, 20);
         if (!img.isNull()) {
@@ -199,7 +187,8 @@ void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
             }
         }
 
-        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "HS", timestamp);
+        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "HS", timestamp,
+                                     BaslerConstants::Binary);
 
         if (m_isSingleShotNeeded) {
             m_isNeedToSaveHS = false;
@@ -242,7 +231,8 @@ void CameraManager::onSlaveRawData(const QByteArray &data, int w, int h,
             }
         }
 
-        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "OC", timestamp);
+        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "OC", timestamp,
+                                     BaslerConstants::Png);
 
         if (m_isSingleShotNeeded) {
             m_isNeedToSaveOC = false;

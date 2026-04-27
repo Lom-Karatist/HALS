@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     QrcFilesRestorer::restoreFilesFromQrc(":/Hals/4Release/");
     QrcFilesRestorer::restoreFilesFromQrc(":/LightSensor/4Release/");
     QrcFilesRestorer::restoreFilesFromQrc(":/Basler/4Release/");
-    qInstallMessageHandler(myMessageOutput);
+    //    qInstallMessageHandler(myMessageOutput);
     HalsWindow w;
     w.show();
     return a.exec();
