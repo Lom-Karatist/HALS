@@ -267,6 +267,7 @@ void BaslerApi::setupCameraFeatures() {
         applyOffsetXChanging(m_params.offsetX);
         applyOffsetYChanging(m_params.offsetY);
         applyExposureChanging(m_params.exposureTime);
+        applyFramerateChanging(m_params.acquisitionFrameRate);
 
         applyGainChanging(m_params.gain);
         applyPixelFormatChanging(m_params.pixelFormat);

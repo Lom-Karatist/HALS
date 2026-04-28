@@ -74,12 +74,13 @@ void LightSensorApi::setEmulationMode(bool enable) { m_emulationMode = enable; }
 
 bool LightSensorApi::initialize() {
     if (m_emulationMode) {
-        qDebug() << "LightSensorApi: running in emulation mode";
+        qDebug() << "\t\tLightSensorApi: running in emulation mode";
         m_initialized = true;
         return true;
     }
 
 #ifdef Q_OS_LINUX
+    qDebug() << "\t\tLightSensorApi: running /dev/i2c-1";
     m_i2cFd = open("/dev/i2c-1", O_RDWR);
     if (m_i2cFd < 0) {
         emit errorOccurred("Failed to open I2C bus /dev/i2c-1");
@@ -93,6 +94,7 @@ bool LightSensorApi::initialize() {
     }
 
     // Включить питание датчика (PON=1)
+    qDebug() << "\t\tLight sensor power switching...";
     if (!writeRegister(REG_ENABLE, 0x01)) return false;
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
@@ -103,6 +105,7 @@ bool LightSensorApi::initialize() {
     setIntegrationTimeMs(m_integrationTimeMs);
     setGainByIndex(m_gainIndex);
 
+    qDebug() << "\t\tLight sensor is initted!";
     m_initialized = true;
     return true;
 #else

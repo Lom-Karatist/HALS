@@ -36,7 +36,7 @@ void LightSensorWorker::run() {
     params.fps = m_frameRateHz;
     emit settingsChanged(params);
 
-    qDebug() << "Light sensor start";
+    qDebug() << "\t\tLight sensor start";
 
     while (m_isActive.load()) {
         if (m_isCommandsPending.load()) {
@@ -51,6 +51,8 @@ void LightSensorWorker::run() {
         if (m_api->readAllChannels(data)) {
             data.sunElevation = 0.0;
             emit dataReady(data);
+        } else {
+            qDebug() << "\t\tLight sensor can't read channels";
         }
 
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
