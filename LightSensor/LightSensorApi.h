@@ -158,6 +158,53 @@ private:
      */
     bool emulationReadAllChannels(LightSensorData &data);
 
+    enum Channel {
+        CH_F1,
+        CH_F2,
+        CH_F3,
+        CH_F4,
+        CH_F5,
+        CH_F6,
+        CH_F7,
+        CH_F8,
+        CH_NIR,
+        CH_CLEAR,
+        CH_FD
+    };
+
+    // Регистры AS7341 (ключевые)
+    static const uint8_t REG_ENABLE = 0x80;
+    static const uint8_t REG_ATIME = 0x81;
+    static const uint8_t REG_WTIME = 0x83;
+    static const uint8_t REG_ASTEP_L = 0xCA;
+    static const uint8_t REG_ASTEP_H = 0xCB;
+    static const uint8_t REG_CFG0 = 0xA9;
+    static const uint8_t REG_CFG1 = 0xAA;
+    static const uint8_t REG_CFG6 = 0xAF;
+    static const uint8_t REG_CFG9 = 0xB2;
+    static const uint8_t REG_SMUX_CMD = 0xAF;
+    static const uint8_t REG_STATUS = 0x71;
+    static const uint8_t REG_ID = 0x92;
+    static const uint8_t REG_ASTATUS = 0x94;
+    static const uint8_t REG_CH0_L = 0x95;
+    static const uint8_t REG_CH0_H = 0x96;
+    static const uint8_t REG_CH1_L = 0x97;
+    static const uint8_t REG_CH1_H = 0x98;
+    static const uint8_t REG_CH2_L = 0x99;
+    static const uint8_t REG_CH2_H = 0x9A;
+    static const uint8_t REG_CH3_L = 0x9B;
+    static const uint8_t REG_CH3_H = 0x9C;
+    static const uint8_t REG_CH4_L = 0x9D;
+    static const uint8_t REG_CH4_H = 0x9E;
+    static const uint8_t REG_CH5_L = 0x9F;
+    static const uint8_t REG_CH5_H = 0xA0;
+
+    // SMUX конфигурации (проверенные, из даташита и библиотеки Adafruit)
+    // Цикл 0: F1, F2, F3, F4, NIR, CLEAR
+    static const uint8_t SMUX_CONFIG_CYCLE0[16];
+    // Цикл 1: F5, F6, F7, F8, FD, CLEAR
+    static const uint8_t SMUX_CONFIG_CYCLE1[16];
+
     int m_i2cFd;  //!< Дескриптор I2C-устройства (Linux) или -1.
     int m_integrationTimeMs;  //!< Текущее время интеграции (мс).
     int m_gainIndex;     //!< Текущий индекс усиления.
