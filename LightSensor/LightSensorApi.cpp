@@ -62,6 +62,12 @@ bool LightSensorApi::initialize() {
         m_i2cFd = -1;
         return false;
     }
+    for (int i = 0; i < 3; ++i) {
+        uint8_t id = 0;
+        if (readRegister(REG_ID, id))
+            qDebug() << "Attempt" << i << "ID = 0x" << Qt::hex << id;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 
     // 1. Проверка ID датчика
     uint8_t id = 0;
