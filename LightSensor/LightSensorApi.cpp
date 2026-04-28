@@ -62,32 +62,25 @@ bool LightSensorApi::initialize() {
         m_i2cFd = -1;
         return false;
     }
-    for (int i = 0; i < 3; ++i) {
-        uint8_t id = 0;
-        if (readRegister(REG_ID, id))
-            qDebug() << "Attempt" << i << "ID = 0x" << Qt::hex << id;
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    // 1. Включение питания (PON) — сразу!
+    if (!writeRegister(REG_ENABLE, 0x01)) {
+        emit errorOccurred("Failed to set PON");
+        return false;
     }
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(100));  // увеличено до 100 мс
 
-    // 1. Проверка ID датчика
+    // 2. Теперь читаем ID
     uint8_t id = 0;
     if (!readRegister(REG_ID, id)) {
         emit errorOccurred("Failed to read ID register");
         return false;
     }
-    qDebug() << "\t\tAS7341 ID = 0x" << Qt::hex << id << Qt::dec;
+    qDebug() << "AS7341 ID = 0x" << Qt::hex << id;
     if (id != 0x39 && id != 0x40) {
         emit errorOccurred(QString("Invalid AS7341 ID: 0x%1").arg(id, 2, 16));
         return false;
     }
-
-    // 2. Включение питания (PON)
-    if (!writeRegister(REG_ENABLE, 0x01)) {
-        emit errorOccurred("Failed to set PON");
-        return false;
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    qDebug() << "\t\tPON set, delay 10ms";
 
     // 3. Выбор банка SMUX (регистр 0xEF = 0x00)
     // В даташите прямо не описан, но требуется для работы SMUX
