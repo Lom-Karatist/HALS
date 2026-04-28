@@ -69,7 +69,7 @@ double toDegrees(const QString& coord, const QString& dir,
     int degLen = (dir == "N" || dir == "S") ? 2 : 3;
     bool isOk;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     int deg = coord.first(degLen).toInt(&isOk);
     double min = coord.sliced(degLen).toDouble(&isOk);
 #else
@@ -168,7 +168,7 @@ bool isDateValid(QString& date, QStringList& errors) {
     }
 
     bool okDay, okMonth, okYear;
-#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     int day = date.first(2).toInt(&okDay);
     int month = date.sliced(2, 2).toInt(&okMonth);
     int year = date.sliced(4, 2).toInt(&okYear);
@@ -204,7 +204,7 @@ bool isTimeValid(const QString& timeStr, QStringList& errors) {
     }
 
     bool ok;
-#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     int hours = timeStr.first(2).toInt(&ok);
 #else
     int hours = timeStr.midRef(0, 2).toInt(&ok);
@@ -214,7 +214,7 @@ bool isTimeValid(const QString& timeStr, QStringList& errors) {
         return false;
     }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     int minutes = timeStr.sliced(2, 2).toInt(&ok);
 #else
     int minutes = timeStr.midRef(2, 2).toInt(&ok);
@@ -224,7 +224,7 @@ bool isTimeValid(const QString& timeStr, QStringList& errors) {
         return false;
     }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     double seconds = timeStr.sliced(4).toDouble(&ok);
 #else
     double seconds = timeStr.midRef(4).toDouble(&ok);
@@ -308,6 +308,7 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
     }
 
     data.satellites = parts[kGgaSatellitesPartIndex].toInt(&isOk);
+    qDebug() << "Recieved GPS:" << data.timeUtc << isOk << data.satellites;
     isSatellitesNumberValid(data.satellites, data.errors);
     if (!isOk) {
         data.satellites = -1;

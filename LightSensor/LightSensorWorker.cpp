@@ -1,5 +1,6 @@
 #include "LightSensorWorker.h"
 
+#include <QDebug>
 #include <QThread>
 #include <chrono>
 #include <thread>
@@ -34,6 +35,8 @@ void LightSensorWorker::run() {
     params.gain = m_gainIndex;
     params.fps = m_frameRateHz;
     emit settingsChanged(params);
+
+    qDebug() << "Light sensor start";
 
     while (m_isActive.load()) {
         if (m_isCommandsPending.load()) {
