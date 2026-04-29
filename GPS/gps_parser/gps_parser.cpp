@@ -273,7 +273,7 @@ void GPSParser::parseLine(const QString line) {
 }
 
 void GPSParser::parseGGA(const QString& line, bool& isValid) {
-    qDebug() << line;
+    //    qDebug() << line;
     QStringList parts = line.split(",");
     if (!isGgaNumberValid(parts.size(), data.errors)) {
         isValid = false;
@@ -320,7 +320,7 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
 }
 
 void GPSParser::parseRMC(const QString& line, QString& rmcTime, bool& isValid) {
-    qDebug() << line;
+    //    qDebug() << line;
     QStringList parts = line.split(",");
     if (!isRmcNumberValid(parts.size(), data.errors)) {
         isValid = false;

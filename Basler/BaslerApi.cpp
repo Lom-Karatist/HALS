@@ -131,13 +131,10 @@ void BaslerApi::applyGainChanging(double value) {
 }
 
 void BaslerApi::applyPixelFormatChanging(int value) {
-    qDebug() << "pixel format is setting to " << value;
     if (m_camera->PixelFormat.IsWritable()) {
-        qDebug() << "trying to write";
         try {
             m_camera->PixelFormat.SetIntValue(
                 static_cast<PixelFormatEnums>(value));
-            qDebug() << "written successfully";
         } catch (const GenericException& e) {
             qDebug() << "Pylon exception:" << e.GetDescription();
             emit sendErrorMessage(QString("Failed to set pixel format: %1")
@@ -204,8 +201,11 @@ void BaslerApi::applyExposureChanging(double exposureMs) {
 }
 
 void BaslerApi::applyFramerateChanging(double fps) {
+    qDebug() << "setting framerate to " << fps;
     if (GenApi::IsAvailable(m_camera->AcquisitionFrameRate))
         m_camera->AcquisitionFrameRate.SetValue(fps);
+    qDebug() << "current framerate:"
+             << m_camera->AcquisitionFrameRate.GetValue();
 }
 
 bool BaslerApi::initializeCamera() {
@@ -297,6 +297,9 @@ void BaslerApi::configureMasterSlave() {
             }
             if (GenApi::IsAvailable(m_camera->LineInverter)) {
                 m_camera->LineInverter.SetValue(true);
+            }
+            if (GenApi::IsAvailable(m_camera->AcquisitionFrameRateEnable)) {
+                m_camera->AcquisitionFrameRateEnable.SetValue(true);
             }
         } else {
             m_camera->TriggerSelector.SetValue(TriggerSelector_FrameStart);

@@ -148,7 +148,7 @@ bool LightSensorApi::switchSmuxCycle(int cycle) {
 #endif
 
 void LightSensorApi::setIntegrationTimeMs(int ms) {
-    qDebug() << "\t\tsetIntegrationTimeMs:" << ms << "ms";
+    //    qDebug() << "\t\tsetIntegrationTimeMs:" << ms << "ms";
     m_integrationTimeMs = ms;
     if (m_emulationMode) return;
 #ifdef Q_OS_LINUX
@@ -168,8 +168,8 @@ void LightSensorApi::setIntegrationTimeMs(int ms) {
 }
 
 void LightSensorApi::setGainByIndex(int index) {
-    qDebug() << "setGainByIndex:" << index << "->"
-             << (index == 0 ? 0.5 : (1 << (index - 1))) << "x";
+    //    qDebug() << "setGainByIndex:" << index << "->"
+    //             << (index == 0 ? 0.5 : (1 << (index - 1))) << "x";
 
     m_gainIndex = index;
     if (m_emulationMode) return;

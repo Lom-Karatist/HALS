@@ -357,12 +357,12 @@ void HalsFacade::onLightForceParameterChanging(
 }
 
 void HalsFacade::onLightDataReady(const LightSensorData &data) {
-    if (data.channels.isEmpty()) {
-        qDebug() << "empty channels got";
-    } else {
-        qDebug() << data.channels.first() << data.channels.last()
-                 << data.channels.count();
-    }
+    //    if (data.channels.isEmpty()) {
+    //        qDebug() << "empty channels got";
+    //    } else {
+    //        qDebug() << data.channels.first() << data.channels.last()
+    //                 << data.channels.count();
+    //    }
 }
 
 void HalsFacade::onUsbStatusChanged(bool mounted, qint64 availableBytes,

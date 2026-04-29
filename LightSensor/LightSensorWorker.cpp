@@ -36,7 +36,7 @@ void LightSensorWorker::run() {
     params.fps = m_frameRateHz;
     emit settingsChanged(params);
 
-    qDebug() << "\t\tLight sensor start";
+    //    qDebug() << "\t\tLight sensor start";
 
     while (m_isActive.load()) {
         if (m_isCommandsPending.load()) {
