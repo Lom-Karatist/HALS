@@ -34,6 +34,11 @@ void LightSensorManager::startAs7341Stream(int expoMs, int gainIndex,
     QString scriptPath = scriptDir + "/as7341_stream.py";
     QString python = "python3";
 
+    static const double gainMap[] = {0.5, 1,  2,   4,   8,  16,
+                                     32,  64, 128, 256, 512};
+    double gainValue =
+        (gainIndex >= 0 && gainIndex <= 10) ? gainMap[gainIndex] : 32.0;
+
     m_lsProcess = new QProcess(this);
     m_lsProcess->setWorkingDirectory(scriptDir);
 
@@ -46,7 +51,7 @@ void LightSensorManager::startAs7341Stream(int expoMs, int gainIndex,
 
     QStringList args;
     args << scriptPath << "--integration" << QString::number(expoMs) << "--gain"
-         << QString::number(gainIndex) << "--freq"
+         << QString::number(gainValue) << "--freq"
          << QString::number(framerateHz) << "--port"
          << "12345";
 
