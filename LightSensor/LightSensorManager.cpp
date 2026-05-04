@@ -86,8 +86,6 @@ void LightSensorManager::initialize() {
             &UdpLightSensorReader::start);
     connect(m_udpReader, &UdpLightSensorReader::dataReceived, this,
             &LightSensorManager::onDataReady);
-    connect(m_udpReader, &UdpLightSensorReader::errorOccurred, this,
-            &LightSensorManager::onUdpError);
     connect(m_udpThread, &QThread::finished, m_udpReader,
             &QObject::deleteLater);
 
