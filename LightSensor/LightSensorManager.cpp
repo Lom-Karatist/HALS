@@ -37,6 +37,13 @@ void LightSensorManager::startAs7341Stream(int expoMs, int gainIndex,
     m_lsProcess = new QProcess(this);
     m_lsProcess->setWorkingDirectory(scriptDir);
 
+    connect(m_lsProcess, &QProcess::readyReadStandardOutput, [=]() {
+        qDebug() << "Python stdout:" << m_lsProcess->readAllStandardOutput();
+    });
+    connect(m_lsProcess, &QProcess::readyReadStandardError, [=]() {
+        qDebug() << "Python stderr:" << m_lsProcess->readAllStandardError();
+    });
+
     QStringList args;
     args << scriptPath << "--integration" << QString::number(expoMs) << "--gain"
          << QString::number(gainIndex) << "--freq"
