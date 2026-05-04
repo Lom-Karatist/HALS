@@ -11,6 +11,7 @@
 #include "LightSaver.h"
 #include "LightSettings.h"
 #include "LightTypes.h"
+#include "UdpLightSensorReader.h"
 
 /**
  * @brief Менеджер датчика освещённости AS7341.
