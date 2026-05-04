@@ -3,13 +3,12 @@
 
 #include <QMutex>
 #include <QObject>
+#include <QProcess>
 #include <QTimer>
 #include <atomic>
 #include <memory>
 
 #include "LightSaver.h"
-#include "LightSensorApi.h"
-#include "LightSensorWorker.h"
 #include "LightSettings.h"
 #include "LightTypes.h"
 
@@ -43,6 +42,10 @@ public:
      * @brief Деструктор. Останавливает таймер и освобождает ресурсы.
      */
     ~LightSensorManager();
+
+    void startAs7341Stream(int expoMs, int gainIndex, int framerateHz);
+
+    void stopAs7341Stream();
 
     /**
      * @brief Инициализировать менеджер и датчик.
@@ -147,8 +150,12 @@ private slots:
     void onDataReady(LightSensorData data);
 
 private:
-    LightSensorWorker *m_worker;  //!< Модуль для работы сенсора освещенности в
-                                  //!< отдельном потоке
+#ifdef Q_OS_LINUX
+    QProcess *m_lsProcess = nullptr;
+    QThread *m_udpThread = nullptr;
+    UdpLightSensorReader *m_udpReader = nullptr;
+#endif
+
     std::unique_ptr<LightSettings>
         m_lightSettings;  //!< Настройки датчика (INI-файл).
     std::unique_ptr<LightSaver> m_saver;  //!< Модуль сохранения данных.

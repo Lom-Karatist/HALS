@@ -5,59 +5,104 @@
 #include <QThreadPool>
 
 LightSensorManager::LightSensorManager(QObject *parent)
-    : QObject(parent), m_worker(nullptr), m_currentSunElevation(0.0) {
+    : QObject(parent), m_currentSunElevation(0.0) {
     m_lightSettings =
         std::make_unique<LightSettings>(this, QDir::currentPath() + "/LS.ini");
     m_saver = std::make_unique<LightSaver>();
 }
 
 LightSensorManager::~LightSensorManager() {
-    if (m_worker) {
-        m_worker->stopWork();
-        QThreadPool::globalInstance()->waitForDone(2000);
+    stopAs7341Stream();
+#ifdef Q_OS_LINUX
+    if (m_udpThread) {
+        if (m_udpReader) {
+            m_udpReader->stop();
+            m_udpReader->deleteLater();
+        }
+        m_udpThread->quit();
+        m_udpThread->wait();
+        delete m_udpThread;
     }
-    if (m_worker) {
-        delete m_worker;
-        m_worker = nullptr;
+#endif
+}
+
+void LightSensorManager::startAs7341Stream(int expoMs, int gainIndex,
+                                           int framerateHz) {
+#ifdef Q_OS_LINUX
+    // Путь к папке со скриптом – измените под свою конфигурацию
+    QString scriptDir = "/home/hals/Desktop/python";
+    QString scriptPath = scriptDir + "/as7341_stream.py";
+    QString python = "python3";
+
+    m_lsProcess = new QProcess(this);
+    m_lsProcess->setWorkingDirectory(scriptDir);
+
+    QStringList args;
+    args << scriptPath << "--integration" << QString::number(expoMs) << "--gain"
+         << QString::number(gainIndex) << "--freq"
+         << QString::number(framerateHz) << "--port"
+         << "12345";
+
+    m_lsProcess->start(python, args);
+    if (!m_lsProcess->waitForStarted(3000)) {
+        qDebug() << "Failed to start as7341_stream.py:"
+                 << m_lsProcess->errorString();
+        emit connectionStatusChanged(false);
+        return;
     }
+    qDebug() << "AS7341 Python script started";
+#endif
+}
+
+void LightSensorManager::stopAs7341Stream() {
+#ifdef Q_OS_LINUX
+    if (m_lsProcess) {
+        m_lsProcess->terminate();
+        if (!m_lsProcess->waitForFinished(2000)) m_lsProcess->kill();
+        delete m_lsProcess;
+        m_lsProcess = nullptr;
+    }
+#endif
 }
 
 void LightSensorManager::initialize() {
-    m_worker = new LightSensorWorker();
-    m_worker->setAutoDelete(false);
-
-    connect(m_worker, &LightSensorWorker::dataReady, this,
-            &LightSensorManager::onDataReady);
-    connect(m_worker, &LightSensorWorker::errorOccurred, this,
-            &LightSensorManager::errorOccurred);
-    connect(m_worker, &LightSensorWorker::connectionStatusChanged, this,
-            &LightSensorManager::connectionStatusChanged);
-    connect(m_worker, &LightSensorWorker::settingsChanged, this,
-            &LightSensorManager::settingsChanged);
+    qDebug() << "Initializing LightSensorManager";
 
     LightSensorParameters params;
     params.exposureMs = m_lightSettings->integrationTimeMs();
     params.gain = m_lightSettings->gainIndex();
     params.fps = m_lightSettings->frameRateHz();
 
-    setIntegrationTimeMs(params.exposureMs);
-    setGainIndex(params.gain);
-    setFrameRateHz(params.fps);
+#ifdef Q_OS_LINUX
+    // 1. Запускаем Python-скрипт
+    startAs7341Stream(params.exposureMs, params.gain, params.fps);
 
+    // 2. Запускаем UDP-читатель в отдельном потоке
+    m_udpThread = new QThread(this);
+    m_udpReader = new UdpLightSensorReader(12345);
+    m_udpReader->moveToThread(m_udpThread);
+
+    connect(m_udpThread, &QThread::started, m_udpReader,
+            &UdpLightSensorReader::start);
+    connect(m_udpReader, &UdpLightSensorReader::dataReceived, this,
+            &LightSensorManager::onDataReady);
+    connect(m_udpReader, &UdpLightSensorReader::errorOccurred, this,
+            &LightSensorManager::onUdpError);
+    connect(m_udpThread, &QThread::finished, m_udpReader,
+            &QObject::deleteLater);
+
+    m_udpThread->start();
     emit connectionStatusChanged(true);
-    emit settingsChanged(params);
-
-    m_worker->activate();
-    QThreadPool::globalInstance()->start(m_worker);
+#else
+    qDebug()
+        << "LightSensorManager: running in windows mode (no Python script)";
+    emit connectionStatusChanged(false);
+#endif
 }
 
 void LightSensorManager::setIntegrationTimeMs(int ms) {
     if (m_lightSettings->integrationTimeMs() != ms) {
         m_lightSettings->setIntegrationTimeMs(ms);
-    }
-    if (m_worker) {
-        if (m_worker->integrationTimeMs() != ms)
-            m_worker->setIntegrationTimeMs(ms);
     }
 }
 
@@ -65,17 +110,11 @@ void LightSensorManager::setGainIndex(int index) {
     if (m_lightSettings->gainIndex() != index) {
         m_lightSettings->setGainIndex(index);
     }
-    if (m_worker) {
-        if (m_worker->gainIndex() != index) m_worker->setGainIndex(index);
-    }
 }
 
 void LightSensorManager::setFrameRateHz(int hz) {
     if (m_lightSettings->frameRateHz() != hz) {
         m_lightSettings->setFrameRateHz(hz);
-    }
-    if (m_worker) {
-        if (m_worker->frameRateHz() != hz) m_worker->setFrameRateHz(hz);
     }
 }
 
