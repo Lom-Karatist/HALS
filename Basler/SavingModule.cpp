@@ -11,7 +11,15 @@
 SavingModule::SavingModule(QObject *parent)
     : QObject{parent},
       m_isNeedToSave(false),
-      m_format(BaslerConstants::Binary) {}
+      m_format(BaslerConstants::Binary),
+      m_batchSaver(nullptr) {}
+
+SavingModule::~SavingModule() {
+    if (m_batchSaver != nullptr) {
+        //        m_batchSaver->shutdown();
+        delete m_batchSaver;
+    }
+}
 
 void SavingModule::setSavingPath(const QString &newSavingPath) {
     m_savingPath = newSavingPath;
@@ -43,6 +51,13 @@ void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
                                  const QString &timeStamp,
                                  BaslerConstants::SavingFormat format) {
     switch (format) {
+        case BaslerConstants::Batched:
+            if (!m_batchSaver) {
+                m_batchSaver =
+                    new BatchSaver(m_savingPath, 200, 500 * 1024 * 1024, this);
+            }
+            m_batchSaver->addFrame(prefix, width, height, pixelFormat, data, 0);
+            break;
         case BaslerConstants::Png:
             (void)QtConcurrent::run(&SavingModule::saveAsPngAsync, data, width,
                                     height, pixelFormat, prefix, timeStamp,
@@ -56,6 +71,7 @@ void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
         case BaslerConstants::Binary:
             (void)QtConcurrent::run(&SavingModule::saveAsBinaryAsync, data,
                                     prefix, timeStamp, m_savingPath);
+
             break;
     }
 }
@@ -118,7 +134,10 @@ void SavingModule::saveData(const QByteArray &data, int width, int height,
                             int pixelFormat, QString appendix,
                             QString timeStamp) {
     switch (m_format) {
+        case BaslerConstants::Batched:
+            break;
         case BaslerConstants::Bmp:
+        case BaslerConstants::Png:
             saveAsBmp(data, width, height, pixelFormat, appendix, timeStamp);
             break;
         case BaslerConstants::Binary:
@@ -163,5 +182,8 @@ QString SavingModule::generateFileName(const QString &prefix,
 bool SavingModule::isNeedToSave() const { return m_isNeedToSave; }
 
 void SavingModule::setIsNeedToSave(bool newIsNeedToSave) {
+    if (!newIsNeedToSave && m_batchSaver) {
+        m_batchSaver->flush();
+    }
     m_isNeedToSave = newIsNeedToSave;
 }

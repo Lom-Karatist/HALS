@@ -40,6 +40,8 @@ SOURCES += \
     $$BASLER_PATH/Commands/SetOffsetYCommand.cpp \
     $$BASLER_PATH/Commands/SetPixelFormatCommand.cpp \
     $$BASLER_PATH/Commands/SetWidthCommand.cpp \
+    $$PWD/BatchSaver.cpp \
+    $$PWD/BatchWriter.cpp \
     $$PWD/ImageFormatConverter.cpp
 
 HEADERS += \
@@ -61,6 +63,8 @@ HEADERS += \
     $$BASLER_PATH/Commands/SetOffsetYCommand.h \
     $$BASLER_PATH/Commands/SetPixelFormatCommand.h \
     $$BASLER_PATH/Commands/SetWidthCommand.h \
+    $$PWD/BatchSaver.h \
+    $$PWD/BatchWriter.h \
     $$PWD/ImageFormatConverter.h
 
 RESOURCES += \

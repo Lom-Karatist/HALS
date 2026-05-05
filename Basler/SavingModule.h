@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QString>
 
+#include "BatchSaver.h"
 #include "Types.h"
 
 /**
@@ -31,6 +32,7 @@ public:
      * @param parent Родительский QObject.
      */
     explicit SavingModule(QObject *parent = nullptr);
+    ~SavingModule();
 
     /**
      * @brief Задать путь для сохранения файлов.
@@ -155,6 +157,7 @@ private:
     bool m_isNeedToSave;  //!< Флаг: сохранять данные или нет.
     QString m_savingPath;  //!< Путь к каталогу для сохранения.
     BaslerConstants::SavingFormat m_format;  //!< Текущий формат сохранения.
+    BatchSaver *m_batchSaver;
 };
 
 #endif  // SAVINGMODULE_H
