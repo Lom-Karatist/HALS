@@ -31,9 +31,8 @@ bool GpsPortAutoDetector::isCOMPortGPS(const QSerialPortInfo& portInfo) const {
 
     for (const GpsDeviceEntry& entry : gpsDatabase) {
         if (entry.vid == vid && entry.pid == pid) {
-            //            qDebug() << QString(msgs::kGpsMsgIsFound) <<
-            //            entry.vendor
-            //                     << entry.comment;
+            qDebug() << QString(msgs::kGpsMsgIsFound) << entry.vendor
+                     << entry.comment;
             return true;
         }
     }
@@ -67,7 +66,7 @@ void GpsPortAutoDetector::findPorts() {
         if (isCOMPortGPS(portInfo)) {
             gpsPorts.append(portInfo);
             gpsPortName = portInfo.portName();
-            //            qDebug() << QString(msgs::kGpsMsgIsGpsPort);
+            qDebug() << QString(msgs::kGpsMsgIsGpsPort);
         } else {
             //            qDebug() << QString(msgs::kGpsMsgIsNotGpsPort);
         }

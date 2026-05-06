@@ -24,19 +24,20 @@ BatchWriter::BatchWriter(const QString &basePath, int maxFramesPerBatch,
 
 BatchWriter::~BatchWriter() { m_shutdown.fetchAndStoreRelease(1); }
 
-void BatchWriter::writeBatch(const QString &prefix,
+void BatchWriter::writeBatch(const QString prefix,
                              const QVector<FrameData> &frames) {
     if (m_shutdown.loadAcquire()) return;
     writeBatchImpl(prefix, frames);
 }
 
-void BatchWriter::writeBatchImpl(const QString &prefix,
-                                 const QVector<FrameData> &frames) {
+void BatchWriter::writeBatchImpl(
+    const QString &prefix, const QVector<BaslerConstants::FrameData> &frames) {
     if (frames.isEmpty()) return;
 
     QString baseName = generateBaseName(prefix);
     writeBinary(m_basePath + "/" + prefix + "/" + baseName + ".bin", frames);
-    writeHeader(m_basePath + "/" + prefix + "/" + baseName + ".json", frames);
+    writeHeader(m_basePath + "/" + prefix + "/" + baseName + ".json", baseName,
+                frames);
 
     emit fileWritten(m_basePath + "/" + prefix + "/" + baseName + ".bin",
                      frames.size(), prefix);
@@ -55,11 +56,11 @@ void BatchWriter::writeBinary(const QString binPath,
     binFile.close();
 }
 
-void BatchWriter::writeHeader(const QString headerPath,
+void BatchWriter::writeHeader(const QString headerPath, QString baseName,
                               const QVector<FrameData> &frames) {
     QJsonObject root;
     root["version"] = 1;
-    root["prefix"] = headerPath;
+    root["baseName"] = baseName;
     root["width"] = frames.first().width;
     root["height"] = frames.first().height;
     root["pixelFormat"] = frames.first().pixelFormat;

@@ -19,8 +19,9 @@ public:
     ~BatchSaver();
 
 public slots:
-    void addFrame(const QString &prefix, int width, int height, int pixelFormat,
-                  const QByteArray &data, qint64 timestampMs = 0);
+    void addFrame(const QString &prefix, int width, int height,
+                  QString pixelFormat, const QByteArray &data,
+                  qint64 timestampMs = 0);
     void flush();
 
 signals:
@@ -45,7 +46,7 @@ private:
         qint64 totalBytes = 0;
         int width = 0;
         int height = 0;
-        int pixelFormat = 0;
+        QString pixelFormat;
         bool active = false;
         QString prefix;
     };
@@ -55,6 +56,9 @@ private:
     QString m_basePath;
     int m_maxFramesPerBatch;
     qint64 m_maxBufferBytesPerBatch;
+
+    int m_buffersCount;
+    int m_buffersWritten;
 
     Buffer m_bufferHS;
     Buffer m_bufferOC;

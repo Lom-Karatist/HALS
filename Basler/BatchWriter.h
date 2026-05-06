@@ -18,7 +18,8 @@ public:
     ~BatchWriter();
 
 public slots:
-    void writeBatch(const QString &prefix, const QVector<FrameData> &frames);
+    void writeBatch(const QString prefix,
+                    const QVector<BaslerConstants::FrameData> &frames);
     void shutdown();
 
 signals:
@@ -31,7 +32,7 @@ private:
                         const QVector<FrameData> &frames);
 
     void writeBinary(const QString binPath, const QVector<FrameData> &frames);
-    void writeHeader(const QString headerPath,
+    void writeHeader(const QString headerPath, QString baseName,
                      const QVector<FrameData> &frames);
     QString generateBaseName(const QString &prefix) const;
 

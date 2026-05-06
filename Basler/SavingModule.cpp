@@ -53,10 +53,12 @@ void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
     switch (format) {
         case BaslerConstants::Batched:
             if (!m_batchSaver) {
-                m_batchSaver =
-                    new BatchSaver(m_savingPath, 200, 500 * 1024 * 1024, this);
+                m_batchSaver = new BatchSaver(m_savingPath, 200,
+                                              500 * 1024 * 1024, nullptr);
             }
-            m_batchSaver->addFrame(prefix, width, height, pixelFormat, data, 0);
+            m_batchSaver->addFrame(
+                prefix, width, height,
+                ImageFormatConverter::getPixelFormatName(pixelFormat), data, 0);
             break;
         case BaslerConstants::Png:
             (void)QtConcurrent::run(&SavingModule::saveAsPngAsync, data, width,

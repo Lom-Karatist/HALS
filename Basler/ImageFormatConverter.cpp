@@ -194,6 +194,25 @@ QImage ImageFormatConverter::convertToQImage(const QByteArray &data, int width,
     return QImage();
 }
 
+QString ImageFormatConverter::getPixelFormatName(int pixelFormat) {
+    QString formatName;
+    switch (pixelFormat) {
+        case PixelType_Mono8:
+            formatName = "Mono8";
+            break;
+        case PixelType_Mono12:
+            formatName = "Mono12";
+            break;
+        case PixelType_Mono12p:
+            formatName = "Mono12p";
+            break;
+        default:
+            formatName = "Unknown";
+            break;
+    }
+    return formatName;
+}
+
 QVector<quint16> ImageFormatConverter::unpackMono12p(const QByteArray &data,
                                                      int numPixels) {
     QVector<quint16> result(numPixels);

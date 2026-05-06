@@ -8,25 +8,27 @@ BatchSaver::BatchSaver(const QString &basePath, int maxFramesPerBatch,
     : QObject(parent),
       m_basePath(basePath),
       m_maxFramesPerBatch(maxFramesPerBatch),
-      m_maxBufferBytesPerBatch(maxBufferBytesPerBatch) {
-    // Создаём и настраиваем BatchWriter в отдельном потоке
+      m_maxBufferBytesPerBatch(maxBufferBytesPerBatch),
+      m_buffersCount(0),
+      m_buffersWritten(0) {
     m_writer = new BatchWriter(basePath, maxFramesPerBatch,
                                maxBufferBytesPerBatch, nullptr);
     m_writer->moveToThread(&m_writerThread);
+    qDebug() << "writer was added to thread";
 
     connect(m_writer, &BatchWriter::errorOccurred, this,
             &BatchSaver::onWriterError, Qt::QueuedConnection);
     connect(m_writer, &BatchWriter::fileWritten, this,
             &BatchSaver::onWriterFileWritten, Qt::QueuedConnection);
-    connect(m_writer, &BatchWriter::flushed, this, &BatchSaver::onWriterFlushed,
-            Qt::QueuedConnection);
 
     m_writerThread.start();
 
     moveToThread(&m_saverThread);
+    qDebug() << "saver was added to thread";
     m_saverThread.start();
 
     qRegisterMetaType<BaslerConstants::FrameData>();
+    qRegisterMetaType<QVector<BaslerConstants::FrameData>>();
 }
 
 BatchSaver::~BatchSaver() {
@@ -40,7 +42,7 @@ BatchSaver::~BatchSaver() {
 }
 
 void BatchSaver::addFrame(const QString &prefix, int width, int height,
-                          int pixelFormat, const QByteArray &data,
+                          QString pixelFormat, const QByteArray &data,
                           qint64 timestampMs) {
     Buffer *buf = (prefix == "HS") ? &m_bufferHS : &m_bufferOC;
     if (!buf->active) {
@@ -62,13 +64,15 @@ void BatchSaver::addFrame(const QString &prefix, int width, int height,
 
     if (buf->frames.size() >= m_maxFramesPerBatch ||
         buf->totalBytes >= m_maxBufferBytesPerBatch) {
+        m_buffersCount++;
         sendBuffer(prefix, *buf);
+        qDebug() << "[SEND]" << QTime::currentTime().toString("hh::mm::ss.zzzz")
+                 << m_buffersCount;
         buf->active = false;
     }
 }
 
 void BatchSaver::flush() {
-    // Выполняется в потоке m_saverThread
     if (m_bufferHS.active) {
         sendBuffer("HS", m_bufferHS);
         m_bufferHS.active = false;
@@ -77,8 +81,6 @@ void BatchSaver::flush() {
         sendBuffer("OC", m_bufferOC);
         m_bufferOC.active = false;
     }
-    // Запрашиваем у writer'а завершение (асинхронно)
-    QMetaObject::invokeMethod(m_writer, "flush", Qt::QueuedConnection);
 }
 
 void BatchSaver::sendBuffer(const QString &prefix, Buffer &buf) {
@@ -91,7 +93,6 @@ void BatchSaver::sendBuffer(const QString &prefix, Buffer &buf) {
                        f.timestampMs});
     }
 
-    // Отправляем в поток writer'а
     QMetaObject::invokeMethod(
         m_writer, "writeBatch", Qt::QueuedConnection, Q_ARG(QString, prefix),
         Q_ARG(QVector<BaslerConstants::FrameData>, frames));
@@ -104,7 +105,10 @@ void BatchSaver::onWriterError(const QString &err) { emit errorOccurred(err); }
 
 void BatchSaver::onWriterFileWritten(const QString &binFile, int count,
                                      const QString &prefix) {
+    m_buffersWritten++;
     emit fileWritten(binFile, count, prefix);
+    qDebug() << "[WRITTEN]" << QTime::currentTime().toString("hh::mm::ss.zzzz")
+             << m_buffersWritten;
 }
 
 void BatchSaver::onWriterFlushed() { emit flushed(); }

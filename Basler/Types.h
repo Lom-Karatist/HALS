@@ -121,7 +121,7 @@ struct FrameData {
     QString prefix;  //!< "HS" для гиперспектрометра, "OC" для обзорной камеры
     int width;   //!< Ширина изображения в пикселях
     int height;  //!< Высота изображения
-    int pixelFormat;  //!< Формат пикселя (значение из EPixelType)
+    QString pixelFormat;  //!< Формат пикселя (значение из EPixelType)
     QByteArray data;  //!< Сырые данные кадра (как получены от камеры)
     qint64 timestampMs;  //!< Временная метка в миллисекундах
 };
