@@ -242,7 +242,7 @@ bool isTimeValid(const QString& timeStr, QStringList& errors) {
 GPSParser::GPSParser(EmitMode mode) : emitMode(mode) {}
 
 void GPSParser::parseLine(const QString line) {
-    qDebug() << "line";
+    qDebug() << line;
     if (line.isEmpty()) return;
 
     if (line.startsWith("$GPRMC")) {

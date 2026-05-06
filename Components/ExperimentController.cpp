@@ -186,6 +186,8 @@ void ExperimentController::setDataRecording(bool enabled) {
 
     m_cameraManager->setIsNeedToSave(enabled, enabled, enabled);
 
+    return;
+
     if (m_lightSensor) {
         if (enabled) {
             m_lightSensor->setRecordingEnabled(true);

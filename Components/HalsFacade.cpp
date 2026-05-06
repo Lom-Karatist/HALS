@@ -80,8 +80,9 @@ void HalsFacade::startUsbChecker() {
     m_usbChecker = std::make_unique<UsbChecker>(this);
     connect(m_usbChecker.get(), &UsbChecker::usbStatusChanged, this,
             &HalsFacade::onUsbStatusChanged);
-    connect(m_usbChecker.get(), &UsbChecker::usbSpaceUpdated, m_dataSaver.get(),
-            &DataSaver::onUsbSpaceUpdated);
+    //    connect(m_usbChecker.get(), &UsbChecker::usbSpaceUpdated,
+    //    m_dataSaver.get(),
+    //            &DataSaver::onUsbSpaceUpdated);
     m_usbChecker->check();
     m_usbChecker->startMonitoring();
 }
