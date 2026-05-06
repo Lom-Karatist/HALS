@@ -43,9 +43,9 @@ void LightSaver::appendToFile(const LightSensorData &data,
 
     QJsonDocument doc(obj);
     QString fileName = path + "/lightsensor_data.jsonl";
-    QFile file(fileName);
-    if (file.open(QIODevice::Append | QIODevice::Text)) {
-        file.write(doc.toJson() + "\n");
-        file.close();
-    }
+    //    QFile file(fileName);
+    //    if (file.open(QIODevice::Append | QIODevice::Text)) {
+    //        file.write(doc.toJson() + "\n");
+    //        file.close();
+    //    }
 }

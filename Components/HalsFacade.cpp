@@ -44,7 +44,7 @@ void HalsFacade::initialize() {
     initDataSaver();
     initCameras();
     initFlightTaskModule();
-    startUsbChecker();
+    //    startUsbChecker();
     startGps();
     initLightSensor();
     //    startMemoryMonitor();
