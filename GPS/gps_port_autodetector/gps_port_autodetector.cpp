@@ -41,34 +41,31 @@ bool GpsPortAutoDetector::isCOMPortGPS(const QSerialPortInfo& portInfo) const {
 
 // функция определения портов и проверки GPS
 void GpsPortAutoDetector::findPorts() {
-    //    qDebug() << QString(msgs::kGpsMsgIsDevicesLoaded) <<
-    //    gpsDatabase.size();
+    qDebug() << QString(msgs::kGpsMsgIsDevicesLoaded) << gpsDatabase.size();
     detectedPorts = QSerialPortInfo::availablePorts();
     gpsPorts.clear();
 
     for (const QSerialPortInfo& portInfo : detectedPorts) {
-        //        qDebug() << "\nPort:" << portInfo.portName()
-        //                 << "\nLocation:" << portInfo.systemLocation()
-        //                 << "\nDescription:" << portInfo.description()
-        //                 << "\nManufacturer:" << portInfo.manufacturer()
-        //                 << "\nSerial number:" << portInfo.serialNumber()
-        //                 << "\nVendor Identifier:"
-        //                 << (portInfo.hasVendorIdentifier()
-        //                         ?
-        //                         QByteArray::number(portInfo.vendorIdentifier(),
-        //                         16) : QByteArray())
-        //                 << "\nProduct Identifier:"
-        //                 << (portInfo.hasProductIdentifier()
-        //                         ?
-        //                         QByteArray::number(portInfo.productIdentifier(),
-        //                         16) : QByteArray());
+        qDebug() << "\nPort:" << portInfo.portName()
+                 << "\nLocation:" << portInfo.systemLocation()
+                 << "\nDescription:" << portInfo.description()
+                 << "\nManufacturer:" << portInfo.manufacturer()
+                 << "\nSerial number:" << portInfo.serialNumber()
+                 << "\nVendor Identifier:"
+                 << (portInfo.hasVendorIdentifier()
+                         ? QByteArray::number(portInfo.vendorIdentifier(), 16)
+                         : QByteArray())
+                 << "\nProduct Identifier:"
+                 << (portInfo.hasProductIdentifier()
+                         ? QByteArray::number(portInfo.productIdentifier(), 16)
+                         : QByteArray());
 
         if (isCOMPortGPS(portInfo)) {
             gpsPorts.append(portInfo);
             gpsPortName = portInfo.portName();
             qDebug() << QString(msgs::kGpsMsgIsGpsPort);
         } else {
-            //            qDebug() << QString(msgs::kGpsMsgIsNotGpsPort);
+            qDebug() << QString(msgs::kGpsMsgIsNotGpsPort);
         }
     }
 }
