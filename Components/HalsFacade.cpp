@@ -130,7 +130,7 @@ bool HalsFacade::initCameras() {
 }
 
 bool HalsFacade::startGps() {
-    m_gpsDevice = std::make_unique<GPSDevice>(EmitMode::BothValid, this);
+    m_gpsDevice = std::make_unique<GPSDevice>(EmitMode::AnyValid, this);
     if (m_gpsDevice) {
         connect(m_gpsDevice.get(), &GPSDevice::gpsDataUpdated, this,
                 &HalsFacade::onGpsDataUpdated, Qt::QueuedConnection);
