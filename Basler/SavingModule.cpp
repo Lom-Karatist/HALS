@@ -53,8 +53,8 @@ void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
     switch (format) {
         case BaslerConstants::Batched:
             if (!m_batchSaver) {
-                m_batchSaver = new BatchSaver(m_savingPath, 300,
-                                              750 * 1024 * 1024, nullptr);
+                m_batchSaver = new BatchSaver(m_savingPath, 150,
+                                              400 * 1024 * 1024, nullptr);
             }
             m_batchSaver->addFrame(
                 prefix, width, height,

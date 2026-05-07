@@ -246,10 +246,10 @@ void GPSParser::parseLine(const QString line) {
     if (line.isEmpty()) return;
 
     if (line.startsWith("$GPRMC")) {
-        qDebug() << "GPRMC packet";
+        //        qDebug() << "GPRMC packet";
         parseRMC(line, rmcTime, isRMC_Ready);
     } else if (line.startsWith("$GPGGA")) {
-        qDebug() << "GPGGA packet";
+        //        qDebug() << "GPGGA packet";
         parseGGA(line, isGGA_Ready);
     }
 
