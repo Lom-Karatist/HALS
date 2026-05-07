@@ -40,6 +40,7 @@ private:
     int m_maxFramesPerBatch;
     qint64 m_maxBufferBytesPerBatch;
     QAtomicInt m_shutdown;
+    int m_recievedCount;
 };
 
 #endif  // BATCHWRITER_H

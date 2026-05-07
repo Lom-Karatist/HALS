@@ -15,7 +15,8 @@ BatchWriter::BatchWriter(const QString &basePath, int maxFramesPerBatch,
       m_basePath(basePath),
       m_maxFramesPerBatch(maxFramesPerBatch),
       m_maxBufferBytesPerBatch(maxBufferBytesPerBatch),
-      m_shutdown(0) {
+      m_shutdown(0),
+      m_recievedCount(0) {
     QDir dir(m_basePath + "/HS");
     if (!dir.exists()) dir.mkpath(".");
     dir.setPath(m_basePath + "/OC");
@@ -27,6 +28,8 @@ BatchWriter::~BatchWriter() { m_shutdown.fetchAndStoreRelease(1); }
 void BatchWriter::writeBatch(const QString prefix,
                              const QVector<FrameData> &frames) {
     if (m_shutdown.loadAcquire()) return;
+    qDebug() << "[RECIEVED]" << QTime::currentTime().toString("hh::mm::ss.zzzz")
+             << m_recievedCount;
     writeBatchImpl(prefix, frames);
 }
 
