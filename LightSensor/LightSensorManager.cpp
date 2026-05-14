@@ -74,6 +74,7 @@ void LightSensorManager::stopAs7341Stream() {
         delete m_lsProcess;
         m_lsProcess = nullptr;
     }
+    if (m_commandWriter != nullptr) delete m_commandWriter;
 #endif
 }
 
@@ -104,8 +105,7 @@ void LightSensorManager::initialize() {
     m_udpThread->start();
     emit connectionStatusChanged(true);
 
-    m_commandWriter =
-        std::make_unique<UdpLightSensorWriter>("127.0.0.1", 12346, this);
+    m_commandWriter = new UdpLightSensorWriter("127.0.0.1", 12346, this);
 
 #else
     qDebug()
