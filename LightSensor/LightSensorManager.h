@@ -10,8 +10,18 @@
 
 #include "LightSaver.h"
 #include "LightSettings.h"
-#include "LightTypes.h"
 #include "UdpLightSensorReader.h"
+#include "UdpLightSensorWriter.h"
+
+namespace ls_gain_transorms {
+const double gainMap[] = {0.5,  1.0,  2.0,   4.0,   8.0,  16.0,
+                          32.0, 64.0, 128.0, 256.0, 512.0};
+static double gainIndexToValue(int index) {
+    if (index < 0) index = 0;
+    if (index > 10) index = 10;
+    return gainMap[index];
+}
+}  // namespace ls_gain_transorms
 
 /**
  * @brief Менеджер датчика освещённости AS7341.
@@ -151,11 +161,10 @@ private slots:
     void onDataReady(LightSensorData data);
 
 private:
-#ifdef Q_OS_LINUX
     QProcess *m_lsProcess = nullptr;
     QThread *m_udpThread = nullptr;
     UdpLightSensorReader *m_udpReader = nullptr;
-#endif
+    UdpLightSensorWriter *m_commandWriter = nullptr;
 
     std::unique_ptr<LightSettings>
         m_lightSettings;  //!< Настройки датчика (INI-файл).

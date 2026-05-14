@@ -103,6 +103,10 @@ void LightSensorManager::initialize() {
 
     m_udpThread->start();
     emit connectionStatusChanged(true);
+
+    m_commandWriter =
+        std::make_unique<UdpLightSensorWriter>("127.0.0.1", 12346, this);
+
 #else
     qDebug()
         << "LightSensorManager: running in windows mode (no Python script)";
@@ -113,18 +117,34 @@ void LightSensorManager::initialize() {
 void LightSensorManager::setIntegrationTimeMs(int ms) {
     if (m_lightSettings->integrationTimeMs() != ms) {
         m_lightSettings->setIntegrationTimeMs(ms);
+#ifdef Q_OS_LINUX
+        if (m_commandWriter) {
+            m_commandWriter->sendIntegrationTime(ms);
+        }
+#endif
     }
 }
 
 void LightSensorManager::setGainIndex(int index) {
     if (m_lightSettings->gainIndex() != index) {
         m_lightSettings->setGainIndex(index);
+#ifdef Q_OS_LINUX
+        if (m_commandWriter) {
+            double gainValue = ls_gain_transorms::gainIndexToValue(index);
+            m_commandWriter->sendGain(gainValue);
+        }
+#endif
     }
 }
 
 void LightSensorManager::setFrameRateHz(int hz) {
     if (m_lightSettings->frameRateHz() != hz) {
         m_lightSettings->setFrameRateHz(hz);
+#ifdef Q_OS_LINUX
+        if (m_commandWriter) {
+            m_commandWriter->sendFrameRate(hz);
+        }
+#endif
     }
 }
 
