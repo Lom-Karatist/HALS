@@ -9,6 +9,7 @@ LightSensorManager::LightSensorManager(QObject *parent)
     m_lightSettings =
         std::make_unique<LightSettings>(this, QDir::currentPath() + "/LS.ini");
     m_saver = std::make_unique<LightSaver>();
+    m_recordingMode = IndependentMode;
 }
 
 LightSensorManager::~LightSensorManager() {
@@ -152,8 +153,14 @@ void LightSensorManager::setSavingPath(const QString &path) {
     m_saver->setSavingPath(path);
 }
 
-void LightSensorManager::setRecordingEnabled(bool enabled) {
+void LightSensorManager::setRecordingEnabled(bool enabled,
+                                             bool isIndependentSavingNeeded) {
     m_saver->setEnabled(enabled);
+    if (isIndependentSavingNeeded) {
+        m_recordingMode = IndependentMode;
+    } else {
+        m_recordingMode = BatchMode;
+    }
 }
 
 void LightSensorManager::updateSunElevation(double elevation) {
@@ -162,8 +169,14 @@ void LightSensorManager::updateSunElevation(double elevation) {
 
 void LightSensorManager::onDataReady(LightSensorData data) {
     data.sunElevation = m_currentSunElevation.load();
-    emit dataReady(data);
     if (m_saver->isEnabled()) {
-        m_saver->saveDataAsync(data);
+        switch (m_recordingMode) {
+            case LightSensorManager::IndependentMode:
+                m_saver->saveDataAsync(data);
+                break;
+            case LightSensorManager::BatchMode:
+                emit dataReady(data);
+                break;
+        }
     }
 }

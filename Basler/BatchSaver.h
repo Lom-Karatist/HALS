@@ -2,12 +2,14 @@
 #define BATCHSAVER_H
 
 #include <QByteArray>
+#include <QMutex>
 #include <QObject>
 #include <QString>
 #include <QThread>
 #include <QVector>
 
 #include "BatchWriter.h"
+#include "LightTypes.h"
 #include "Types.h"
 
 class BatchSaver : public QObject {
@@ -17,6 +19,7 @@ public:
                         qint64 maxBufferBytesPerBatch = 50 * 1024 * 1024,
                         QObject *parent = nullptr);
     ~BatchSaver();
+    void addLightData(const LightSensorData &data);
 
 public slots:
     void addFrame(const QString &prefix, int width, int height,
@@ -66,6 +69,9 @@ private:
     QThread m_saverThread;
     QThread m_writerThread;
     BatchWriter *m_writer;
+
+    QVector<LightSensorData> m_pendingLightData;
+    QMutex m_lightMutex;
 };
 
 #endif  // BATCHSAVER_H

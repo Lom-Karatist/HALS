@@ -188,9 +188,12 @@ void ExperimentController::setDataRecording(bool enabled) {
 
     if (m_lightSensor) {
         if (enabled) {
-            m_lightSensor->setRecordingEnabled(true);
+            if (m_cameraManager->isReady())
+                m_lightSensor->setRecordingEnabled(true, false);
+            else
+                m_lightSensor->setRecordingEnabled(true, true);
         } else {
-            m_lightSensor->setRecordingEnabled(false);
+            m_lightSensor->setRecordingEnabled(false, true);
         }
     }
     if (m_gpsDevice) {

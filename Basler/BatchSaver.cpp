@@ -29,6 +29,8 @@ BatchSaver::BatchSaver(const QString &basePath, int maxFramesPerBatch,
 
     qRegisterMetaType<BaslerConstants::FrameData>();
     qRegisterMetaType<QVector<BaslerConstants::FrameData>>();
+    qRegisterMetaType<LightSensorData>();
+    qRegisterMetaType<QVector<LightSensorData>>();
 }
 
 BatchSaver::~BatchSaver() {
@@ -39,6 +41,11 @@ BatchSaver::~BatchSaver() {
     m_writerThread.quit();
     m_writerThread.wait();
     delete m_writer;
+}
+
+void BatchSaver::addLightData(const LightSensorData &data) {
+    QMutexLocker locker(&m_lightMutex);
+    m_pendingLightData.append(data);
 }
 
 void BatchSaver::addFrame(const QString &prefix, int width, int height,
@@ -93,9 +100,17 @@ void BatchSaver::sendBuffer(const QString &prefix, Buffer &buf) {
                        f.timestampMs});
     }
 
+    QVector<LightSensorData> lightData;
+    if (prefix == "HS") {
+        QMutexLocker locker(&m_lightMutex);
+        lightData = m_pendingLightData;
+        m_pendingLightData.clear();
+    }
+
     QMetaObject::invokeMethod(
         m_writer, "writeBatch", Qt::QueuedConnection, Q_ARG(QString, prefix),
-        Q_ARG(QVector<BaslerConstants::FrameData>, frames));
+        Q_ARG(QVector<BaslerConstants::FrameData>, frames),
+        Q_ARG(QVector<LightSensorData>, lightData));
 
     buf.frames.clear();
     buf.totalBytes = 0;

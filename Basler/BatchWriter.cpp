@@ -26,21 +26,23 @@ BatchWriter::BatchWriter(const QString &basePath, int maxFramesPerBatch,
 BatchWriter::~BatchWriter() { m_shutdown.fetchAndStoreRelease(1); }
 
 void BatchWriter::writeBatch(const QString prefix,
-                             const QVector<FrameData> &frames) {
+                             const QVector<FrameData> &frames,
+                             const QVector<LightSensorData> &lightData) {
     if (m_shutdown.loadAcquire()) return;
     qDebug() << "[RECIEVED]" << QTime::currentTime().toString("hh::mm::ss.zzzz")
              << m_recievedCount;
-    writeBatchImpl(prefix, frames);
+    writeBatchImpl(prefix, frames, lightData);
 }
 
 void BatchWriter::writeBatchImpl(
-    const QString &prefix, const QVector<BaslerConstants::FrameData> &frames) {
+    const QString &prefix, const QVector<BaslerConstants::FrameData> &frames,
+    const QVector<LightSensorData> &lightData) {
     if (frames.isEmpty()) return;
 
     QString baseName = generateBaseName(prefix);
     writeBinary(m_basePath + "/" + prefix + "/" + baseName + ".bin", frames);
     writeHeader(m_basePath + "/" + prefix + "/" + baseName + ".json", baseName,
-                frames);
+                frames, lightData);
 
     emit fileWritten(m_basePath + "/" + prefix + "/" + baseName + ".bin",
                      frames.size(), prefix);
@@ -60,7 +62,8 @@ void BatchWriter::writeBinary(const QString binPath,
 }
 
 void BatchWriter::writeHeader(const QString headerPath, QString baseName,
-                              const QVector<FrameData> &frames) {
+                              const QVector<FrameData> &frames,
+                              const QVector<LightSensorData> &lightData) {
     QJsonObject root;
     root["version"] = 1;
     root["baseName"] = baseName;
@@ -81,6 +84,22 @@ void BatchWriter::writeHeader(const QString headerPath, QString baseName,
         framesArray.append(frameObj);
     }
     root["frames"] = framesArray;
+
+    if (!lightData.isEmpty()) {
+        QJsonArray lightArray;
+        for (const LightSensorData &ld : lightData) {
+            QJsonObject lightObj;
+            lightObj["timestamp"] = ld.dateTime;
+            lightObj["integrationTimeMs"] = ld.integrationTimeMs;
+            lightObj["gainIndex"] = ld.gainIndex;
+            lightObj["sunElevation"] = ld.sunElevation;
+            QJsonArray chArr;
+            for (quint16 val : ld.channels) chArr.append(val);
+            lightObj["channels"] = chArr;
+            lightArray.append(lightObj);
+        }
+        root["lightSensorData"] = lightArray;
+    }
 
     QFile jsonFile(headerPath);
     if (jsonFile.open(QIODevice::WriteOnly)) {

@@ -189,3 +189,9 @@ void SavingModule::setIsNeedToSave(bool newIsNeedToSave) {
     }
     m_isNeedToSave = newIsNeedToSave;
 }
+
+void SavingModule::addLightData(const LightSensorData &data) {
+    if (m_format == BaslerConstants::Batched && m_batchSaver) {
+        m_batchSaver->addLightData(data);
+    }
+}

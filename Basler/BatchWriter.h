@@ -6,7 +6,9 @@
 #include <QString>
 #include <QVector>
 
+#include "LightTypes.h"
 #include "Types.h"
+
 using namespace BaslerConstants;
 
 class BatchWriter : public QObject {
@@ -19,7 +21,8 @@ public:
 
 public slots:
     void writeBatch(const QString prefix,
-                    const QVector<BaslerConstants::FrameData> &frames);
+                    const QVector<BaslerConstants::FrameData> &frames,
+                    const QVector<LightSensorData> &lightData = {});
     void shutdown();
 
 signals:
@@ -28,12 +31,12 @@ signals:
                      const QString &prefix);
 
 private:
-    void writeBatchImpl(const QString &prefix,
-                        const QVector<FrameData> &frames);
+    void writeBatchImpl(const QString &prefix, const QVector<FrameData> &frames,
+                        const QVector<LightSensorData> &lightData);
 
     void writeBinary(const QString binPath, const QVector<FrameData> &frames);
     void writeHeader(const QString headerPath, QString baseName,
-                     const QVector<FrameData> &frames);
+                     const QVector<FrameData> &frames, const QVector<LightSensorData> &lightData);
     QString generateBaseName(const QString &prefix) const;
 
     QString m_basePath;

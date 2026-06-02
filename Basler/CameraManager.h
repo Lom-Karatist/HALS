@@ -10,7 +10,9 @@
 
 #include "BaslerApi.h"
 #include "BaslerSettings.h"
+#include "LightTypes.h"
 #include "SavingModule.h"
+
 /**
  * @brief Класс-менеджер, координирующий работу двух камер (мастер и слейв).
  *
@@ -108,6 +110,8 @@ public:
      * @brief Запустить сохранение одного кадра при следующем приеме данных
      */
     void makeSingleShootNeeded();
+
+    void addLightSensorData(const LightSensorData &data);
 
 signals:
     /**

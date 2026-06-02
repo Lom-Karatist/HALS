@@ -38,10 +38,39 @@ current_gain = 32.0      # множитель (не индекс)
 current_freq = 10.0
 
 def apply_parameters():
-    """Применить текущие настройки к датчику."""
+    """Применить текущие настройки к датчику и перезапустить измерение."""
     with params_lock:
-        sensor.integration_time = current_integration_time
-        sensor.gain = GAIN_TABLE[current_gain]
+        new_integration = current_integration_time
+        new_gain = GAIN_TABLE[current_gain]
+    
+    # Останавливаем текущее измерение, если возможно
+    try:
+        sensor.stop()
+    except AttributeError:
+        pass  # если нет метода stop, пробуем disable
+    try:
+        sensor.enable = False
+    except:
+        pass
+    
+    # Устанавливаем новые параметры
+    sensor.integration_time = new_integration
+    sensor.gain = new_gain
+    
+    # Ждём, пока регистры применятся
+    time.sleep(0.02)
+    
+    # Перезапускаем измерение
+    try:
+        sensor.start()
+    except AttributeError:
+        pass
+    try:
+        sensor.enable = True
+    except:
+        pass
+    
+    print(f"[APPLY] integration={new_integration}, gain={new_gain}", flush=True)
 
 def read_spectrum():
     return {

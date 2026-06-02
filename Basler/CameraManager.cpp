@@ -575,6 +575,10 @@ void CameraManager::makeSingleShootNeeded() {
     m_isNeedToSaveOC = true;
 }
 
+void CameraManager::addLightSensorData(const LightSensorData &data) {
+    m_savingModule.addLightData(data);
+}
+
 void CameraManager::setIsNeedToSave(bool newIsNeedToSave, bool isNeedToSaveHS,
                                     bool isNeedToSaveOC) {
     m_isNeedToSaveHS = isNeedToSaveHS;

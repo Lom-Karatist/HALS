@@ -7,6 +7,7 @@
 #include <QString>
 
 #include "BatchSaver.h"
+#include "LightTypes.h"
 #include "Types.h"
 
 /**
@@ -132,6 +133,8 @@ public:
      * @param newIsNeedToSave true – начать сохранять, false – остановить.
      */
     void setIsNeedToSave(bool newIsNeedToSave);
+
+    void addLightData(const LightSensorData &data);
 
 private:
     /**

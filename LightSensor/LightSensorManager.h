@@ -104,8 +104,10 @@ public:
      * @brief Включить или выключить сохранение данных датчика.
      * @param enabled true – данные будут сохраняться в JSONL-файл,
      *                false – сохранение отключено.
+     * @param enabled isIndependentSavingNeeded – нужно ли независимое
+     * сохранение в модуле освещенности
      */
-    void setRecordingEnabled(bool enabled);
+    void setRecordingEnabled(bool enabled, bool isIndependentSavingNeeded);
 
 signals:
     /**
@@ -171,6 +173,9 @@ private:
     std::unique_ptr<LightSaver> m_saver;  //!< Модуль сохранения данных.
     std::atomic<double>
         m_currentSunElevation;  //!< Текущий угол возвышения Солнца
+
+    enum RecordingMode { IndependentMode, BatchMode };
+    RecordingMode m_recordingMode;
 };
 
 #endif  // LIGHTSENSORMANAGER_H
