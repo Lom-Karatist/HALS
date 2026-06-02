@@ -2,8 +2,9 @@
 #define UDPLIGHTSENSORREADER_H
 
 #include <QObject>
-#include <QUdpSocket>
 #include <QThread>
+#include <QUdpSocket>
+
 #include "LightTypes.h"
 
 /**
@@ -12,8 +13,7 @@
  * Работает в отдельном потоке. Слушает заданный порт, читает JSON-сообщения,
  * преобразует их в структуру LightSensorData и испускает сигнал dataReceived().
  */
-class UdpLightSensorReader : public QObject
-{
+class UdpLightSensorReader : public QObject {
     Q_OBJECT
 public:
     explicit UdpLightSensorReader(int port = 12345, QObject *parent = nullptr);
@@ -32,9 +32,11 @@ private slots:
 private:
     LightSensorData parseJson(const QByteArray &jsonData) const;
 
+    int gainToIndex(const double &gain) const;
+
     QUdpSocket *m_udpSocket;
     int m_port;
     bool m_running;
 };
 
-#endif // UDPLIGHTSENSORREADER_H
+#endif  // UDPLIGHTSENSORREADER_H

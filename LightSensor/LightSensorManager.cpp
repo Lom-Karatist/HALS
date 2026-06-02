@@ -2,12 +2,15 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QStandardPaths>
 #include <QThreadPool>
 
 LightSensorManager::LightSensorManager(QObject *parent)
     : QObject(parent), m_currentSunElevation(0.0) {
-    m_lightSettings =
-        std::make_unique<LightSettings>(this, QDir::currentPath() + "/LS.ini");
+    m_lightSettings = std::make_unique<LightSettings>(
+        this,
+        QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) +
+            "/LS.ini");
     m_saver = std::make_unique<LightSaver>();
     m_recordingMode = IndependentMode;
 }
@@ -30,7 +33,9 @@ LightSensorManager::~LightSensorManager() {
 void LightSensorManager::startAs7341Stream(int expoMs, int gainIndex,
                                            int framerateHz) {
 #ifdef Q_OS_LINUX
-    // Путь к папке со скриптом – измените под свою конфигурацию
+    int atime, astep;
+    msToAtimeAstep(expoMs, atime, astep);
+
     QString scriptDir = "/home/hals/Desktop/python";
     QString scriptPath = scriptDir + "/as7341_stream.py";
     QString python = "python3";
@@ -51,9 +56,9 @@ void LightSensorManager::startAs7341Stream(int expoMs, int gainIndex,
     });
 
     QStringList args;
-    args << scriptPath << "--integration" << QString::number(expoMs) << "--gain"
-         << QString::number(gainValue) << "--freq"
-         << QString::number(framerateHz) << "--port"
+    args << scriptPath << "--atime" << QString::number(atime) << "--astep"
+         << QString::number(astep) << "--gain" << QString::number(gainValue)
+         << "--freq" << QString::number(framerateHz) << "--port"
          << "12345";
 
     m_lsProcess->start(python, args);
@@ -120,7 +125,9 @@ void LightSensorManager::setIntegrationTimeMs(int ms) {
         m_lightSettings->setIntegrationTimeMs(ms);
 #ifdef Q_OS_LINUX
         if (m_commandWriter) {
-            m_commandWriter->sendIntegrationTime(ms);
+            int atime, astep;
+            msToAtimeAstep(ms, atime, astep);
+            m_commandWriter->sendIntegrationTime(atime, astep);
         }
 #endif
     }
@@ -179,4 +186,18 @@ void LightSensorManager::onDataReady(LightSensorData data) {
                 break;
         }
     }
+}
+
+void LightSensorManager::msToAtimeAstep(int ms, int &atime, int &astep) const {
+    // Опорная точка: atime = 10, astep = 20000 при T = 556 мс
+    const int refAtime = 10;
+    const int refAstep = 20000;
+    const int refMs = 556;
+
+    // Вычисляем желаемый astep линейно по времени экспозиции
+    double astepDouble = static_cast<double>(refAstep + 1) * ms / refMs - 1.0;
+    astep = static_cast<int>(astepDouble + 0.5);  // округление
+    if (astep < 0) astep = 0;
+    if (astep > 65535) astep = 65535;
+    atime = refAtime;
 }

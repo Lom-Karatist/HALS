@@ -61,9 +61,11 @@ LightSensorData UdpLightSensorReader::parseJson(
 
     QJsonObject obj = doc.object();
     data.dateTime = obj["timestamp"].toString();
-    data.integrationTimeMs = obj["integration_ms"].toInt();
-    data.gainIndex =
-        obj["gain"].toInt();  // усиление в виде индекса (например 32)
+    int atime = obj["atime"].toInt();
+    int astep = obj["astep"].toInt();
+    // Вычисляем время экспозиции в миллисекундах
+    data.integrationTimeMs = (atime + 1) * (astep + 1) * 2.78 / 1000.0;
+    data.gainIndex = gainToIndex(obj["gain"].toDouble());
     data.sunElevation = 0.0;  // пока не передаётся, можно будет добавить позже
 
     // Каналы: ожидаем 10 значений: 415,445,480,515,555,590,630,680,912,clear
@@ -82,4 +84,11 @@ LightSensorData UdpLightSensorReader::parseJson(
     data.channels = ch;
 
     return data;
+}
+
+int UdpLightSensorReader::gainToIndex(const double &gain) const {
+    static const QMap<double, int> gainMap = {
+        {0.5, 0}, {1, 1},  {2, 2},   {4, 3},   {8, 4},   {16, 5},
+        {32, 6},  {64, 7}, {128, 8}, {256, 9}, {512, 10}};
+    return gainMap.value(gain, 0);
 }
