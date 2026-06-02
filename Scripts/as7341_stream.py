@@ -150,7 +150,7 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     dest = ('127.0.0.1', args.port)
 
-    print(f"Streaming: integration={args.integration} ms, gain={args.gain}, freq={args.freq} Hz, data port={args.port}, cmd port={args.cmd_port}")
+    print(f"Streaming: atime={args.atime}, astep={args.astep}, gain={args.gain}, freq={args.freq} Hz, data port={args.port}, cmd port={args.cmd_port}")
     print("Press Ctrl+C to stop")
 
     try:
