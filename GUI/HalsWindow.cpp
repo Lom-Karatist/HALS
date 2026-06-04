@@ -4,6 +4,7 @@
 
 #include <QMessageBox>
 #include <QPixmap>
+#include <QProcess>
 #include <QStyle>
 #include <QTouchEvent>
 
@@ -54,10 +55,18 @@ bool HalsWindow::eventFilter(QObject* watched, QEvent* event) {
 
 void HalsWindow::on_pushButtonQuit_clicked() {
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this, "Подтверждение", "Завершить работу приложения?",
+        this, "Подтверждение",
+        "Завершить работу приложения и выключить систему?",
         QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
+        m_facade->stopExperiment();
         qApp->quit();
+
+// После quit() выполнение кода продолжается, но приложение уже в процессе
+// завершения. shutdown запускаем асинхронно, чтобы не блокировать.
+#ifdef Q_OS_LINUX
+        QProcess::startDetached("sudo shutdown -h now");
+#endif
     }
 }
 
