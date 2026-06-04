@@ -60,13 +60,11 @@ void HalsWindow::on_pushButtonQuit_clicked() {
         QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         m_facade->stopExperiment();
-        qApp->quit();
 
-// После quit() выполнение кода продолжается, но приложение уже в процессе
-// завершения. shutdown запускаем асинхронно, чтобы не блокировать.
 #ifdef Q_OS_LINUX
-        QProcess::startDetached("sudo shutdown -h now");
+        QProcess::execute("sudo /home/hals/shutdown_hals.sh");
 #endif
+        qApp->quit();
     }
 }
 
@@ -138,7 +136,7 @@ void HalsWindow::initSettingsForms() {
 
     setupSettingBox(ui->widgetBrightnessParams, "Сенсор освещенности      ",
                     {ParameterType::LIGHT_EXPOSURE, "Экспозиция", "мс", 1, 1000,
-                     100, 1, 10, 100},
+                     500, 1, 10, 100},
                     {ParameterType::LIGHT_FRAMERATE, "Частота регистрации",
                      "кадров/с", 1, 60, 1, 1, 5, 10});
 

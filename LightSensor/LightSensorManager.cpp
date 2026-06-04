@@ -91,6 +91,7 @@ void LightSensorManager::initialize() {
     params.exposureMs = m_lightSettings->integrationTimeMs();
     params.gain = m_lightSettings->gainIndex();
     params.fps = m_lightSettings->frameRateHz();
+    emit settingsChanged(params);
 
 #ifdef Q_OS_LINUX
     // 1. Запускаем Python-скрипт
