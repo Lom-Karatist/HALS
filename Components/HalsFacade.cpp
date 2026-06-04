@@ -107,6 +107,7 @@ bool HalsFacade::initCameras() {
                 &HalsFacade::startBaslerCameras);
         connect(m_cameraManager.get(), &CameraManager::errorOccurred, this,
                 &HalsFacade::componentError, Qt::QueuedConnection);
+        m_cameraManager->onSavingModeChanged(2);  // 2 = Batched
         m_cameraManager->initCameras();
 
         connect(m_cameraManager.get(), &CameraManager::forceParameterChanging,

@@ -11,7 +11,7 @@
 SavingModule::SavingModule(QObject *parent)
     : QObject{parent},
       m_isNeedToSave(false),
-      m_format(BaslerConstants::Binary),
+      m_format(BaslerConstants::Batched),
       m_batchSaver(nullptr) {}
 
 SavingModule::~SavingModule() {

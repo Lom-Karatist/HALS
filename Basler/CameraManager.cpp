@@ -604,6 +604,9 @@ void CameraManager::onSettingsChanged(bool isMaster,
 
 void CameraManager::onSavingModeChanged(const int savingFormat) {
     switch (savingFormat) {
+        case 2:
+            m_savingModule.setFormat(BaslerConstants::SavingFormat::Batched);
+            break;
         case 1:
             m_savingModule.setFormat(BaslerConstants::SavingFormat::Binary);
             break;
