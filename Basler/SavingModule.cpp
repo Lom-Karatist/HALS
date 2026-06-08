@@ -41,15 +41,17 @@ void SavingModule::setFormat(BaslerConstants::SavingFormat newFormat) {
 
 void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
                                  int pixelFormat, const QString &prefix,
-                                 const QString &timeStamp) {
-    saveDataAsync(data, width, height, pixelFormat, prefix, timeStamp,
-                  m_format);
+                                 const QString &timeStamp,
+                                 double framerateFpS) {
+    saveDataAsync(data, width, height, pixelFormat, prefix, timeStamp, m_format,
+                  framerateFpS);
 }
 
 void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
                                  int pixelFormat, const QString &prefix,
                                  const QString &timeStamp,
-                                 BaslerConstants::SavingFormat format) {
+                                 BaslerConstants::SavingFormat format,
+                                 double framerateFpS) {
     switch (format) {
         case BaslerConstants::Batched:
             if (!m_batchSaver) {
@@ -58,7 +60,8 @@ void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
             }
             m_batchSaver->addFrame(
                 prefix, width, height,
-                ImageFormatConverter::getPixelFormatName(pixelFormat), data, 0);
+                ImageFormatConverter::getPixelFormatName(pixelFormat), data,
+                framerateFpS);
             break;
         case BaslerConstants::Png:
             (void)QtConcurrent::run(&SavingModule::saveAsPngAsync, data, width,

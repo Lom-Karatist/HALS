@@ -50,7 +50,7 @@ void BatchSaver::addLightData(const LightSensorData &data) {
 
 void BatchSaver::addFrame(const QString &prefix, int width, int height,
                           QString pixelFormat, const QByteArray &data,
-                          qint64 timestampMs) {
+                          double framerateFpS) {
     Buffer *buf = (prefix == "HS") ? &m_bufferHS : &m_bufferOC;
     if (!buf->active) {
         buf->frames.clear();
@@ -66,6 +66,8 @@ void BatchSaver::addFrame(const QString &prefix, int width, int height,
             QString("Parameter mismatch for %1, discarding frame").arg(prefix));
         return;
     }
+    qint64 timestampMs =
+        static_cast<qint64>(ceil(1000 * buf->frames.size() / framerateFpS));
     buf->frames.append({data, timestampMs});
     buf->totalBytes += data.size();
 

@@ -24,7 +24,7 @@ public:
 public slots:
     void addFrame(const QString &prefix, int width, int height,
                   QString pixelFormat, const QByteArray &data,
-                  qint64 timestampMs = 0);
+                  double framerateFpS);
     void flush();
 
 signals:
