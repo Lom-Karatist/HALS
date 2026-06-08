@@ -272,10 +272,10 @@ void GPSParser::parseLine(const QString line) {
     if (line.isEmpty()) return;
 
     if (line.startsWith("$GPRMC")) {
-        //        qDebug() << "GPRMC packet";
+        qDebug() << "GPRMC packet" << line;
         parseRMC(line, rmcTime, isRMC_Ready);
     } else if (line.startsWith("$GPGGA")) {
-        //        qDebug() << "GPGGA packet";
+        qDebug() << "GPGGA packet" << line;
         parseGGA(line, isGGA_Ready);
     }
 
@@ -337,7 +337,8 @@ void GPSParser::parseGGA(const QString& line, bool& isValid) {
     }
 
     data.satellites = parts[kGgaSatellitesPartIndex].toInt(&isOk);
-    qDebug() << "Recieved GPS:" << data.timeUtc << isOk << data.satellites;
+    //    qDebug() << "Recieved GPS:" << data.timeUtc << isOk <<
+    //    data.satellites;
     isSatellitesNumberValid(data.satellites, data.errors);
     if (!isOk) {
         data.satellites = -1;
