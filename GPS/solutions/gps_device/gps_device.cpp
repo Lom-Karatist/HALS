@@ -7,7 +7,7 @@ GPSDevice::GPSDevice(EmitMode mode, QObject *parent) : QObject(parent) {
     m_gps_parser = new GPSParser(mode);
 
     connect(m_gps_receiver, &GPSReceiver::gpsDataReceived, m_gps_parser,
-            &GPSParser::parseLine);
+            &GPSParser::processData);
 
     QObject::connect(m_gps_receiver, &GPSReceiver::gpsStatusChanged, this,
                      &GPSDevice::gpsStatusUpdated);
