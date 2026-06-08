@@ -62,7 +62,13 @@ void HalsWindow::on_pushButtonQuit_clicked() {
         m_facade->stopExperiment();
 
 #ifdef Q_OS_LINUX
-        QProcess::execute("sudo /home/hals/shutdown_hals.sh");
+        //        QProcess::execute("sudo /home/hals/shutdown_hals.sh");
+        QProcess process;
+        process.start("sudo /home/pi/shutdown_hals.sh");
+        process.waitForFinished(3000);
+        qDebug() << "Exit code:" << process.exitCode();
+        qDebug() << "Error:" << process.errorString();
+        qDebug() << "Stderr:" << process.readAllStandardError();
 #endif
         qApp->quit();
     }
