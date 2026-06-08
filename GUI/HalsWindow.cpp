@@ -62,9 +62,9 @@ void HalsWindow::on_pushButtonQuit_clicked() {
         m_facade->stopExperiment();
 
 #ifdef Q_OS_LINUX
-        //        QProcess::execute("sudo /home/hals/shutdown_hals.sh");
+        //        QProcess::execute("/home/hals/shutdown_hals.sh");
         QProcess process;
-        process.start("sudo", QStringList() << "/home/hals/shutdown_hals.sh");
+        process.startDetached("/home/hals/shutdown_hals.sh");
         if (!process.waitForFinished(3000)) {
             qDebug() << "Process didn't finish within timeout";
         }
