@@ -33,7 +33,7 @@ public:
      * @return Структура BaslerCameraParams, заполненная значениями из файла.
      *         Если файл отсутствует или ключи не найдены, используются значения по умолчанию.
      */
-    BaslerCameraParams loadParamsFromFile();
+    BaslerCameraParams loadParamsFromFile(bool isMaster);
 
     /**
      * @brief Сохранить параметры камеры в INI-файл.

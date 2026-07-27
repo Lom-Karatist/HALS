@@ -9,12 +9,12 @@ BaslerSettings::BaslerSettings(QObject *parent, QString fileName)
 
 BaslerSettings::~BaslerSettings() { delete m_settings; }
 
-BaslerCameraParams BaslerSettings::loadParamsFromFile() {
+BaslerCameraParams BaslerSettings::loadParamsFromFile(bool isMaster) {
     BaslerCameraParams params;
 
     m_settings->beginGroup("Camera");
     params.serialNumber = m_settings->value("serialNumber", "").toString();
-    params.isMaster = m_settings->value("isMaster", false).toBool();
+    params.isMaster = m_settings->value("isMaster", isMaster).toBool();
 
     params.exposureTime = m_settings->value("exposureTime", 10000.0).toDouble();
     params.gain = m_settings->value("gain", 1.0).toDouble();

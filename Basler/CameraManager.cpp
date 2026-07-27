@@ -10,8 +10,12 @@ CameraManager::CameraManager(QObject *parent, bool isMasterSlaveNeeded)
     : QObject(parent),
       m_master(nullptr),
       m_slave(nullptr),
-      m_masterSettings(this, QDir::currentPath() + "/HS.ini"),
-      m_slaveSettings(this, QDir::currentPath() + "/OC.ini"),
+      m_masterSettings(this, QStandardPaths::writableLocation(
+                                 QStandardPaths::AppConfigLocation) +
+                                 "/HS.ini"),
+      m_slaveSettings(this, QStandardPaths::writableLocation(
+                                QStandardPaths::AppConfigLocation) +
+                                "/OC.ini"),
       m_connectedCount(0),
       m_ready(false),
       m_isImageNeeded(false),
@@ -21,8 +25,8 @@ CameraManager::CameraManager(QObject *parent, bool isMasterSlaveNeeded)
       m_isNeedToSaveHS(true),
       m_isNeedToSaveOC(true) {
     PylonInitialize();
-    m_hsParams = m_masterSettings.loadParamsFromFile();
-    m_ocParams = m_slaveSettings.loadParamsFromFile();
+    m_hsParams = m_masterSettings.loadParamsFromFile(true);
+    m_ocParams = m_slaveSettings.loadParamsFromFile(false);
 
     m_master = new BaslerApi(true, m_hsParams);
     m_slave = new BaslerApi(false, m_ocParams);
