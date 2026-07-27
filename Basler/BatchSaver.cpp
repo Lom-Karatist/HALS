@@ -50,7 +50,7 @@ void BatchSaver::addLightData(const LightSensorData &data) {
 
 void BatchSaver::addFrame(const QString &prefix, int width, int height,
                           QString pixelFormat, const QByteArray &data,
-                          double framerateFpS) {
+                          int expositionMs, double framerateFpS) {
     Buffer *buf = (prefix == "HS") ? &m_bufferHS : &m_bufferOC;
     if (!buf->active) {
         buf->frames.clear();
@@ -58,6 +58,7 @@ void BatchSaver::addFrame(const QString &prefix, int width, int height,
         buf->width = width;
         buf->height = height;
         buf->pixelFormat = pixelFormat;
+        buf->expositionMs = expositionMs;
         buf->prefix = prefix;
         buf->active = true;
     } else if (buf->width != width || buf->height != height ||
@@ -99,7 +100,7 @@ void BatchSaver::sendBuffer(const QString &prefix, Buffer &buf) {
     frames.reserve(buf.frames.size());
     for (const auto &f : buf.frames) {
         frames.append({prefix, buf.width, buf.height, buf.pixelFormat, f.data,
-                       f.timestampMs});
+                       buf.expositionMs, f.timestampMs});
     }
 
     QVector<LightSensorData> lightData;

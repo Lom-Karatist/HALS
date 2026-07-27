@@ -82,12 +82,14 @@ public:
      */
     void saveDataAsync(const QByteArray &data, int width, int height,
                        int pixelFormat, const QString &prefix,
-                       const QString &timeStamp, double framerateFpS);
+                       const QString &timeStamp, int expositionMs,
+                       double framerateFpS);
 
     void saveDataAsync(const QByteArray &data, int width, int height,
                        int pixelFormat, const QString &prefix,
                        const QString &timeStamp,
-                       BaslerConstants::SavingFormat format, double framerateFpS);
+                       BaslerConstants::SavingFormat format, int expositionMs,
+                       double framerateFpS);
 
     /**
      * @brief Статический метод для асинхронного сохранения в формате BMP.

@@ -40,6 +40,7 @@ void BatchWriter::writeBatchImpl(
     if (frames.isEmpty()) return;
 
     QString baseName = generateBaseName(prefix);
+    qDebug() << m_basePath + "/" + prefix + "/" + baseName + ".json";
     writeBinary(m_basePath + "/" + prefix + "/" + baseName + ".bin", frames);
     writeHeader(m_basePath + "/" + prefix + "/" + baseName + ".json", baseName,
                 frames, lightData);
@@ -65,11 +66,12 @@ void BatchWriter::writeHeader(const QString headerPath, QString baseName,
                               const QVector<FrameData> &frames,
                               const QVector<LightSensorData> &lightData) {
     QJsonObject root;
-    root["version"] = 1;
+    root["version"] = 2;
     root["baseName"] = baseName;
     root["width"] = frames.first().width;
     root["height"] = frames.first().height;
     root["pixelFormat"] = frames.first().pixelFormat;
+    root["exposition"] = frames.first().expositionMs;
     root["frameCount"] = frames.size();
     root["endianness"] =
         (QSysInfo::ByteOrder == QSysInfo::LittleEndian) ? "little" : "big";

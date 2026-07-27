@@ -23,7 +23,7 @@ public:
 
 public slots:
     void addFrame(const QString &prefix, int width, int height,
-                  QString pixelFormat, const QByteArray &data,
+                  QString pixelFormat, const QByteArray &data, int expositionMs,
                   double framerateFpS);
     void flush();
 
@@ -50,6 +50,7 @@ private:
         int width = 0;
         int height = 0;
         QString pixelFormat;
+        int expositionMs;
         bool active = false;
         QString prefix;
     };

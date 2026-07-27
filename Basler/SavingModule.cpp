@@ -16,7 +16,6 @@ SavingModule::SavingModule(QObject *parent)
 
 SavingModule::~SavingModule() {
     if (m_batchSaver != nullptr) {
-        //        m_batchSaver->shutdown();
         delete m_batchSaver;
     }
 }
@@ -41,17 +40,17 @@ void SavingModule::setFormat(BaslerConstants::SavingFormat newFormat) {
 
 void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
                                  int pixelFormat, const QString &prefix,
-                                 const QString &timeStamp,
+                                 const QString &timeStamp, int expositionMs,
                                  double framerateFpS) {
     saveDataAsync(data, width, height, pixelFormat, prefix, timeStamp, m_format,
-                  framerateFpS);
+                  expositionMs, framerateFpS);
 }
 
 void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
                                  int pixelFormat, const QString &prefix,
                                  const QString &timeStamp,
                                  BaslerConstants::SavingFormat format,
-                                 double framerateFpS) {
+                                 int expositionMs, double framerateFpS) {
     switch (format) {
         case BaslerConstants::Batched:
             if (!m_batchSaver) {
@@ -61,7 +60,7 @@ void SavingModule::saveDataAsync(const QByteArray &data, int width, int height,
             m_batchSaver->addFrame(
                 prefix, width, height,
                 ImageFormatConverter::getPixelFormatName(pixelFormat), data,
-                framerateFpS);
+                expositionMs, framerateFpS);
             break;
         case BaslerConstants::Png:
             (void)QtConcurrent::run(&SavingModule::saveAsPngAsync, data, width,

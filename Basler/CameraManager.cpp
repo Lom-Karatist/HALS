@@ -191,9 +191,10 @@ void CameraManager::onMasterRawData(const QByteArray &data, int w, int h,
             }
         }
 
-        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "HS", timestamp,
-                                     BaslerConstants::Batched,
-                                     m_hsParams.acquisitionFrameRate);
+        m_savingModule.saveDataAsync(
+            data, w, h, pixelFormat, "HS", timestamp, BaslerConstants::Batched,
+            m_hsParams.exposureTime, m_hsParams.acquisitionFrameRate);
+        qDebug() << "saving HS:" << m_hsParams.exposureTime;
 
         if (m_isSingleShotNeeded) {
             m_isNeedToSaveHS = false;
@@ -236,9 +237,10 @@ void CameraManager::onSlaveRawData(const QByteArray &data, int w, int h,
             }
         }
 
-        m_savingModule.saveDataAsync(data, w, h, pixelFormat, "OC", timestamp,
-                                     BaslerConstants::Batched,
-                                     m_hsParams.acquisitionFrameRate);
+        m_savingModule.saveDataAsync(
+            data, w, h, pixelFormat, "OC", timestamp, BaslerConstants::Batched,
+            m_ocParams.exposureTime, m_hsParams.acquisitionFrameRate);
+        qDebug() << "saving OC:" << m_ocParams.exposureTime;
 
         if (m_isSingleShotNeeded) {
             m_isNeedToSaveOC = false;
