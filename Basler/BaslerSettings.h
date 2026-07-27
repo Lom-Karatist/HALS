@@ -2,8 +2,9 @@
 #define BASLERSETTINGS_H
 
 #include <QObject>
-#include "BaslerApi.h"
 #include <QSettings>
+
+#include "BaslerApi.h"
 
 /**
  * @class BaslerSettings
@@ -14,8 +15,7 @@
  * и записи обратно в файл. Используется в CameraManager для хранения
  * конфигурации мастер-камеры (HS) и слейв-камеры (OC).
  */
-class BaslerSettings : public QObject
-{
+class BaslerSettings : public QObject {
     Q_OBJECT
 public:
     /**
@@ -23,7 +23,7 @@ public:
      * @param parent Родительский QObject.
      * @param fileName Полный путь к INI-файлу настроек.
      */
-    explicit BaslerSettings(QObject *parent = nullptr, QString fileName = "");    
+    explicit BaslerSettings(QObject *parent = nullptr, QString fileName = "");
 
     /// Деструктор. Освобождает внутренний объект QSettings.
     ~BaslerSettings();
@@ -31,21 +31,31 @@ public:
     /**
      * @brief Загрузить параметры из INI-файла.
      * @return Структура BaslerCameraParams, заполненная значениями из файла.
-     *         Если файл отсутствует или ключи не найдены, используются значения по умолчанию.
+     *         Если файл отсутствует или ключи не найдены, используются значения
+     * по умолчанию.
      */
     BaslerCameraParams loadParamsFromFile(bool isMaster);
+
+    /**
+     * @brief Загрузить параметры из INI-файла в ресурсах ПО (настройки по
+     * умолчанию).
+     * @return Структура BaslerCameraParams, заполненная значениями из файла.
+     */
+    BaslerCameraParams loadDefaultParamsFromFile(bool isMaster);
 
     /**
      * @brief Сохранить параметры камеры в INI-файл.
      * @param cameraParams Структура с актуальными параметрами.
      *
-     * Запись производится в группу [Camera]. После вызова данные синхронизируются с диском.
+     * Запись производится в группу [Camera]. После вызова данные
+     * синхронизируются с диском.
      */
     void saveParams(const BaslerCameraParams &cameraParams);
 
     /**
      * @brief Получить указатель на внутренний объект QSettings.
-     * @return Указатель на QSettings (может быть использован для прямого доступа, если требуется).
+     * @return Указатель на QSettings (может быть использован для прямого
+     * доступа, если требуется).
      */
     const QSettings *settings() const;
 
@@ -55,11 +65,12 @@ private:
      * @param iniFileName Имя INI-файла.
      * @return Указатель на новый QSettings.
      *
-     * Статический метод, проверяет существование файла и выводит отладочную информацию.
+     * Статический метод, проверяет существование файла и выводит отладочную
+     * информацию.
      */
     static QSettings *createSettingsObject(QString iniFileName);
 
     QSettings *m_settings;  //!< Внутренний объект для работы с INI-файлом.
 };
 
-#endif // BASLERSETTINGS_H
+#endif  // BASLERSETTINGS_H

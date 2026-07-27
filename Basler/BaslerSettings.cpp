@@ -11,18 +11,34 @@ BaslerSettings::~BaslerSettings() { delete m_settings; }
 
 BaslerCameraParams BaslerSettings::loadParamsFromFile(bool isMaster) {
     BaslerCameraParams params;
+    BaslerCameraParams defaultParams = loadDefaultParamsFromFile(isMaster);
 
     m_settings->beginGroup("Camera");
     params.serialNumber = m_settings->value("serialNumber", "").toString();
     params.isMaster = m_settings->value("isMaster", isMaster).toBool();
 
-    params.exposureTime = m_settings->value("exposureTime", 10000.0).toDouble();
-    params.gain = m_settings->value("gain", 1.0).toDouble();
+    params.exposureTime =
+        m_settings->value("exposureTime", defaultParams.exposureTime)
+            .toDouble();
+    params.gain = m_settings->value("gain", defaultParams.gain).toDouble();
     params.acquisitionFrameRate =
-        m_settings->value("acquisitionFrameRate", 10.0).toDouble();
-    QString pixFmt =
-        m_settings->value("pixelFormat", BaslerConstants::pixelFormats().at(0))
-            .toString();
+        m_settings
+            ->value("acquisitionFrameRate", defaultParams.acquisitionFrameRate)
+            .toDouble();
+
+    QString defaultPixFmt;
+    switch (defaultParams.pixelFormat) {
+        case PixelType_Mono8:
+            defaultPixFmt = BaslerConstants::pixelFormats().at(0);
+            break;
+        case PixelType_Mono12:
+            defaultPixFmt = BaslerConstants::pixelFormats().at(1);
+            break;
+        case PixelType_Mono12p:
+            defaultPixFmt = BaslerConstants::pixelFormats().at(2);
+            break;
+    }
+    QString pixFmt = m_settings->value("pixelFormat", defaultPixFmt).toString();
     if (pixFmt == BaslerConstants::pixelFormats().at(0))
         params.pixelFormat = PixelType_Mono8;
     else if (pixFmt == BaslerConstants::pixelFormats().at(1))
@@ -30,23 +46,28 @@ BaslerCameraParams BaslerSettings::loadParamsFromFile(bool isMaster) {
     else if (pixFmt == BaslerConstants::pixelFormats().at(2))
         params.pixelFormat = PixelType_Mono12p;
 
-    params.width = m_settings->value("width", 1920).toInt();
-    params.height = m_settings->value("height", 1200).toInt();
-    params.offsetX = m_settings->value("offsetX", 0).toInt();
-    params.offsetY = m_settings->value("offsetY", 0).toInt();
+    params.width = m_settings->value("width", defaultParams.width).toInt();
+    params.height = m_settings->value("height", defaultParams.height).toInt();
+    params.offsetX =
+        m_settings->value("offsetX", defaultParams.offsetX).toInt();
+    params.offsetY =
+        m_settings->value("offsetY", defaultParams.offsetY).toInt();
     params.binningHorizontal =
-        m_settings->value("binningHorizontal", 1).toInt();
-    params.binningVertical = m_settings->value("binningVertical", 1).toInt();
+        m_settings->value("binningHorizontal", defaultParams.binningHorizontal)
+            .toInt();
+    params.binningVertical =
+        m_settings->value("binningVertical", defaultParams.binningVertical)
+            .toInt();
 
     QString binHMode =
-        m_settings->value("binningHorizontalMode", "Average").toString();
+        m_settings->value("binningHorizontalMode", "Sum").toString();
     if (binHMode == BaslerConstants::binningModes().at(1))
         params.binningHorizontalMode = BinningHorizontalMode_Average;
     else if (binHMode == BaslerConstants::binningModes().at(0))
         params.binningHorizontalMode = BinningHorizontalMode_Sum;
 
     QString binVMode =
-        m_settings->value("binningVerticalMode", "Average").toString();
+        m_settings->value("binningVerticalMode", "Sum").toString();
     if (binVMode == BaslerConstants::binningModes().at(1))
         params.binningVerticalMode = BinningVerticalMode_Average;
     else if (binVMode == BaslerConstants::binningModes().at(0))
@@ -54,6 +75,63 @@ BaslerCameraParams BaslerSettings::loadParamsFromFile(bool isMaster) {
 
     m_settings->endGroup();
 
+    return params;
+}
+
+BaslerCameraParams BaslerSettings::loadDefaultParamsFromFile(bool isMaster) {
+    QString resourcePath;
+    if (isMaster)
+        resourcePath = ":/Basler/4Release/HS.ini";
+    else {
+        resourcePath = ":/Basler/4Release/OC.ini";
+    }
+    QSettings resourceSettings = QSettings(resourcePath, QSettings::IniFormat);
+
+    BaslerCameraParams params;
+    resourceSettings.beginGroup("Camera");
+
+    params.serialNumber = resourceSettings.value("serialNumber", "").toString();
+    params.isMaster = isMaster;
+    params.exposureTime =
+        resourceSettings.value("exposureTime", 50000.0).toDouble();  // 50 мс
+    params.gain = resourceSettings.value("gain", 0.0).toDouble();
+    params.acquisitionFrameRate =
+        resourceSettings.value("acquisitionFrameRate", 20.0).toDouble();
+
+    QString pixFmt =
+        resourceSettings.value("pixelFormat", "Mono12p").toString();
+    if (pixFmt == "Mono8")
+        params.pixelFormat = PixelType_Mono8;
+    else if (pixFmt == "Mono12")
+        params.pixelFormat = PixelType_Mono12;
+    else if (pixFmt == "Mono12p")
+        params.pixelFormat = PixelType_Mono12p;
+    else
+        params.pixelFormat = PixelType_Mono12p;
+
+    params.width = resourceSettings.value("width", 1920).toInt();
+    params.height = resourceSettings.value("height", 1200).toInt();
+    params.offsetX = resourceSettings.value("offsetX", 0).toInt();
+    params.offsetY = resourceSettings.value("offsetY", 0).toInt();
+    params.binningHorizontal =
+        resourceSettings.value("binningHorizontal", 1).toInt();
+    params.binningVertical =
+        resourceSettings.value("binningVertical", 1).toInt();
+
+    QString binHMode =
+        resourceSettings.value("binningHorizontalMode", "Sum").toString();
+    params.binningHorizontalMode = (binHMode == "Average")
+                                       ? BinningHorizontalMode_Average
+                                       : BinningHorizontalMode_Sum;
+
+    QString binVMode =
+        resourceSettings.value("binningVerticalMode", "Sum").toString();
+    params.binningVerticalMode = (binVMode == "Average")
+                                     ? BinningVerticalMode_Average
+                                     : BinningVerticalMode_Sum;
+
+    resourceSettings.endGroup();
+    qDebug() << "Def params were loaded:" << params.isMaster << params.offsetX;
     return params;
 }
 
